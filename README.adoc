@@ -1,0 +1,16 @@
+Home security with Rasperry PI
+==============================
+Thomas Herzog <herzog.thomas81@gmail.com>
+v0.1, 2017/04/07, Initial intention description.
+
+# Intention
+
+# System components
+
+# System infrastructure
+
+## Spring-Boot rest-server
+
+## Android push-client
+
+## Android admin-client

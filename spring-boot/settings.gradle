@@ -1,0 +1,4 @@
+include 'model:jpa'
+include 'model:domain'
+include 'rest:api'
+include 'rest:impl'

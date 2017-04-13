@@ -1,0 +1,4 @@
+Android Security-Client-App
+===========================
+Thomas Herzog <herzog.thomas81@gmail.com>
+v0.1, 2017/04/07, Initial intention description.
