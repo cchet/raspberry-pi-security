@@ -36,4 +36,4 @@ The Firebase Cloud Messaging (FCW) service is used to push notifications to the 
 
 # System infrastructure
 The following images displays the main infrastructure of this application. +
-image::doc/images/Infrastructure.jpg[Infrastructure]
+image:doc/images/Infrastructure.jpg[Infrastructure]
