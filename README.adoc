@@ -3,14 +3,37 @@ Home security with Rasperry PI
 Thomas Herzog <herzog.thomas81@gmail.com>
 v0.1, 2017/04/07, Initial intention description.
 
-# Intention
+# Idea
+This project realizes a home security application with a Raspberry Pi.
+The Raspberry Pi hosts a Spring Boot application which represents the core of the
+this project. It is connected to a camera and a movement sensor and acts on a detected
+movements. The Raspberry Pi will host the main application represented by a Spring Boot
+application which provides a REST-API for configuration purpose and push notifications to the clients.
+Also the application manages the connected sensors. +
 
-# System components
+An android admin app allows the owner of the security domain to configure the  system and to register
+users, who get notified if an security issues occurs. The users will have the client app
+installed on their android devices which are capable of receiving push notifications of the app server
+in case of an security issue. +
+
+The clients are registered on the Firebase Cloud Messaging (FCM) Service provided by Google
+and will get the notifications pushed to them via this service. The REST-Server will act
+as the app server which manages the client apps which are part of the security domain and assigned
+to registered users. +
+
+# Hardware
+The main hardware is a Raspberry Pi 3 Model B which hosts the Spring Boot application and has a movements sensor
+and a camera connected to it. The hardware for the internet connection is already provided by the
+Raspberry Pi.
+
+# Software
+The main part of the software is the Spring Boot application which hosts a REST-API and provides the main logic
+for interacting with the sensors. The library __PI4J__ For is used for interacting with the connected hardware.
+The database is provided by a __MongoDB__ server. A __Nginx__ service is used as a reverse proxy. Docker is used to isolate the service from each other and
+to provide the possibility to deploy updates and upgrades for the database and spring boot application without the need to modify the host. +
+
+The Firebase Cloud Messaging (FCW) service is used to push notifications to the registered clients of the users.
 
 # System infrastructure
-
-## Spring-Boot rest-server
-
-## Android push-client
-
-## Android admin-client
+The following images displays the main infrastructure of this application. +
+image::doc/images/Infrastructure.jpg[Infrastructure]
