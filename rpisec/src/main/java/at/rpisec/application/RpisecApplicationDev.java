@@ -2,15 +2,13 @@ package at.rpisec.application;
 
 import at.rpisec.jpa.model.User;
 import at.rpisec.jpa.repositories.UserRepository;
-import at.rpisec.rest.AliveRestService;
 import at.rpisec.rest.UserRestRepository;
-import org.glassfish.jersey.server.ResourceConfig;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.*;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
@@ -22,6 +20,7 @@ import javax.servlet.Filter;
 @EnableJpaRepositories(basePackageClasses = {UserRepository.class, UserRestRepository.class})
 @EntityScan(basePackageClasses = User.class)
 @EnableTransactionManagement
+@EnableAspectJAutoProxy
 @Profile("dev")
 public class RpisecApplicationDev {
 
@@ -40,11 +39,20 @@ public class RpisecApplicationDev {
     }
 
     @Bean
-    public ResourceConfig produceJerseyResourceConfig() {
-        final ResourceConfig config = new ResourceConfig();
-        config.packages(true, AliveRestService.class.getPackage().getName());
+    public CommandLineRunner produceCommandLineRunner(final UserRepository userRepo) {
+        return (args) -> {
+            User admin = userRepo.findOne(1L);
+            if (admin == null) {
+                admin = new User();
+                admin.setFirstname("Admin");
+                admin.setLastname("Admin");
+                admin.setUsername("admin");
+                admin.setPassword("admin");
+                admin.setEmail("admin@rpisec.at");
+                admin.setAdmin(Boolean.TRUE);
 
-        return config;
+                userRepo.save(admin);
+            }
+        };
     }
-
 }

@@ -105,4 +105,12 @@ public class User extends BaseEntity<Long> {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
 }
