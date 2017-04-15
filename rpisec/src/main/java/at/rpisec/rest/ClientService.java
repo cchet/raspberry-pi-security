@@ -1,4 +1,4 @@
-package at.rpisec.rest.client;
+package at.rpisec.rest;
 
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
