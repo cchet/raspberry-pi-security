@@ -1,0 +1,7 @@
+Spring boot server
+==================
+Thomas Herzog <herzog.thomas81@gmail.com>
+v0.1, 2017/04/07, Initial intention description.
+
+# Firebase prerequisites
+The private key represented by the json file named __firebase-account.json__ must be located int user home directory. +
