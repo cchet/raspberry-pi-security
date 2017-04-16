@@ -1,11 +1,14 @@
 package at.rpisec.application;
 
-import at.rpisec.security.DbUsernamePasswordAuthenticationManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * This configuration class setups the security for this application.
@@ -15,9 +18,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 04/14/17
  */
-@Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private AuthenticationManager authManager;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -31,6 +35,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public AuthenticationManager authenticationManager() throws Exception {
-        return new DbUsernamePasswordAuthenticationManager();
+        return authManager;
     }
 }

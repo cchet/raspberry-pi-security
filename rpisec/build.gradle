@@ -21,6 +21,10 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+bootRun {
+    systemProperties['spring.profiles.active']  = System.getProperty('spring.profiles.active') ?: 'dev'
+}
+
 repositories {
     mavenCentral()
 }
@@ -31,7 +35,6 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
-    compile("org.springframework.boot:spring-boot-starter-logging")
     compile("com.h2database:h2:${h2Version}")
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     compile("io.springfox:springfox-swagger2:${springfoxSwaggerVersion}")

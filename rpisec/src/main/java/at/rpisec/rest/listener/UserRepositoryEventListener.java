@@ -1,8 +1,12 @@
 package at.rpisec.rest.listener;
 
 import at.rpisec.jpa.model.User;
+import at.rpisec.jpa.repositories.UserRepository;
 import at.rpisec.rest.UserRestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.data.rest.core.event.AbstractRepositoryEventListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,9 +18,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserRepositoryEventListener extends AbstractRepositoryEventListener<User> {
 
+    @Autowired
+    private PasswordEncoder encoder;
+    @Autowired
+    private UserRepository userRepo;
+
     @Override
     protected void onBeforeCreate(User entity) {
-        super.onBeforeCreate(entity);
+        entity.setPassword(encoder.encode(entity.getPassword()));
     }
 
     @Override
@@ -26,7 +35,9 @@ public class UserRepositoryEventListener extends AbstractRepositoryEventListener
 
     @Override
     protected void onBeforeSave(User entity) {
-        super.onBeforeSave(entity);
+        if (!userRepo.exists(entity.getId())) {
+            throw new DataRetrievalFailureException("User with id '" + entity.getId() + "' does not exist");
+        }
     }
 
     @Override
@@ -60,7 +71,9 @@ public class UserRepositoryEventListener extends AbstractRepositoryEventListener
 
     @Override
     protected void onBeforeDelete(User entity) {
-        super.onBeforeDelete(entity);
+        if (!userRepo.exists(entity.getId())) {
+            throw new DataRetrievalFailureException("User with id '" + entity.getId() + "' does not exist");
+        }
     }
 
     @Override
