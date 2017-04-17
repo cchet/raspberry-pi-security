@@ -1,6 +1,6 @@
 package at.rpisec.rest;
 
-import at.rpisec.application.SecurityProperties;
+import at.rpisec.config.SecurityProperties;
 import at.rpisec.jpa.model.User;
 import at.rpisec.jpa.model.projections.SimpleUserProjection;
 import org.springframework.data.repository.CrudRepository;

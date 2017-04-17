@@ -1,8 +1,7 @@
-package at.rpisec.application;
+package at.rpisec.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener;
 import org.springframework.data.rest.core.mapping.RepositoryDetectionStrategy;
@@ -12,7 +11,7 @@ import org.springframework.validation.Validator;
 
 
 /**
- * This class configures the rest part of this application.
+ * This class configures the rest part of this config.
  * <p>
  * See: http://www.baeldung.com/swagger-2-documentation-for-spring-rest-api
  *

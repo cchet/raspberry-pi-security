@@ -1,5 +1,7 @@
-package at.rpisec.application;
+package at.rpisec;
 
+import at.rpisec.config.RestConfiguration;
+import at.rpisec.config.SecurityConfiguration;
 import at.rpisec.jpa.model.User;
 import at.rpisec.jpa.repositories.UserRepository;
 import at.rpisec.rest.UserRestRepository;
@@ -38,10 +40,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
         SpringDataRestConfiguration.class,
         BeanValidatorPluginsConfiguration.class
 })
-public class RpisecApplicationDev {
+public class Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(RpisecApplicationDev.class, args);
+        SpringApplication.run(Application.class, args);
     }
 
     @Bean

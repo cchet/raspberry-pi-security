@@ -1,4 +1,4 @@
-package at.rpisec.application;
+package at.rpisec.config;
 
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
