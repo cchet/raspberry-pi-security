@@ -21,16 +21,16 @@ public abstract class AbstractRestController<M, I extends Serializable, T extend
     private T logic;
 
     @GetMapping(value = "/list")
-    public List<M> getByAll() {
+    public List<M> list() {
         return logic.list();
     }
 
-    @GetMapping(value = "/{id}")
-    public M getById(@PathVariable I id) {
+    @GetMapping(value = "/get/{id}")
+    public M get(@PathVariable I id) {
         return logic.byId(id);
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(value = "/delete/{id}")
     public boolean delete(@PathVariable I id) {
         return logic.delete(id);
     }

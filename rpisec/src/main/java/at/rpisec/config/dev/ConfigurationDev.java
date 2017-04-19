@@ -46,31 +46,17 @@ public class ConfigurationDev {
                 admin.setEmail("admin@rpisec.at");
                 admin.setAdmin(Boolean.TRUE);
 
+                final User client = new User();
+                client.setFirstname("Client_1");
+                client.setLastname("Client_1");
+                client.setUsername("client");
+                client.setPassword(encoder.encode("client"));
+                client.setEmail("client_1@rpisec.at");
+                client.setAdmin(Boolean.FALSE);
+
                 userRepo.save(admin);
+                userRepo.save(client);
             }
         };
-    }
-
-    // See: https://firebase.google.com/docs/auth/admin/create-custom-tokens
-
-    @Bean
-    FirebaseApp produceFirebaseApp(final ConfigProperties.FirebaseProperties firebaseConfig) throws IOException {
-        final File file = Paths.get(firebaseConfig.getConfigFile()).toFile();
-        if (!file.exists()) {
-            throw new IllegalArgumentException("firebaseConfig: '" + firebaseConfig.getConfigFile() + "' does not exist");
-        }
-
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setServiceAccount(FileUtils.openInputStream(file))
-                .setDatabaseUrl(firebaseConfig.getDatabaseUrl())
-                .build();
-
-        return FirebaseApp.initializeApp(options);
-    }
-
-    @Bean
-    DatabaseReference produceDatabaseReference(FirebaseApp firebaseApp) {
-        FirebaseDatabase.getInstance(firebaseApp).setPersistenceEnabled(false);
-        return FirebaseDatabase.getInstance(firebaseApp).getReference();
     }
 }
