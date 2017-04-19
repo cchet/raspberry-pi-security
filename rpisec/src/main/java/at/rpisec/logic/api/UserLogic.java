@@ -1,5 +1,6 @@
 package at.rpisec.logic.api;
 
+import at.rpisec.rest.model.UserDto;
 import org.springframework.security.core.Authentication;
 
 import java.io.Serializable;
@@ -8,7 +9,7 @@ import java.io.Serializable;
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 04/17/17
  */
-public interface UserLogic extends Serializable {
+public interface UserLogic extends Logic<UserDto, Long> {
 
     /**
      * Logs the user in

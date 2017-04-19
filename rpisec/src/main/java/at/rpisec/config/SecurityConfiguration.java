@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 /**
  * This configuration class setups the security for this config.
@@ -23,9 +24,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.httpBasic()
             .and()
             .authorizeRequests()
-            .antMatchers("/rest/**").hasAnyRole(SecurityProperties.ADMIN, SecurityProperties.CLIENT)
+            .antMatchers("/api/**").hasAnyRole(SecurityProperties.ADMIN, SecurityProperties.CLIENT)
             .and()
-            .csrf().disable();
+            .csrf().disable()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Override

@@ -31,13 +31,6 @@ public class ConfigurationDev {
     private PasswordEncoder encoder;
     @Autowired
     private UserRepository userRepo;
-/*
-    // fromapplication.properties
-    @Value("${firebase.databaseUrl}")
-    private String firebaseDatabaseUrl;
-
-    @Value("${firebase.config}")
-    private String firebaseConfig;*/
 
     @Bean
     CommandLineRunner produceCommandLineRunner() {
@@ -61,7 +54,7 @@ public class ConfigurationDev {
     FirebaseApp produceFirebaseApp(final ConfigProperties.FirebaseProperties firebaseConfig) throws IOException {
         final File file = Paths.get(firebaseConfig.getConfigFile()).toFile();
         if (!file.exists()) {
-            throw new IllegalArgumentException("firebaseConfig: '" + firebaseConfig + "' does not exist");
+            throw new IllegalArgumentException("firebaseConfig: '" + firebaseConfig.getConfigFile() + "' does not exist");
         }
 
         FirebaseOptions options = new FirebaseOptions.Builder()

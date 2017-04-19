@@ -4,6 +4,7 @@ import at.rpisec.config.SecurityProperties;
 import at.rpisec.jpa.model.User;
 import at.rpisec.jpa.repositories.UserRepository;
 import at.rpisec.logic.api.UserLogic;
+import at.rpisec.rest.model.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -53,5 +54,33 @@ public class UserLogicImpl implements UserLogic {
         }
 
         return new UsernamePasswordAuthenticationToken(username, user.getPassword(), grantedAuthorities);
+    }
+
+    @Override
+    public UserDto byId(Long id) {
+        final UserDto model = new UserDto();
+        model.setFirstname("thomas");
+
+        return model;
+    }
+
+    @Override
+    public List<UserDto> list() {
+        return null;
+    }
+
+    @Override
+    public UserDto create(UserDto model) {
+        return null;
+    }
+
+    @Override
+    public UserDto update(UserDto model) {
+        return null;
+    }
+
+    @Override
+    public boolean delete(Long id) {
+        return false;
     }
 }
