@@ -26,11 +26,19 @@ targetCompatibility = 1.8
 
 bootRun {
     systemProperties['spring.profiles.active']  = System.getProperty('spring.profiles.active') ?: 'dev'
-    systemProperties['firebase.configFile'] = System.getProperty("user.home") + File.separator + "firebase-account.json";
+    systemProperties['firebase.configFile'] = System.getProperty("user.home") + File.separator + "firebase-account.json"
 }
 
 repositories {
+    jcenter()
     mavenCentral()
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
 }
 
 dependencies {
@@ -39,7 +47,6 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     compile("com.h2database:h2:${h2Version}")
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
     compile("io.springfox:springfox-swagger2:${springfoxSwaggerVersion}")
     compile("io.springfox:springfox-swagger-ui:${springfoxSwaggerVersion}")
     compile("io.springfox:springfox-bean-validators:${springfoxSwaggerVersion}")
@@ -48,4 +55,6 @@ dependencies {
     compile ("ma.glasnost.orika:orika-core:${orikaVersion}")
     runtime('org.springframework.boot:spring-boot-devtools')
     testCompile('org.springframework.boot:spring-boot-starter-test')
+
+    compileOnly ("org.projectlombok:lombok:${lombokVersion}")
 }

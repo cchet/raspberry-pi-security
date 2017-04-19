@@ -5,6 +5,7 @@ import at.rpisec.jpa.model.User;
 import at.rpisec.jpa.repositories.UserRepository;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import org.apache.commons.io.FileUtils;
@@ -49,6 +50,8 @@ public class ConfigurationDev {
             }
         };
     }
+
+    // See: https://firebase.google.com/docs/auth/admin/create-custom-tokens
 
     @Bean
     FirebaseApp produceFirebaseApp(final ConfigProperties.FirebaseProperties firebaseConfig) throws IOException {
