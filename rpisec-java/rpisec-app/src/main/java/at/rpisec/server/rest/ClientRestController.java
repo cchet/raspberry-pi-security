@@ -3,7 +3,6 @@ package at.rpisec.server.rest;
 import at.rpisec.server.logic.api.ClientLogic;
 import at.rpisec.server.logic.api.UserLogic;
 import at.rpisec.server.shared.rest.constants.ClientRestConstants;
-import at.rpisec.server.shared.rest.constants.UserRestConstants;
 import at.rpisec.server.shared.rest.model.TokenResponse;
 import at.rpisec.server.shared.rest.model.UserDto;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,18 +53,28 @@ public class ClientRestController {
     @PutMapping(ClientRestConstants.REL_URI_REGISTER)
     public void register(final @RequestParam(ClientRestConstants.PARAM_UUID) String uuid,
                          final Authentication auth) {
-        clientLogic.create(uuid, auth.getPrincipal().toString());
+        clientLogic.register(uuid, auth.getPrincipal().toString());
     }
 
-    @PutMapping(ClientRestConstants.REL_URI_UNREGISTER)
+    @DeleteMapping(ClientRestConstants.REL_URI_UNREGISTER)
     public void unregister(final @RequestParam(ClientRestConstants.PARAM_UUID) String uuid,
                            final Authentication auth) {
-        clientLogic.delete(uuid, auth.getPrincipal().toString());
+        clientLogic.unregister(uuid, auth.getPrincipal().toString());
     }
 
-    @PutMapping(value = UserRestConstants.REL_URI_UPDATE)
-    public UserDto update(@RequestBody @Valid UserDto model) {
-        userLogic.update(model);
-        return userLogic.byId(model.getId());
+    @PostMapping(value = ClientRestConstants.REL_URI_PROFILE + "/{uuid}")
+    public UserDto updateProfile(final @RequestBody @Valid UserDto model,
+                                 final @PathVariable("uuid") String uuid,
+                                 final Authentication auth) {
+        final Long id = clientLogic.updateProfile(uuid, auth.getPrincipal().toString(), model);
+
+        return userLogic.byId(id);
+    }
+
+    @PostMapping(value = ClientRestConstants.REL_URI_PASSWORD)
+    public void updatePassword(final @RequestParam("uuid") String uuid,
+                               final @RequestParam("password") String password,
+                               final Authentication auth) {
+        clientLogic.updatePassword(uuid, auth.getPrincipal().toString(), password);
     }
 }

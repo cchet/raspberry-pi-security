@@ -13,15 +13,17 @@ public interface UserLogic {
 
     UserDto byId(Long id);
 
+    UserDto byUsername(String username);
+
     List<UserDto> list();
 
     Long create(UserDto model);
 
-    void update(UserDto model);
+    Long update(UserDto model);
 
     void update(UserDto model, String username);
 
-    boolean delete(Long id);
+    void delete(String username);
 
     /**
      * Logs the user in

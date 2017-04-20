@@ -25,24 +25,25 @@ public class UserRestController {
         return logic.list();
     }
 
-    @GetMapping(value = UserRestConstants.REL_URI_GET + "/{id}")
-    public UserDto get(@PathVariable Long id) {
-        return logic.byId(id);
+    @GetMapping(value = UserRestConstants.REL_URI_GET + "/{username}")
+    public UserDto get(@PathVariable String username) {
+        return logic.byUsername(username);
     }
 
-    @DeleteMapping(value = UserRestConstants.REL_URI_DELETE + "/{id}")
-    public void delete(@PathVariable Long id) {
-        logic.delete(id);
+    @DeleteMapping(value = UserRestConstants.REL_URI_DELETE + "/{username}")
+    public void delete(@PathVariable String username) {
+        logic.delete(username);
     }
 
     @PutMapping(value = UserRestConstants.REL_URI_CREATE)
     public UserDto create(@RequestBody @Valid UserDto model) {
-        return logic.byId(logic.create(model));
+        final Long id = logic.create(model);
+        return logic.byId(id);
     }
 
-    @PutMapping(value = UserRestConstants.REL_URI_UPDATE)
+    @PostMapping(value = UserRestConstants.REL_URI_UPDATE)
     public UserDto update(@RequestBody @Valid UserDto model) {
-        logic.update(model);
-        return logic.byId(model.getId());
+        final Long id = logic.update(model);
+        return logic.byId(id);
     }
 }

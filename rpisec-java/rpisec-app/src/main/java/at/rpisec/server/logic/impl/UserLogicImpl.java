@@ -1,10 +1,11 @@
 package at.rpisec.server.logic.impl;
 
 import at.rpisec.server.config.SecurityProperties;
+import at.rpisec.server.exception.DbEntryNotFoundException;
 import at.rpisec.server.jpa.model.User;
 import at.rpisec.server.jpa.repositories.UserRepository;
-import at.rpisec.server.logic.event.UserEventHandler;
 import at.rpisec.server.logic.api.UserLogic;
+import at.rpisec.server.logic.event.UserEventHandler;
 import at.rpisec.server.shared.rest.model.UserDto;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
@@ -68,15 +70,27 @@ public class UserLogicImpl implements UserLogic {
 
     @Override
     public UserDto byId(Long id) {
-        final UserDto model = new UserDto();
-        model.setFirstname("thomas");
+        final User user = userRepo.findOne(id);
+        if (user == null) {
+            throw new DbEntryNotFoundException(String.format("USer not found for id: %d", id), User.class);
+        }
 
-        return model;
+        return mapper.map(user, UserDto.class);
+    }
+
+    @Override
+    public UserDto byUsername(String username) {
+        final User user = userRepo.findByUsername(username);
+        if (user == null) {
+            throw new DbEntryNotFoundException(String.format("USer not found for username: %d", username), User.class);
+        }
+
+        return mapper.map(user, UserDto.class);
     }
 
     @Override
     public List<UserDto> list() {
-        return null;
+        return userRepo.findAll().stream().map(user -> mapper.map(user, UserDto.class)).collect(Collectors.toList());
     }
 
     @Override
@@ -95,19 +109,38 @@ public class UserLogicImpl implements UserLogic {
     }
 
     @Override
-    public void update(UserDto model) {
+    public Long update(UserDto model) {
+        final User user = userRepo.findByUsername(model.getUsername());
+        if (user == null) {
+            throw new DbEntryNotFoundException(String.format("USer not found for id %d", user.getId()), User.class);
+        }
 
+        mapper.map(model, user);
+        userRepo.save(user);
+
+        return user.getId();
     }
 
     @Secured(SecurityProperties.ROLE_CLIENT)
     @Override
     public void update(UserDto model,
                        String username) {
+        final User user = userRepo.findByUsername(username);
+        if (user == null) {
+            throw new DbEntryNotFoundException(String.format("USer not found for id %d", user.getId()), User.class);
+        }
 
+        mapper.map(model, user);
+        userRepo.saveAndFlush(user);
     }
 
     @Override
-    public boolean delete(Long id) {
-        return false;
+    public void delete(final String username) {
+        final User user = userRepo.findByUsername(username);
+        if (user == null) {
+            throw new DbEntryNotFoundException(String.format("USer not found for id %d", user.getId()), User.class);
+        }
+
+        userRepo.delete(user);
     }
 }

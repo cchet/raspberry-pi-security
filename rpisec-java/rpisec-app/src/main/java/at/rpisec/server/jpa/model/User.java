@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
@@ -89,6 +91,11 @@ public class User extends BaseEntity<Long> {
     @Getter
     @Setter
     private Boolean admin;
+
+    @Getter
+    @Setter
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<Client> clients = new HashSet<>(0);
 
     @PrePersist
     public void prePersist() {

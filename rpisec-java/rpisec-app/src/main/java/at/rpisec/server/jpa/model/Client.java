@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "CLIENT", uniqueConstraints = {
-        @UniqueConstraint(name = "uq_client_uuid", columnNames = "UUID")
+        @UniqueConstraint(name = "uq_client_uuid_user_id", columnNames = {"UUID", "USER_ID"})
 })
 public class Client extends BaseEntity<Long> {
 

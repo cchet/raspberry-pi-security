@@ -8,8 +8,12 @@ import at.rpisec.server.jpa.model.User;
 import at.rpisec.server.jpa.repositories.ClientRepository;
 import at.rpisec.server.jpa.repositories.UserRepository;
 import at.rpisec.server.logic.api.ClientLogic;
+import at.rpisec.server.logic.api.UserLogic;
+import at.rpisec.server.shared.rest.model.UserDto;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,14 +27,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class ClientLogicImpl implements ClientLogic {
 
     @Autowired
+    private PasswordEncoder encoder;
+    @Autowired
     private ClientRepository clientRepo;
-
     @Autowired
     private UserRepository userRepo;
+    @Autowired
+    private MapperFacade mapper;
 
     @Override
-    public Long create(final String uuid,
-                       final String username) {
+    public Long register(final String uuid,
+                         final String username) {
         final User user = userRepo.findByUsername(username);
         Client client = clientRepo.findByUuidAndUser(uuid, user);
 
@@ -46,8 +53,8 @@ public class ClientLogicImpl implements ClientLogic {
     }
 
     @Override
-    public void delete(String uuid,
-                       String username) {
+    public void unregister(String uuid,
+                           String username) {
         final User user = userRepo.findByUsername(username);
         Client client = clientRepo.findByUuidAndUser(uuid, user);
 
@@ -56,5 +63,35 @@ public class ClientLogicImpl implements ClientLogic {
         }
 
         clientRepo.delete(client.getId());
+    }
+
+    @Override
+    public Long updateProfile(String uuid,
+                              String username,
+                              UserDto model) {
+        final User user = userRepo.findByUsernameAndClientUuid(username, uuid);
+        if (user == null) {
+            throw new DbEntryNotFoundException("No user for username and uuid", User.class);
+        }
+
+        mapper.map(model, user);
+        userRepo.save(user);
+
+        return user.getId();
+    }
+
+    @Override
+    public Long updatePassword(String uuid,
+                               String username,
+                               String password) {
+        final User user = userRepo.findByUsernameAndClientUuid(username, uuid);
+        if (user == null) {
+            throw new DbEntryNotFoundException("No user for username and uuid", User.class);
+        }
+
+        user.setPassword(encoder.encode(password));
+        userRepo.save(user);
+
+        return user.getId();
     }
 }

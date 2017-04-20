@@ -13,10 +13,6 @@ import javax.validation.constraints.Size;
  */
 public class UserDto {
 
-    @Getter
-    @Setter
-    private Long id;
-
     @NotNull
     @Size(max = 100)
     @Getter
@@ -34,12 +30,6 @@ public class UserDto {
     @Getter
     @Setter
     private String username;
-
-    @NotNull
-    @Size(max = 500)
-    @Getter
-    @Setter
-    private String password;
 
     @NotNull
     @Email
