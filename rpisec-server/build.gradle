@@ -47,6 +47,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    compile('org.springframework.boot:spring-boot-starter-mail')
     compile("com.h2database:h2:${h2Version}")
     compile("io.springfox:springfox-swagger2:${springfoxSwaggerVersion}")
     compile("io.springfox:springfox-swagger-ui:${springfoxSwaggerVersion}")
