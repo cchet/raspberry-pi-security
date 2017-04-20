@@ -21,3 +21,5 @@ Thumbs.db
 !*/**/resources/ts/typings/**/*.d.ts
 node_modules
 deployments
+firebase-account.json
+google-services.json
