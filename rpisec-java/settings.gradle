@@ -1,0 +1,2 @@
+include ':rpisec-app'
+include ':rpisec-shared'

@@ -1,0 +1,44 @@
+buildscript {
+	ext {
+		lombokVersion='1.16.16'
+	}
+}
+
+allprojects {
+	apply plugin: 'java'
+	apply plugin: 'idea'
+	
+	version = '0.0.1-SNAPSHOT'
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+
+	repositories {
+		jcenter()
+		mavenCentral()
+	}
+	
+	idea {
+		module {
+			downloadJavadoc = true
+			downloadSources = true
+		}
+	}
+
+	ext {
+		springBootVersion = '1.5.2.RELEASE'
+		h2Version = '1.4.194'
+		springfoxSwaggerVersion = '2.6.1'
+		lombokVersion='1.16.16'
+		firebaseAdminVersion= '4.1.6'
+		apacheCommonsVersion='1.3.2'
+		orikaVersion='1.5.1'
+		jacksonDatabindJsr310Version='2.8.8'
+
+		// from spring versions
+		hibernateValidtorVersion='5.3.4.Final'
+	}
+
+	dependencies {
+		compileOnly ("org.projectlombok:lombok:${lombokVersion}")
+	}
+}

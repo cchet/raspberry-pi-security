@@ -1,0 +1,5 @@
+dependencies {
+	compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonDatabindJsr310Version}")
+	compile("io.springfox:springfox-bean-validators:${springfoxSwaggerVersion}")
+	compile("org.hibernate:hibernate-validator:${hibernateValidtorVersion}")
+}
