@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/21/17
  */
 @Entity

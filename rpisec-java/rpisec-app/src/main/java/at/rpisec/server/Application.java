@@ -3,6 +3,7 @@ package at.rpisec.server;
 import at.rpisec.server.config.ConfigProperties;
 import at.rpisec.server.config.ModelMapperConfigurer;
 import at.rpisec.server.config.SecurityConfiguration;
+import at.rpisec.server.config.WebMvCoonfiguration;
 import at.rpisec.server.jpa.model.User;
 import at.rpisec.server.jpa.repositories.UserRepository;
 import at.rpisec.server.security.DbUsernamePasswordAuthenticationManager;
@@ -12,8 +13,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import ma.glasnost.orika.MapperFacade;
-import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.impl.ConfigurableMapper;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +29,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.spi.DocumentationType;
@@ -39,15 +42,17 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 @SpringBootApplication
 @ComponentScan(basePackageClasses = {Application.class, Jsr310JpaConverters.class})
+@EnableWebMvc
 @EnableJpaRepositories(basePackageClasses = {UserRepository.class})
-@EntityScan(basePackageClasses = User.class)
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableSwagger2
+@EntityScan(basePackageClasses = User.class)
 @Import({
         BeanValidatorPluginsConfiguration.class
 })
@@ -60,6 +65,11 @@ public class Application {
     @Bean
     WebSecurityConfigurerAdapter produceWebSecurityConfigurerAdapter() {
         return new SecurityConfiguration();
+    }
+
+    @Bean
+    WebMvcConfigurerAdapter produceWebMvcConfigurationAdaptor() {
+        return new WebMvCoonfiguration();
     }
 
     @Bean
@@ -118,5 +128,12 @@ public class Application {
     @Bean
     FirebaseAuth produceFirebaseAuth(final FirebaseApp firebaseApp) {
         return FirebaseAuth.getInstance(firebaseApp);
+    }
+
+    @Bean
+    LocaleResolver produceLocaleResolver() {
+        SessionLocaleResolver slr = new SessionLocaleResolver();
+        slr.setDefaultLocale(Locale.US);
+        return slr;
     }
 }

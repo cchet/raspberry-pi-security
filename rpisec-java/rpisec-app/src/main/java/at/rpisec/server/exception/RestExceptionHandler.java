@@ -2,10 +2,10 @@ package at.rpisec.server.exception;
 
 import at.rpisec.server.jpa.api.Entity;
 import at.rpisec.server.jpa.model.Client;
+import at.rpisec.server.jpa.model.User;
 import at.rpisec.server.rest.UserRestController;
 import at.rpisec.server.shared.rest.constants.ResponseErrorCode;
 import at.rpisec.server.shared.rest.model.ErrorResponse;
-import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ import javax.validation.ConstraintViolationException;
 /**
  * This class handles the data rest exceptions for the clients.
  *
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/15/17
  */
 @ControllerAdvice(basePackageClasses = UserRestController.class)
@@ -33,8 +33,12 @@ public class RestExceptionHandler {
     public @ResponseBody ErrorResponse handleDbEntryNotFoundError(final DbEntryNotFoundException t) {
         logger.info(String.format("Could not find db entry of type %s", (t.getEntityClass() != null) ? t.getEntityClass().getName() : "unknown"));
         final Class<? extends Entity> entityClass = t.getEntityClass();
-        if (Client.class.equals(entityClass)) {
-            return new ErrorResponse(ResponseErrorCode.CLIENT_NOT_FOUND);
+        if (entityClass != null) {
+            if (Client.class.equals(entityClass)) {
+                return new ErrorResponse(ResponseErrorCode.CLIENT_NOT_FOUND);
+            } else if (User.class.equals(entityClass)) {
+                return new ErrorResponse(ResponseErrorCode.USER_NOT_FOUND);
+            }
         }
 
         return new ErrorResponse(ResponseErrorCode.DB_ACCESS_ERROR, t.getClass().getName());
@@ -45,8 +49,10 @@ public class RestExceptionHandler {
     public @ResponseBody ErrorResponse handleDbEntryAlreadyExistsFoundError(final DbEntryAlreadyExistsException t) {
         logger.info(String.format("Db entry already exists of type %s", (t.getEntityClass() != null) ? t.getEntityClass().getName() : "unknown"));
         final Class<? extends Entity> entityClass = t.getEntityClass();
-        if (Client.class.equals(entityClass)) {
-            return new ErrorResponse(ResponseErrorCode.CLIENT_ALREADY_REGISTERED);
+        if (entityClass != null) {
+            if (Client.class.equals(entityClass)) {
+                return new ErrorResponse(ResponseErrorCode.CLIENT_ALREADY_REGISTERED);
+            }
         }
 
         return new ErrorResponse(ResponseErrorCode.DB_ACCESS_ERROR, t.getClass().getName());
@@ -63,6 +69,6 @@ public class RestExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public @ResponseBody ErrorResponse handleConstraintViolation(final ConstraintViolationException e) {
         logger.info("Model validation failed");
-        return new ErrorResponse(ResponseErrorCode.VALDATION_ERROR);
+        return new ErrorResponse(ResponseErrorCode.VALIDATION_ERROR);
     }
 }

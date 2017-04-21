@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/21/17
  */
 @Repository

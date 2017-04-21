@@ -18,11 +18,15 @@ buildscript {
 		springfoxSwaggerVersion='2.6.1'
 		h2DatabaseVersion='1.4.194'
 		lombokVersion='1.16.16'
+		webjarsBootstrapVersion='3.3.7-1'
+		nekohtmlVersion='1.9.22'
+		springloadedVersion='1.2.7.RELEASE'
 	}
 
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 		classpath "io.spring.gradle:dependency-management-plugin:${springDependencyManagementPluginVersion}"
+		classpath "org.springframework:springloaded:${springloadedVersion}"
 	}
 }
 
@@ -65,6 +69,8 @@ subprojects {
 			dependency "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonJsr310Version}"
 			dependency "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
 			dependency "com.pi4j:pi4j-core:${pi4jVersion}"
+			dependency "org.webjars:bootstrap:${webjarsBootstrapVersion}"
+			dependency "net.sourceforge.nekohtml:nekohtml:${nekohtmlVersion}"
 		}
 	}
 }

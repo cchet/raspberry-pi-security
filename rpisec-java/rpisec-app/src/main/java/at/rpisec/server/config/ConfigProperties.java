@@ -1,12 +1,14 @@
 package at.rpisec.server.config;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
  * This class specifies all type safe configuration classes.
  *
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/17/17
  */
 public class ConfigProperties {
@@ -18,23 +20,13 @@ public class ConfigProperties {
     @ConfigurationProperties("firebase")
     public static final class FirebaseProperties {
 
+        @Getter
+        @Setter
         private String databaseUrl;
+
+        @Getter
+        @Setter
         private String configFile;
 
-        public String getDatabaseUrl() {
-            return databaseUrl;
-        }
-
-        public void setDatabaseUrl(String databaseUrl) {
-            this.databaseUrl = databaseUrl;
-        }
-
-        public String getConfigFile() {
-            return configFile;
-        }
-
-        public void setConfigFile(String configFile) {
-            this.configFile = configFile;
-        }
     }
 }

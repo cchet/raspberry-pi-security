@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/14/17
  */
 @Entity

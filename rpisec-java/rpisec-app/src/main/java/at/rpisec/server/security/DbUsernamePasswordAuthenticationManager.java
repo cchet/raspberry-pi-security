@@ -9,7 +9,7 @@ import org.springframework.security.core.AuthenticationException;
 /**
  * This class performs a security check against the database.
  *
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/15/17
  */
 public class DbUsernamePasswordAuthenticationManager implements AuthenticationManager {

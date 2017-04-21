@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import java.util.UUID;
 
 /**
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/19/17
  */
 @RestController

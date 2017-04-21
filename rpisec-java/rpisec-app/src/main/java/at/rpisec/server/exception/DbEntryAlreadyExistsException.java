@@ -4,7 +4,7 @@ import at.rpisec.server.jpa.api.Entity;
 import org.springframework.dao.DataAccessException;
 
 /**
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/20/17
  */
 public class DbEntryAlreadyExistsException extends DataAccessException {

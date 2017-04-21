@@ -11,7 +11,7 @@ import java.util.Objects;
 /**
  * This class represents the token response for the clients.
  *
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/19/17
  */
 public class TokenResponse {

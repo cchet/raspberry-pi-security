@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.websocket.server.PathParam;
 
 /**
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/15/17
  */
 @Repository

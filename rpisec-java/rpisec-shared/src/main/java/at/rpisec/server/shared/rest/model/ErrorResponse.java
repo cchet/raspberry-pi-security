@@ -4,7 +4,7 @@ import at.rpisec.server.shared.rest.constants.ResponseErrorCode;
 import lombok.Getter;
 
 /**
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/20/17
  */
 public class ErrorResponse {

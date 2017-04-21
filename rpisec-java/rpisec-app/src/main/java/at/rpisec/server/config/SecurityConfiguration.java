@@ -11,7 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
  * <p>
  * See: http://www.baeldung.com/spring-security-custom-voter
  *
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/14/17
  */
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {

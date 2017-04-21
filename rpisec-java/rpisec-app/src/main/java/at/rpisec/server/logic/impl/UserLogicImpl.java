@@ -28,7 +28,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/17/17
  */
 @Service

@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * This class is the root class for all entity types and provides proper implementations for hash and equals.
  *
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/14/17
  */
 @MappedSuperclass

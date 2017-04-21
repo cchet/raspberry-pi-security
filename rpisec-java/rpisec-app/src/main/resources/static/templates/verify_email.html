@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+
+    <title th:text="#{core.title.verify.email}" rel="stylesheet"></title>
+    <link th:href="@{bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{bootstrap/css/bootstrap-theme.min.css}" rel="stylesheet">
+    <script th:src="@{bootstrap/js/bootstrap.min.js}"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="col-mid-4"/>
+        <div class="col-mid-4 centered">
+            <span th:text="#{core.email.verified}"/>
+        </div>
+        <div class="col-mid-4"/>
+    </div>
+</body>
+</html>

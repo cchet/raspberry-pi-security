@@ -1,7 +1,7 @@
 package at.rpisec.server.config;
 
 /**
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/15/17
  */
 public class SecurityProperties {

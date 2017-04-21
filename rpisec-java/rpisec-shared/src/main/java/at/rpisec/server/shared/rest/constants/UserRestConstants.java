@@ -3,7 +3,7 @@ package at.rpisec.server.shared.rest.constants;
 /**
  * This class specifies the client available request parameter.
  *
- * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/20/17
  */
 public class UserRestConstants {
