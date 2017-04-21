@@ -30,12 +30,14 @@ subprojects {
 	apply plugin: 'java'
 	apply plugin: 'idea'
 	apply plugin: 'io.spring.dependency-management'
+	apply plugin: 'maven-publish'
 
 	version = '0.0.1-SNAPSHOT'
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
 
 	repositories {
+		mavenLocal()
 		jcenter()
 		mavenCentral()
 	}
