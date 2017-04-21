@@ -5,7 +5,7 @@ import at.rpisec.server.exception.DbEntryNotFoundException;
 import at.rpisec.server.jpa.model.User;
 import at.rpisec.server.jpa.repositories.UserRepository;
 import at.rpisec.server.logic.api.UserLogic;
-import at.rpisec.server.logic.event.UserEventHandler;
+import at.rpisec.server.logic.event.UserCreatedEvent;
 import at.rpisec.server.shared.rest.model.UserDto;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
  * @since 04/17/17
  */
 @Service
-@Transactional
+@Transactional(isolation = Isolation.READ_COMMITTED)
 @Secured(SecurityProperties.ROLE_ADMIN)
 public class UserLogicImpl implements UserLogic {
 
@@ -69,7 +70,9 @@ public class UserLogicImpl implements UserLogic {
     }
 
     @Override
-    public UserDto byId(Long id) {
+    public UserDto byId(final Long id) {
+        Objects.requireNonNull(id, "Cannot load user with null id");
+
         final User user = userRepo.findOne(id);
         if (user == null) {
             throw new DbEntryNotFoundException(String.format("USer not found for id: %d", id), User.class);
@@ -79,10 +82,12 @@ public class UserLogicImpl implements UserLogic {
     }
 
     @Override
-    public UserDto byUsername(String username) {
+    public UserDto byUsername(final String username) {
+        Objects.requireNonNull(username, "Cannot load user with null username");
+
         final User user = userRepo.findByUsername(username);
         if (user == null) {
-            throw new DbEntryNotFoundException(String.format("USer not found for username: %d", username), User.class);
+            throw new DbEntryNotFoundException(String.format("USer not found for username: %s", username), User.class);
         }
 
         return mapper.map(user, UserDto.class);
@@ -94,25 +99,29 @@ public class UserLogicImpl implements UserLogic {
     }
 
     @Override
-    public Long create(UserDto model) {
+    public Long create(final UserDto model) {
+        Objects.requireNonNull(model, "Cannot create user for null model");
+
         User user = mapper.map(model, User.class);
         user.setAdmin(false);
         user.setVerifyUUID(UUID.randomUUID().toString());
 
         user = userRepo.save(user);
 
-        publisher.publishEvent(new UserEventHandler.UserCreatedEvent(user.getEmail(),
-                                                                     (user.getLastname() + ", " + user.getFirstname()),
-                                                                     user.getVerifyUUID()));
+        publisher.publishEvent(new UserCreatedEvent(user.getEmail(),
+                                                    (user.getLastname() + ", " + user.getFirstname()),
+                                                    user.getVerifyUUID()));
 
         return user.getId();
     }
 
     @Override
-    public Long update(UserDto model) {
+    public Long update(final UserDto model) {
+        Objects.requireNonNull(model, "Cannot create user for null model");
+
         final User user = userRepo.findByUsername(model.getUsername());
         if (user == null) {
-            throw new DbEntryNotFoundException(String.format("USer not found for id %d", user.getId()), User.class);
+            throw new DbEntryNotFoundException(String.format("USer not found for username %s", model.getUsername()), User.class);
         }
 
         mapper.map(model, user);
@@ -123,11 +132,14 @@ public class UserLogicImpl implements UserLogic {
 
     @Secured(SecurityProperties.ROLE_CLIENT)
     @Override
-    public void update(UserDto model,
-                       String username) {
+    public void update(final UserDto model,
+                       final String username) {
+        Objects.requireNonNull(model, "Cannot update user for null model");
+        Objects.requireNonNull(username, "Cannot load user with null username");
+
         final User user = userRepo.findByUsername(username);
         if (user == null) {
-            throw new DbEntryNotFoundException(String.format("USer not found for id %d", user.getId()), User.class);
+            throw new DbEntryNotFoundException(String.format("USer not found for username %s", username), User.class);
         }
 
         mapper.map(model, user);
@@ -136,9 +148,11 @@ public class UserLogicImpl implements UserLogic {
 
     @Override
     public void delete(final String username) {
+        Objects.requireNonNull(username, "Cannot load user with null username");
+
         final User user = userRepo.findByUsername(username);
         if (user == null) {
-            throw new DbEntryNotFoundException(String.format("USer not found for id %d", user.getId()), User.class);
+            throw new DbEntryNotFoundException(String.format("USer not found for username %s", username), User.class);
         }
 
         userRepo.delete(user);

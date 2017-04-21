@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -22,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 04/20/17
  */
 @Service
-@Transactional
+@Transactional(isolation = Isolation.READ_COMMITTED)
 @Secured(SecurityProperties.ROLE_CLIENT)
 public class ClientLogicImpl implements ClientLogic {
 
