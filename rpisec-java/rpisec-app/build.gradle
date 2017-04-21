@@ -30,6 +30,7 @@ dependencies {
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonDatabindJsr310Version}")
 
     compile project (':rpisec-shared')
+    compile project (':rpisec-sensor/impl')
 
     runtime('org.springframework.boot:spring-boot-devtools')
     testCompile('org.springframework.boot:spring-boot-starter-test')
