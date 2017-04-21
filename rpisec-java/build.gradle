@@ -1,13 +1,36 @@
 buildscript {
+	repositories {
+		jcenter()
+		mavenCentral()
+	}
+
 	ext {
+		springDependencyManagementPluginVersion='1.0.2.RELEASE'
+		springBootVersion = '1.5.2.RELEASE'
+		pi4jVersion='1.1'
+		hibernateValidatorVersion='5.3.4.Final'
+		jacksonJsr310Version='2.8.8'
+		orikaVersion='1.5.1'
+		commonsIoVersion='1.3.2'
+		firebaseAdminVersion='4.1.6'
+		springfoxBeanValidatorsVersion='2.6.1'
+		swaggerUiVersion='2.6.1'
+		springfoxSwaggerVersion='2.6.1'
+		h2DatabaseVersion='1.4.194'
 		lombokVersion='1.16.16'
+	}
+
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+		classpath "io.spring.gradle:dependency-management-plugin:${springDependencyManagementPluginVersion}"
 	}
 }
 
 subprojects {
 	apply plugin: 'java'
 	apply plugin: 'idea'
-	
+	apply plugin: 'io.spring.dependency-management'
+
 	version = '0.0.1-SNAPSHOT'
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
@@ -16,7 +39,7 @@ subprojects {
 		jcenter()
 		mavenCentral()
 	}
-	
+
 	idea {
 		module {
 			downloadJavadoc = true
@@ -24,21 +47,22 @@ subprojects {
 		}
 	}
 
-	ext {
-		springBootVersion = '1.5.2.RELEASE'
-		h2Version = '1.4.194'
-		springfoxSwaggerVersion = '2.6.1'
-		lombokVersion='1.16.16'
-		firebaseAdminVersion= '4.1.6'
-		apacheCommonsVersion='1.3.2'
-		orikaVersion='1.5.1'
-		jacksonDatabindJsr310Version='2.8.8'
-
-		// from spring versions
-		hibernateValidtorVersion='5.3.4.Final'
-	}
-
 	dependencies {
 		compileOnly ("org.projectlombok:lombok:${lombokVersion}")
+	}
+
+	dependencyManagement {
+		dependencies {
+			dependency "com.h2database:h2:${h2DatabaseVersion}"
+			dependency "io.springfox:springfox-swagger2:${springfoxSwaggerVersion}"
+			dependency "io.springfox:springfox-swagger-ui:${swaggerUiVersion}"
+			dependency "io.springfox:springfox-bean-validators:${springfoxBeanValidatorsVersion}"
+			dependency "com.google.firebase:firebase-admin:${firebaseAdminVersion}"
+			dependency "org.apache.commons:commons-io:${commonsIoVersion}"
+			dependency "ma.glasnost.orika:orika-core:${orikaVersion}"
+			dependency "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonJsr310Version}"
+			dependency "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
+			dependency "com.pi4j:pi4j-core:${pi4jVersion}"
+		}
 	}
 }

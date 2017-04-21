@@ -1,12 +1,3 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    }
-}
-
 apply plugin: 'org.springframework.boot'
 
 bootRun {
@@ -20,14 +11,14 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     compile('org.springframework.boot:spring-boot-starter-mail')
-    compile("com.h2database:h2:${h2Version}")
-    compile("io.springfox:springfox-swagger2:${springfoxSwaggerVersion}")
-    compile("io.springfox:springfox-swagger-ui:${springfoxSwaggerVersion}")
-    compile("io.springfox:springfox-bean-validators:${springfoxSwaggerVersion}")
-    compile ("com.google.firebase:firebase-admin:${firebaseAdminVersion}")
-    compile ("org.apache.commons:commons-io:${apacheCommonsVersion}")
-    compile ("ma.glasnost.orika:orika-core:${orikaVersion}")
-    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonDatabindJsr310Version}")
+    compile("com.h2database:h2")
+    compile("io.springfox:springfox-swagger2")
+    compile("io.springfox:springfox-swagger-ui")
+    compile("io.springfox:springfox-bean-validators")
+    compile ("com.google.firebase:firebase-admin")
+    compile ("org.apache.commons:commons-io")
+    compile ("ma.glasnost.orika:orika-core")
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     compile project (':rpisec-shared')
     compile project (':rpisec-sensor/impl')
