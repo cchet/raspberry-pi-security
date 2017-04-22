@@ -1,13 +1,13 @@
 package at.rpisec.server.config.dev;
 
-import at.rpisec.server.jpa.model.User;
-import at.rpisec.server.jpa.repositories.UserRepository;
+import at.rpisec.server.exception.DbEntryNotFoundException;
+import at.rpisec.server.logic.api.UserLogic;
+import at.rpisec.server.shared.rest.model.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -18,33 +18,29 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ConfigurationDev {
 
     @Autowired
-    private PasswordEncoder encoder;
-    @Autowired
-    private UserRepository userRepo;
+    private UserLogic userLogic;
 
     @Bean
     CommandLineRunner produceCommandLineRunner() {
         return (args) -> {
-            User admin = userRepo.findOne(1L);
-            if (admin == null) {
-                admin = new User();
+            try {
+                userLogic.byUsername("admin");
+            } catch (DbEntryNotFoundException e) {
+                UserDto admin = new UserDto();
                 admin.setFirstname("Admin");
                 admin.setLastname("Admin");
                 admin.setUsername("admin");
-                admin.setPassword(encoder.encode("admin"));
-                admin.setEmail("admin@rpisec.at");
-                admin.setAdmin(Boolean.TRUE);
+                admin.setEmail("herzog.thomas81@gmail.com");
+                admin.setAdmin(true);
 
-                final User client = new User();
+                final UserDto client = new UserDto();
                 client.setFirstname("Client_1");
                 client.setLastname("Client_1");
                 client.setUsername("client");
-                client.setPassword(encoder.encode("client"));
-                client.setEmail("client_1@rpisec.at");
-                client.setAdmin(Boolean.FALSE);
+                client.setEmail("fh.ooe.mus.rpisec@gmail.com");
 
-                userRepo.save(admin);
-                userRepo.save(client);
+                userLogic.create(admin);
+                userLogic.create(client);
             }
         };
     }

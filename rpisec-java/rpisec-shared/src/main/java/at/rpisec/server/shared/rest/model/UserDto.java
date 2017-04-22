@@ -37,4 +37,9 @@ public class UserDto {
     @Getter
     @Setter
     private String email;
+
+    @NotNull
+    @Getter
+    @Setter
+    private boolean admin = false;
 }

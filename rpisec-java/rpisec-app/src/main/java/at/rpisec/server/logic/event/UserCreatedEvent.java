@@ -10,15 +10,15 @@ public final class UserCreatedEvent {
     @Getter
     private final String email;
     @Getter
-    private final String fullname;
+    private final String username;
     @Getter
     private final String uuid;
 
     public UserCreatedEvent(String email,
-                            String fullname,
+                            String username,
                             String uuid) {
         this.email = email;
-        this.fullname = fullname;
+        this.username = username;
         this.uuid = uuid;
     }
 }

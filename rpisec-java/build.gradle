@@ -20,13 +20,11 @@ buildscript {
 		lombokVersion='1.16.16'
 		webjarsBootstrapVersion='3.3.7-1'
 		nekohtmlVersion='1.9.22'
-		springloadedVersion='1.2.7.RELEASE'
 	}
 
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 		classpath "io.spring.gradle:dependency-management-plugin:${springDependencyManagementPluginVersion}"
-		classpath "org.springframework:springloaded:${springloadedVersion}"
 	}
 }
 

@@ -1,7 +1,26 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+
+    ext {
+        springloadedVersion='1.2.7.RELEASE'
+    }
+
+    dependencies {
+        classpath "org.springframework:springloaded:${springloadedVersion}"
+    }
+}
+
+// provide the following VM Options on bootRun:
+// -Dspring.mail.password=<password of using gmail account goes here>
+
 apply plugin: 'org.springframework.boot'
 
 bootRun {
     systemProperties['spring.profiles.active'] = System.getProperty('spring.profiles.active') ?: 'dev'
+    systemProperties['spring.mail.password'] = System.getProperty('spring.mail.password') ?: 'no_password_set'
     systemProperties['firebase.configFile'] = System.getProperty("user.home") + File.separator + "firebase-account.json"
 }
 
@@ -33,5 +52,6 @@ dependencies {
     compile project(':rpisec-sensor/impl')
 
     runtime('org.springframework.boot:spring-boot-devtools')
+
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }

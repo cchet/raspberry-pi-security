@@ -17,10 +17,13 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InjectionPoint;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,7 +35,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.spi.DocumentationType;
@@ -131,9 +134,34 @@ public class Application {
     }
 
     @Bean
+    MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasenames("classpath:messages/message", "classpath:messages/email");
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setCacheSeconds(60 * 60 * 24);
+        return messageSource;
+    }
+
+    @Bean("localeResolver")
     LocaleResolver produceLocaleResolver() {
-        SessionLocaleResolver slr = new SessionLocaleResolver();
-        slr.setDefaultLocale(Locale.US);
-        return slr;
+        return new FixedLocaleResolver(Locale.US);
+    }
+
+    /**
+     * Parameter must be provided if in dev mode otherwise injection will fail because values are unknown at the poit
+     * the command line runner gets executed.
+     *
+     * @param port        the server.port property value
+     * @param address     the server.address property value
+     * @param sslEnabled  the server.ssl.enabled property value
+     * @param contextPath the server.context-path property value
+     * @return the build server root url
+     */
+    @Bean("serverUrl")
+    String produceRootUrl(@Value("${server.port}") Integer port,
+                          @Value("${server.address}") String address,
+                          @Value("${server.ssl.enabled}") Boolean sslEnabled,
+                          @Value("${server.context-path}") String contextPath) {
+        return (sslEnabled ? "https://" : "http://") + address + ":" + port + contextPath;
     }
 }

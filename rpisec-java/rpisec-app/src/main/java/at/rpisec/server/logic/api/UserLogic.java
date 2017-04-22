@@ -15,13 +15,16 @@ public interface UserLogic {
 
     UserDto byUsername(String username);
 
+    UserDto byVerifyUUID(String uuid);
+
     List<UserDto> list();
 
     Long create(UserDto model);
 
     Long update(UserDto model);
 
-    void update(UserDto model, String username);
+    void update(UserDto model,
+                String username);
 
     void delete(String username);
 
@@ -36,4 +39,14 @@ public interface UserLogic {
      */
     Authentication login(String username,
                          String rawPassword);
+
+    /**
+     * Verifies the user email address and enables the account if not verified yet.
+     *
+     * @param uuid     the uuid identifying the user account
+     * @param password the user's password
+     * @return the user id
+     */
+    Long verifyAccount(String uuid,
+                       String password);
 }

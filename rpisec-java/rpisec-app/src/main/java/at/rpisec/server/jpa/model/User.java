@@ -86,6 +86,11 @@ public class User extends BaseEntity<Long> {
     @Setter
     private LocalDateTime updatedDate;
 
+    @Column(name = "VERIFY_DATE")
+    @Getter
+    @Setter
+    private LocalDateTime verifyDate;
+
     @NotNull
     @Column(name = "ADMIN", length = 1)
     @Getter

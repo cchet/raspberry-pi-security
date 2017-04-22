@@ -20,4 +20,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(name = "User.findByUsernameAndClientUuid")
     User findByUsernameAndClientUuid(@Param("username") String username,
                                      @Param("uuid") String uuid);
+
+    User findByVerifyUUID(String uuid);
 }

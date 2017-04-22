@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+
+    <title th:text="#{title.verify.email}" rel="stylesheet"></title>
+    <link th:href="@{bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{bootstrap/css/bootstrap-theme.min.css}" rel="stylesheet">
+
+    <style type="text/css">
+        html {
+            background-color: #484848;
+        }
+        div {
+            position: absolute;
+            top: 40%;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            margin: auto;
+            width: 100%;
+            text-align: center;
+        }
+        h1, h2, h3 {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <h1 th:text="#{message.email.verified}"/>
+</div>
+</body>
+
+<script th:src="@{jquery/js/jquery.min.js}"></script>
+<script th:src="@{bootstrap/js/bootstrap.min.js}"></script>
+</html>

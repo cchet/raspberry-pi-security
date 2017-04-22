@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -70,6 +71,23 @@ public class UserLogicImpl implements UserLogic {
     }
 
     @Override
+    public Long verifyAccount(String uuid,
+                              String password) {
+        final User user = userRepo.findByVerifyUUID(uuid);
+        if (user == null) {
+            throw new DbEntryNotFoundException("User not found uuid during verify", User.class);
+        }
+
+        user.setVerifyUUID(null);
+        user.setVerifyDate(LocalDateTime.now());
+        user.setPassword(encoder.encode(password));
+
+        userRepo.save(user);
+
+        return user.getId();
+    }
+
+    @Override
     public UserDto byId(final Long id) {
         Objects.requireNonNull(id, "Cannot load user with null id");
 
@@ -94,6 +112,19 @@ public class UserLogicImpl implements UserLogic {
     }
 
     @Override
+    public UserDto byVerifyUUID(String uuid) {
+        Objects.requireNonNull(uuid, "Cannot load user with null uuid");
+
+        final User user = userRepo.findByVerifyUUID(uuid);
+        if (user == null) {
+            throw new DbEntryNotFoundException(String.format("USer not found for uuid: %s", uuid), User.class);
+        }
+
+        return mapper.map(user, UserDto.class);
+
+    }
+
+    @Override
     public List<UserDto> list() {
         return userRepo.findAll().stream().map(user -> mapper.map(user, UserDto.class)).collect(Collectors.toList());
     }
@@ -103,13 +134,13 @@ public class UserLogicImpl implements UserLogic {
         Objects.requireNonNull(model, "Cannot create user for null model");
 
         User user = mapper.map(model, User.class);
-        user.setAdmin(false);
+        user.setPassword(UUID.randomUUID().toString());
         user.setVerifyUUID(UUID.randomUUID().toString());
 
         user = userRepo.save(user);
 
         publisher.publishEvent(new UserCreatedEvent(user.getEmail(),
-                                                    (user.getLastname() + ", " + user.getFirstname()),
+                                                    user.getUsername(),
                                                     user.getVerifyUUID()));
 
         return user.getId();
