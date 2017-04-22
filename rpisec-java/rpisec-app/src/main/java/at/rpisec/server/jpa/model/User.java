@@ -2,6 +2,7 @@ package at.rpisec.server.jpa.model;
 
 import at.rpisec.server.jpa.api.BaseEntity;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Email;
 
@@ -22,6 +23,7 @@ import java.util.Set;
         @UniqueConstraint(name = "uq_user_username", columnNames = "USERNAME"),
         @UniqueConstraint(name = "uq_user_email", columnNames = "EMAIL")
 })
+@NoArgsConstructor
 public class User extends BaseEntity<Long> {
 
     @Id

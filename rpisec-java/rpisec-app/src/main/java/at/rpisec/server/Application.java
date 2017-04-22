@@ -136,7 +136,7 @@ public class Application {
     @Bean
     MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasenames("classpath:messages/message", "classpath:messages/email");
+        messageSource.setBasenames("classpath:messages/message", "classpath:messages/email", "classpath:messages/validation");
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setCacheSeconds(60 * 60 * 24);
         return messageSource;

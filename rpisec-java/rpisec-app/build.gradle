@@ -46,12 +46,11 @@ dependencies {
     compile("ma.glasnost.orika:orika-core")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     compile('org.webjars:bootstrap')
-    compile('net.sourceforge.nekohtml:nekohtml')
 
     compile project(':rpisec-shared')
     compile project(':rpisec-sensor/impl')
 
-    runtime('org.springframework.boot:spring-boot-devtools')
+    //runtime('org.springframework.boot:spring-boot-devtools')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
