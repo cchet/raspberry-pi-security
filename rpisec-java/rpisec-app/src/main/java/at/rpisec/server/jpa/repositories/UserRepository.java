@@ -17,8 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByUsername(String username);
 
-    User findByUsernameAndVerifyUUID(String username, String uuid);
-
     @Query(name = "User.findByUsernameAndClientUuid")
     User findByUsernameAndClientUuid(@Param("username") String username,
                                      @Param("uuid") String uuid);

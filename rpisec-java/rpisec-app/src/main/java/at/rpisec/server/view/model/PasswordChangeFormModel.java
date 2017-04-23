@@ -12,16 +12,17 @@ import javax.validation.constraints.Size;
  * @since 04/22/17
  */
 @NoArgsConstructor
-public class PasswordFormModel {
+public class PasswordChangeFormModel {
 
     @NotEmpty
     @Getter
     @Setter
     private String username;
 
+    @NotEmpty
     @Getter
     @Setter
-    private String uuid;
+    private String oldPassword;
 
     @Size(min = 8, max = 100)
     @Getter
@@ -33,13 +34,7 @@ public class PasswordFormModel {
     @Setter
     private String confirmPassword;
 
-    public PasswordFormModel(String username) {
+    public PasswordChangeFormModel(String username) {
         this.username = username;
-    }
-
-    public PasswordFormModel(String username,
-                             String uuid) {
-        this.username = username;
-        this.uuid = uuid;
     }
 }

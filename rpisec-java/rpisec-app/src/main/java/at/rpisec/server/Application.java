@@ -140,7 +140,7 @@ public class Application {
     MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasenames("classpath:messages/message", "classpath:messages/email", "classpath:messages/validation");
-        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setDefaultEncoding("UTF8");
         messageSource.setCacheSeconds(60 * 60 * 24);
         return messageSource;
     }

@@ -71,15 +71,13 @@ public class UserLogicImpl implements UserLogic {
     }
 
     @Override
-    public Long verifyAccount(String username,
-                              String uuid,
+    public Long verifyAccount(String uuid,
                               String password) {
-        Objects.requireNonNull(username, "Cannot load user with null username");
         Objects.requireNonNull(uuid, "Cannot load user with null uuid");
 
-        final User user = userRepo.findByUsernameAndVerifyUUID(username, uuid);
+        final User user = userRepo.findByVerifyUUID(uuid);
         if (user == null) {
-            throw new DbEntryNotFoundException(String.format("User not found by username: '%s' / uuid: '%s' during verify", username, uuid), User.class);
+            throw new DbEntryNotFoundException(String.format("User not found by uuid: '%s' during verify", uuid), User.class);
         }
 
         user.setVerifyUUID(null);
@@ -91,8 +89,9 @@ public class UserLogicImpl implements UserLogic {
         return user.getId();
     }
 
-    @Override public Long setPassword(String username,
-                                      String password) {
+    @Override
+    public Long setPassword(String username,
+                            String password) {
         Objects.requireNonNull(username, "Cannot load user with null username");
 
         final User user = userRepo.findByUsername(username);
@@ -105,6 +104,20 @@ public class UserLogicImpl implements UserLogic {
         userRepo.save(user);
 
         return user.getId();
+    }
+
+    @Override
+    public boolean isPasswordValid(String username,
+                                   String password) {
+        Objects.requireNonNull(username, "Cannot check user password with null username");
+        Objects.requireNonNull(password, "Cannot check user password with null password");
+
+        final User user = userRepo.findByUsername(username);
+        if (user == null) {
+            throw new DbEntryNotFoundException(String.format("USer not found for username: %s", username), User.class);
+        }
+
+        return encoder.matches(password, user.getPassword());
     }
 
     @Override
