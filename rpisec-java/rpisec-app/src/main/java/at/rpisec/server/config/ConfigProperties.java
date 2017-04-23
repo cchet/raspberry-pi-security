@@ -29,4 +29,18 @@ public class ConfigProperties {
         private String configFile;
 
     }
+
+    @Component
+    @ConfigurationProperties("webjar")
+    public static final class WebjarProperties {
+
+        @Getter
+        @Setter
+        private String jquery;
+
+        @Getter
+        @Setter
+        private String bootstrap;
+
+    }
 }

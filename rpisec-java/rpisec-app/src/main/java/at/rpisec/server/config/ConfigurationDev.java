@@ -1,4 +1,4 @@
-package at.rpisec.server.config.dev;
+package at.rpisec.server.config;
 
 import at.rpisec.server.exception.DbEntryNotFoundException;
 import at.rpisec.server.logic.api.UserLogic;

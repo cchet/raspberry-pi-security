@@ -1,9 +1,6 @@
 package at.rpisec.server;
 
-import at.rpisec.server.config.ConfigProperties;
-import at.rpisec.server.config.ModelMapperConfigurer;
-import at.rpisec.server.config.SecurityConfiguration;
-import at.rpisec.server.config.WebMvCoonfiguration;
+import at.rpisec.server.config.*;
 import at.rpisec.server.jpa.model.User;
 import at.rpisec.server.jpa.repositories.UserRepository;
 import at.rpisec.server.security.DbUsernamePasswordAuthenticationManager;
@@ -21,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -72,7 +70,12 @@ public class Application {
 
     @Bean
     WebMvcConfigurerAdapter produceWebMvcConfigurationAdaptor() {
-        return new WebMvCoonfiguration();
+        return new WebMvConfiguration();
+    }
+
+    @Bean
+    ServletContextInitializer produceWebApplicationInitializer(){
+        return new ServletContextConfig();
     }
 
     @Bean
