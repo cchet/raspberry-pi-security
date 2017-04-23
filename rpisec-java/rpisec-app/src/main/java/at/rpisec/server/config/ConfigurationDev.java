@@ -8,6 +8,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.util.Locale;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -22,6 +25,7 @@ public class ConfigurationDev {
 
     @Bean
     CommandLineRunner produceCommandLineRunner() {
+        LocaleContextHolder.setLocale(Locale.US);
         return (args) -> {
             try {
                 userLogic.byUsername("admin");
