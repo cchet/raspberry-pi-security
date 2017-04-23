@@ -7,6 +7,8 @@
 *.zip
 *.rtf
 target/
+classes/
+.gradle/
 */.DS_Store
 */src/main/generated
 *.tlog
