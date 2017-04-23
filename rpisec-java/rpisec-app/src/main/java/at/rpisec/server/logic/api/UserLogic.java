@@ -43,10 +43,21 @@ public interface UserLogic {
     /**
      * Verifies the user email address and enables the account if not verified yet.
      *
+     * @param username the username of the account to verify
      * @param uuid     the uuid identifying the user account
      * @param password the user's password
      * @return the user id
      */
-    Long verifyAccount(String uuid,
+    Long verifyAccount(String username,
+                       String uuid,
+                       String password);
+    /**
+     * Sets a new password for the given user.
+     *
+     * @param username the username of the account to set new password for
+     * @param password the user's password
+     * @return the user id
+     */
+    Long setPassword(String username,
                        String password);
 }

@@ -19,6 +19,10 @@ public class PasswordFormModel {
     @Setter
     private String username;
 
+    @Getter
+    @Setter
+    private String uuid;
+
     @Size(min = 8, max = 100)
     @Getter
     @Setter
@@ -31,5 +35,11 @@ public class PasswordFormModel {
 
     public PasswordFormModel(String username) {
         this.username = username;
+    }
+
+    public PasswordFormModel(String username,
+                             String uuid) {
+        this.username = username;
+        this.uuid = uuid;
     }
 }

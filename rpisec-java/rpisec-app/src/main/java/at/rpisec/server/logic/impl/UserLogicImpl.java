@@ -71,15 +71,35 @@ public class UserLogicImpl implements UserLogic {
     }
 
     @Override
-    public Long verifyAccount(String uuid,
+    public Long verifyAccount(String username,
+                              String uuid,
                               String password) {
-        final User user = userRepo.findByVerifyUUID(uuid);
+        Objects.requireNonNull(username, "Cannot load user with null username");
+        Objects.requireNonNull(uuid, "Cannot load user with null uuid");
+
+        final User user = userRepo.findByUsernameAndVerifyUUID(username, uuid);
         if (user == null) {
-            throw new DbEntryNotFoundException("User not found uuid during verify", User.class);
+            throw new DbEntryNotFoundException(String.format("User not found by username: '%s' / uuid: '%s' during verify", username, uuid), User.class);
         }
 
         user.setVerifyUUID(null);
         user.setVerifyDate(LocalDateTime.now());
+        user.setPassword(encoder.encode(password));
+
+        userRepo.save(user);
+
+        return user.getId();
+    }
+
+    @Override public Long setPassword(String username,
+                                      String password) {
+        Objects.requireNonNull(username, "Cannot load user with null username");
+
+        final User user = userRepo.findByUsername(username);
+        if (user == null) {
+            throw new DbEntryNotFoundException(String.format("User not found by username: '%s' during passwort set", username), User.class);
+        }
+
         user.setPassword(encoder.encode(password));
 
         userRepo.save(user);
