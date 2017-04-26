@@ -20,5 +20,6 @@ services:
         volumes:
             - ${NGINX_CONF_VOLUME}:/etc/nginx:r
             - ${NGINX_LOG_VOLUME}:/var/log/nginx:rw
+            - ${NGINX_CERT_VOLUME}:/tmp/cert:r
         mem_limit: 128m
         cpu_shares: 2
