@@ -10,14 +10,15 @@ services:
             - POSTGRES_DATABASE=${RPISEC_DB_NAME}
         mem_limit: 256m
         cpu_shares: 1
-        depends_on: 
+        depends_on:
             - rpisec-nginx
         volumes:
-            - ${POSTGRES_DATA_VOLUME}:/var/lib/postgresql/data
+            - ${POSTGRES_DATA_VOLUME}:/var/lib/postgresql/data:rw
     rpisec-nginx:
         container_name: rpisec-nginx
         image: lispmeister/rpi-nginx:0.0.1
         volumes:
             - ${NGINX_CONF_VOLUME}:/etc/nginx:r
+            - ${NGINX_LOG_VOLUME}:/var/log/nginx:rw
         mem_limit: 128m
         cpu_shares: 2
