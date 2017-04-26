@@ -50,6 +50,17 @@ subprojects {
 		}
 	}
 
+	publishing {
+		publications {
+			maven(MavenPublication) {
+				groupId 'at.rpisec'
+				artifactId project.name.replace('/', '-')
+				version project.version
+				from components.java
+			}
+		}
+	}
+
 	dependencies {
 		compileOnly ("org.projectlombok:lombok:${lombokVersion}")
 	}
