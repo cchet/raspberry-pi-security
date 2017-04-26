@@ -3,12 +3,14 @@
 .settings/
 .classpath
 .factorypath
+.gradle/
 *.iml
 *.zip
 *.rtf
 target/
 classes/
 .gradle/
+build/
 */.DS_Store
 */src/main/generated
 *.tlog
