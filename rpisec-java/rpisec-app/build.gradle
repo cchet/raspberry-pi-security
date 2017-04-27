@@ -59,3 +59,10 @@ dependencies {
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+
+jar {
+    profiles = System.getProperty('spring.profiles.active') ?: ''
+    if (isProd) {
+        exclude("**/application-dev.properties")
+    }
+}
