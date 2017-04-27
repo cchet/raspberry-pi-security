@@ -3,7 +3,8 @@ MAINTAINER Thomas Herzog <herzog.thomas81@gmail.com>
 
 RUN apt-get update -y && \
     apt-get install -y ca-certificates nginx && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
 
 RUN adduser nginx
 USER nginx
