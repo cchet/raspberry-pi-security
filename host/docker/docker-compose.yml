@@ -17,8 +17,10 @@ services:
         build:
             context: ./app
         volumes:
-            - ${APP_VOLUME}:/home/rpisec/app:ro
+            - ${APP_VOLUME}:/home/rpisec/app:rw
             - ${APP_CONF_VOLUME}:/home/rpisec/conf:ro
+        environment:
+            - APP_JAVA_OPTS=-Xms512m -Xmx512m
         mem_limit: 512m
         cpu_shares: 2
         depends_on:
@@ -35,6 +37,7 @@ services:
         cpu_shares: 2
         ports:
             - 443:443
+            - 80:80
         depends_on:
             - rpisec-postgres
             - rpisec-app
