@@ -21,6 +21,7 @@ services:
             - ${APP_CONF_VOLUME}:/home/rpisec/conf:ro
         environment:
             - APP_JAVA_OPTS=-Xms512m -Xmx512m
+            - POSTGRES_HOST=rpisec-postgres
         mem_limit: 512m
         cpu_shares: 2
         depends_on:

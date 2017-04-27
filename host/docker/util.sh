@@ -2,15 +2,15 @@
 # Please set DOCKER_INFRASTRUCTURE_HOME env variable
 
 function start {
-	su - docker -c "docker-compose -f  ${DOCKER_INFRASTRUCTURE_HOME}/docker-compose.yml up -d"
+	 docker-compose -f  ${DOCKER_INFRASTRUCTURE_HOME}/docker-compose.yml up -d
 }
 
 function stop {
-	 su - docker -c "docker-compose -f  ${DOCKER_INFRASTRUCTURE_HOME}/docker-compose.yml stop"
+	 docker-compose -f  ${DOCKER_INFRASTRUCTURE_HOME}/docker-compose.yml stop
 }
 
 function kill {
-         su - docker -c "docker-compose -f  ${DOCKER_INFRASTRUCTURE_HOME}/docker-compose.yml kill"
+         docker-compose -f  ${DOCKER_INFRASTRUCTURE_HOME}/docker-compose.yml kill
 }
 
 function restart {
@@ -24,8 +24,8 @@ function kill-restart {
 }
 
 function recreate {
-	su - docker -c "docker-compose -f  ${DOCKER_INFRASTRUCTURE_HOME}/docker-compose.yml down   &&  \
-	                docker-compose -f  ${DOCKER_INFRASTRUCTURE_HOME}/docker-compose.yml build"
+	docker-compose -f  ${DOCKER_INFRASTRUCTURE_HOME}/docker-compose.yml down   &&  \
+	docker-compose -f  ${DOCKER_INFRASTRUCTURE_HOME}/docker-compose.yml build
 }
 
 function recreate-start {
