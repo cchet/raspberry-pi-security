@@ -10,18 +10,31 @@ services:
             - POSTGRES_DATABASE=${RPISEC_DB_NAME}
         mem_limit: 256m
         cpu_shares: 2
-        depends_on:
-            - rpisec-nginx
         volumes:
             - ${POSTGRES_DATA_VOLUME}:/var/lib/postgresql/data:rw
+    rpisec-app:
+        container_name: rpisec-app
+        build:
+            context: ./app
+        volumes:
+            - ${APP_VOLUME}:/home/rpisec/app:ro
+            - ${APP_CONF_VOLUME}:/home/rpisec/conf:ro
+        mem_limit: 512m
+        cpu_shares: 2
+        depends_on:
+            - rpisec-postgres
     rpisec-nginx:
         container_name: rpisec-nginx
         image: rpisec-nginx
         build:
             context: ./nginx
         volumes:
-            - ${NGINX_CONF_VOLUME}:/etc/nginx:ro
             - ${NGINX_LOG_VOLUME}:/var/log/nginx:rw
-            - ${NGINX_CERT_VOLUME}:/tmp/cert:ro
+            - ${NGINX_CERT_VOLUME}:/cert:ro
         mem_limit: 128m
         cpu_shares: 2
+        ports:
+            - 443:443
+        depends_on:
+            - rpisec-postgres
+            - rpisec-app

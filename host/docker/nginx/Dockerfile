@@ -6,13 +6,9 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
-RUN adduser nginx
-USER nginx
-RUN cd ~ && \
-    mkdir cert
-
-# forward request and error logs to docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx/access.log
 RUN ln -sf /dev/stderr /var/log/nginx/error.log
+RUN mkdir /cert
+ADD nginx.conf /etc/nginx/nginx.conf
 
 CMD ["nginx", "-g", "daemon off;"]
