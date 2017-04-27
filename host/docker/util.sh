@@ -44,11 +44,11 @@ function kill-recreate-start {
 }
 
 function cleanAll {
-  cleanDandlingImages
+  cleanDanglingImages
   cleanContainers
 }
 
-function cleanDandlingImages {
+function cleanDanglingImages {
   docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
 }
 
@@ -65,8 +65,8 @@ case $1 in
   else
     "$1"
   fi;;
-  cleanAll|cleanDandlingImages|cleanContainers)
-    "$1"
+  cleanAll|cleanDanglingImages|cleanContainers)
+    "$1";;
   *)
   echo "Unkown command entered '$1'"
   exit -1;;
