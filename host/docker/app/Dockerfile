@@ -2,7 +2,8 @@ FROM FROM resin/rpi-raspbian:jessie
 MAINTAINER Thomas Herzog <herzog.thomas81@gmail.com>
 
 RUN apt-get update -y && \
-	  apt-get install -y oracle-java8-jdk && \
+	  apt-get install -y oracle-java8-jdk &&
+    rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
 RUN adduser rpisec --disabled-password
