@@ -1,4 +1,4 @@
-FROM resin/arch-alpine:jessie
+FROM resin/rpi-raspbian:jessie
 MAINTAINER Thomas Herzog <herzog.thomas81@gmail.com>
 
 RUN apt-get update -y && \
