@@ -21,7 +21,11 @@ services:
             - ${APP_CONF_VOLUME}:/home/rpisec/conf:ro
         environment:
             - APP_JAVA_OPTS=-Xms512m -Xmx512m
-            - POSTGRES_HOST=rpisec-postgres
+            - POSTGRES_HOST=rpisec-postgres:5432
+            - RPISEC_DB_NAME=${RPISEC_DB_NAME}
+            - RPISEC_DB_USER=${RPISEC_DB_USER}
+            - RPISEC_DB_PASSWORD=${RPISEC_DB_PASSWORD}
+            - APP_VERSION=0.0.1-SNAPSHOT
         mem_limit: 512m
         cpu_shares: 2
         depends_on:
