@@ -25,7 +25,7 @@ public class UserEventObserver {
     @Autowired
     private MessageSource messages;
     @Autowired()
-    @Qualifier("serverUrl")
+    @Qualifier("baseUrl")
     private String serverRootUrl;
     @Value("spring.mail.username")
     private String from;
