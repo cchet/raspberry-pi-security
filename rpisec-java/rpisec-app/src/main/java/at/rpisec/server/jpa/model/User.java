@@ -19,16 +19,16 @@ import java.util.Set;
  * @since 04/14/17
  */
 @Entity
-@Table(name = "USER", uniqueConstraints = {
-        @UniqueConstraint(name = "uq_user_username", columnNames = "USERNAME"),
-        @UniqueConstraint(name = "uq_user_email", columnNames = "EMAIL")
+@Table(name = "DOMAIN_USER", uniqueConstraints = {
+        @UniqueConstraint(name = "uq_domain_user_username", columnNames = "USERNAME"),
+        @UniqueConstraint(name = "uq_domain_user_email", columnNames = "EMAIL")
 })
 @NoArgsConstructor
 public class User extends BaseEntity<Long> {
 
     @Id
     @Column(name = "ID")
-    @SequenceGenerator(name = "user_id_seq_generator", sequenceName = "user_id_sequence", initialValue = 1, allocationSize = 1)
+    @SequenceGenerator(name = "user_id_seq_generator", sequenceName = "domain_user_id_sequence", initialValue = 1, allocationSize = 1)
     @GeneratedValue(generator = "user_id_seq_generator", strategy = GenerationType.SEQUENCE)
     @Getter
     @Setter
