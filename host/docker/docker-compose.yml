@@ -16,10 +16,12 @@ services:
             - ${POSTGRES_DATA_VOLUME}:/var/lib/postgresql/data:rw
     rpisec-nginx:
         container_name: rpisec-nginx
-        image: lispmeister/rpi-nginx:0.0.1
+        image: rpisec-nginx
+        build:
+            context: ./nginx
         volumes:
             - ${NGINX_CONF_VOLUME}:/etc/nginx:r
             - ${NGINX_LOG_VOLUME}:/var/log/nginx:rw
-            - ${NGINX_CERT_VOLUME}:/tmp/cert:r
+            - ${NGINX_CERT_VOLUME}:/home/nginx/cert:r
         mem_limit: 128m
         cpu_shares: 2
