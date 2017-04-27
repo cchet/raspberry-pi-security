@@ -9,19 +9,25 @@ services:
             - POSTGRES_ROOT_PASSWORD=${RPISEC_DB_ROOT_PASSWORD}
             - POSTGRES_DATABASE=${RPISEC_DB_NAME}
         mem_limit: 256m
-        cpu_shares: 1
+        cpu_shares: 2
         depends_on:
             - rpisec-nginx
         volumes:
-            - ${POSTGRES_DATA_VOLUME}:/var/lib/postgresql/data:rw
+            - ${POSTGRES_DATA_VOLUME}:/var/lib/postgresql/data
     rpisec-nginx:
         container_name: rpisec-nginx
         image: rpisec-nginx
         build:
             context: ./nginx
         volumes:
+<<<<<<< HEAD
             - ${NGINX_CONF_VOLUME}:/etc/nginx:r
             - ${NGINX_LOG_VOLUME}:/var/log/nginx:rw
             - ${NGINX_CERT_VOLUME}:/home/nginx/cert:r
+=======
+            - ${NGINX_CONF_VOLUME}:/etc/nginx
+            - ${NGINX_LOG_VOLUME}:/var/log/nginx
+            - ${NGINX_CERT_VOLUME}:/tmp/cert
+>>>>>>> 6c485ebba42223317ae6e7febaddadd810b75446
         mem_limit: 128m
         cpu_shares: 2
