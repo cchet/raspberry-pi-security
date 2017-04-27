@@ -9,7 +9,7 @@ services:
             - POSTGRES_ROOT_PASSWORD=${RPISEC_DB_ROOT_PASSWORD}
             - POSTGRES_DATABASE=${RPISEC_DB_NAME}
         mem_limit: 256m
-        cpu_shares: 2
+        cpu_shares: 4
         volumes:
             - ${POSTGRES_DATA_VOLUME}:/var/lib/postgresql/data:rw
     rpisec-app:
@@ -20,14 +20,14 @@ services:
             - ${APP_VOLUME}:/home/rpisec/app:rw
             - ${APP_CONF_VOLUME}:/home/rpisec/conf:ro
         environment:
-            - APP_JAVA_OPTS=-Xms512m -Xmx512m
+            - APP_JAVA_OPTS=-Xms64m -Xmx256m -XX:MaxPermSize=128M
             - POSTGRES_HOST=rpisec-postgres:5432
             - RPISEC_DB_NAME=${RPISEC_DB_NAME}
             - RPISEC_DB_USER=${RPISEC_DB_USER}
             - RPISEC_DB_PASSWORD=${RPISEC_DB_PASSWORD}
             - APP_VERSION=0.0.1-SNAPSHOT
-        mem_limit: 512m
-        cpu_shares: 2
+        mem_limit: 256m
+        cpu_shares: 4
         depends_on:
             - rpisec-postgres
     rpisec-nginx:
@@ -39,7 +39,7 @@ services:
             - ${NGINX_LOG_VOLUME}:/var/log/nginx:rw
             - ${NGINX_CERT_VOLUME}:/cert:ro
         mem_limit: 128m
-        cpu_shares: 2
+        cpu_shares: 4
         ports:
             - 443:443
             - 80:80
