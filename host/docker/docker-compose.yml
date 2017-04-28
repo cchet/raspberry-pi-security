@@ -19,9 +19,10 @@ services:
         volumes:
             - ${APP_VOLUME}:/home/rpisec/app:rw
             - ${APP_CONF_VOLUME}:/home/rpisec/conf:ro
+            - ${APP_LOG_VOLUME}:/home/rpisec/log:rw
         environment:
             - APP_JAVA_OPTS=-Xms64m -Xmx256m -XX:MaxPermSize=128M
-            - POSTGRES_HOST=rpisec-postgres:5432
+            - RPISEC_DB_HOST=rpisec-postgres:5432
             - RPISEC_DB_NAME=${RPISEC_DB_NAME}
             - RPISEC_DB_USER=${RPISEC_DB_USER}
             - RPISEC_DB_PASSWORD=${RPISEC_DB_PASSWORD}

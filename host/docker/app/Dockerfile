@@ -16,6 +16,7 @@ RUN chmod +x /home/rpisec/docker-entrypoint.sh && \
 USER rpisec
 
 RUN mkdir ~/app && \
-    mkdir ~/conf
+    mkdir ~/conf && \
+    mkdir ~/log
 
 ENTRYPOINT ~/docker-entrypoint.sh
