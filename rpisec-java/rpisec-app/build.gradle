@@ -29,10 +29,6 @@ idea {
     }
 }
 
-jar {
-    name: 'rpisec-app-' + version
-}
-
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-security')
