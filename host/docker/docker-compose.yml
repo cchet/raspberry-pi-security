@@ -4,10 +4,10 @@ services:
         container_name: rpisec-postgres
         image: tobi312/rpi-postgresql:9.6
         environment:
-            - POSTGRES_USER=${RPISEC_DB_USER}
-            - POSTGRES_PASSWORD=${RPISEC_DB_PASSWORD}
-            - POSTGRES_ROOT_PASSWORD=${RPISEC_DB_ROOT_PASSWORD}
-            - POSTGRES_DATABASE=${RPISEC_DB_NAME}
+            - POSTGRES_USER=rpisec
+            - POSTGRES_PASSWORD=rpisec
+            - POSTGRES_ROOT_PASSWORD=rpisec
+            - POSTGRES_DATABASE=rpisec
         mem_limit: 256m
         cpu_shares: 4
         volumes:
@@ -22,10 +22,6 @@ services:
             - ${APP_LOG_VOLUME}:/home/rpisec/log:rw
         environment:
             - APP_JAVA_OPTS=-Xms64m -Xmx256m -XX:MaxPermSize=128M
-            - RPISEC_DB_HOST=rpisec-postgres:5432
-            - RPISEC_DB_NAME=${RPISEC_DB_NAME}
-            - RPISEC_DB_USER=${RPISEC_DB_USER}
-            - RPISEC_DB_PASSWORD=${RPISEC_DB_PASSWORD}
             - APP_VERSION=0.0.1-SNAPSHOT
         mem_limit: 256m
         cpu_shares: 4

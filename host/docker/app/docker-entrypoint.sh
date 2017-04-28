@@ -1,8 +1,8 @@
 #/bin/bash
 
-if [ -z "${APP_VERSION}" ] || [ -z "${RPISEC_DB_NAME}" ] || [ -z "${RPISEC_DB_USER}" ] || [ -z "${RPISEC_DB_PASSWORD}" ] || [ -z "${POSTGRES_HOST}" ];
+if [ -z "${APP_VERSION}" ];
 then
-	echo "All env variables mut be given 'APP_VERSION, POSTGRES_HOST, RPISEC_DB_NAME, RPISEC_DB_USER, RPISEC_DB_PASSWORD'"
+	echo "environment variable 'APP_VERSION' must be set"
 	exit -1
 fi
 
