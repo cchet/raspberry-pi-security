@@ -126,12 +126,6 @@ public class Application {
     }
 
     @Bean
-    DatabaseReference produceDatabaseReference(FirebaseApp firebaseApp) {
-        FirebaseDatabase.getInstance(firebaseApp).setPersistenceEnabled(false);
-        return FirebaseDatabase.getInstance(firebaseApp).getReference();
-    }
-
-    @Bean
     FirebaseAuth produceFirebaseAuth(final FirebaseApp firebaseApp) {
         return FirebaseAuth.getInstance(firebaseApp);
     }
