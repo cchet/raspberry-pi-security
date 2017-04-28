@@ -44,4 +44,4 @@ image:doc/images/Infrastructure.jpg[Infrastructure] +
 # Documentation
 The parts of the application are documented at the following locations:
 
-include::rpisec-java/README:adoc[Spring Boot Applcation] +
+link:rpisec-java/README.adoc[Spring Boot Applcation] +
