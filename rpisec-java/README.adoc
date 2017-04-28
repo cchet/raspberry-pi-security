@@ -16,7 +16,7 @@ works as a standalone application with no special setup necessary.
 The configuration has been split to a static part which is packaged into the application
 and a dynamic part which is provided via the configuration file  __external-application.properties__. +
 An template for the configuration file __external-application.properties__
-can be found link:../host/config/external-application.poroperties[here]. +
+can be found link:../host/config/external-application.properties[here]. +
 
 Firebase needs a configuration file which must be kep private.
 
