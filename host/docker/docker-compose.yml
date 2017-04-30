@@ -1,0 +1,44 @@
+version: "2.1"
+services:
+    rpisec-db:
+        container_name: rpisec-db
+        image: tobi312/rpi-postgresql:9.6
+        environment:
+            - POSTGRES_USER=rpisec
+            - POSTGRES_PASSWORD=rpisec
+            - POSTGRES_DATABASE=rpisec
+        mem_limit: 256m
+        cpu_shares: 4
+        volumes:
+            - ${POSTGRES_DATA_VOLUME}:/var/lib/postgresql/data:rw
+    rpisec-app:
+        container_name: rpisec-app
+        build:
+            context: ./app
+        volumes:
+            - ${APP_VOLUME}:/home/rpisec/app:rw
+            - ${APP_CONF_VOLUME}:/home/rpisec/conf:ro
+            - ${APP_LOG_VOLUME}:/home/rpisec/log:rw
+        environment:
+            - APP_JAVA_OPTS=-Xms64m -Xmx256m -XX:MaxPermSize=128M
+            - APP_VERSION=${APP_VERSION}
+        mem_limit: 256m
+        cpu_shares: 4
+        depends_on:
+            - rpisec-db
+    rpisec-nginx:
+        container_name: rpisec-nginx
+        image: rpisec-nginx
+        build:
+            context: ./nginx
+        volumes:
+            - ${NGINX_LOG_VOLUME}:/var/log/nginx:rw
+            - ${NGINX_CERT_VOLUME}:/cert:ro
+        mem_limit: 128m
+        cpu_shares: 4
+        ports:
+            - 443:443
+            - 80:80
+        depends_on:
+            - rpisec-db
+            - rpisec-app

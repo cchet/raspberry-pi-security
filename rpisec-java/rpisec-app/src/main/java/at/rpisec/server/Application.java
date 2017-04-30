@@ -151,20 +151,15 @@ public class Application {
     }
 
     /**
-     * Parameter must be provided if in dev mode otherwise injection will fail because values are unknown at the poit
-     * the command line runner gets executed.
+     * Builds the baseUrl of the hosted application
      *
-     * @param port        the server.port property value
-     * @param address     the server.address property value
-     * @param sslEnabled  the server.ssl.enabled property value
+     * @param baseUrl the base url to use in the format e.g. 'http://server:8080'
      * @param contextPath the server.context-path property value
      * @return the build server root url
      */
-    @Bean("serverUrl")
-    String produceRootUrl(@Value("${server.port}") Integer port,
-                          @Value("${server.address}") String address,
-                          @Value("${server.ssl.enabled}") Boolean sslEnabled,
+    @Bean("baseUrl")
+    String produceBaseUrl(@Value("${link.baseUrl}") String baseUrl,
                           @Value("${server.context-path}") String contextPath) {
-        return (sslEnabled ? "https://" : "http://") + address + ":" + port + contextPath;
+        return baseUrl + contextPath;
     }
 }

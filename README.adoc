@@ -39,4 +39,9 @@ The __Firebase Cloud Messaging (FCW)__ service is used to push notifications to 
 # System infrastructure
 The following images shows the main infrastructure of this application. +
 
-image:doc/images/Infrastructure.jpg[Infrastructure]
+image:doc/images/Infrastructure.jpg[Infrastructure] +
+
+# Documentation
+The parts of the application are documented at the following locations:
+
+link:rpisec-java/README.adoc[Spring Boot Applcation] +

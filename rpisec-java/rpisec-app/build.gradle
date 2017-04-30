@@ -6,6 +6,7 @@ buildscript {
 
     ext {
         springloadedVersion='1.2.7.RELEASE'
+        isProd=System.getProperty('spring.profiles.active')?.contains("prod") ?: false
     }
 
     dependencies {
@@ -13,15 +14,12 @@ buildscript {
     }
 }
 
-// provide the following VM Options on bootRun:
-// -Dspring.mail.password=<password of using gmail account goes here>
-
 apply plugin: 'org.springframework.boot'
 
 bootRun {
-    systemProperties['spring.profiles.active'] = System.getProperty('spring.profiles.active') ?: 'dev'
-    systemProperties['spring.mail.password'] = System.getProperty('spring.mail.password') ?: 'no_password_set'
-    systemProperties['firebase.configFile'] = System.getProperty("user.home") + File.separator + "firebase-account.json"
+    // Must always be provided
+    systemProperties['spring.profiles.active'] = System.getProperty('spring.profiles.active')
+    systemProperties['spring.config.location'] = System.getProperty("spring.config.location")
 }
 
 idea {
@@ -37,7 +35,11 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     compile('org.springframework.boot:spring-boot-starter-mail')
-    compile("com.h2database:h2")
+    if (isProd) {
+        compile("org.postgresql:postgresql")
+    }else {
+        compile("com.h2database:h2")
+    }
     compile("io.springfox:springfox-swagger2")
     compile("io.springfox:springfox-swagger-ui")
     compile("io.springfox:springfox-bean-validators")
