@@ -70,21 +70,17 @@ public class ConfigurationDev {
                 clientAdmin.setUser(userRepo.findOne(adminId));
                 clientAdmin.setUuid(UUID.randomUUID().toString());
 
-                Tasks.await(auth.createCustomToken(UUID.randomUUID().toString())
-                                .addOnFailureListener((exception) -> {
-                                    throw new IllegalStateException("Could not retrieve firebase token for dev config");
-                                })
-                                .addOnSuccessListener(clientAdmin::setFirebaseToken));
 
                 final Client clientClient = new Client();
                 clientClient.setUser(userRepo.findOne(clientId));
                 clientClient.setUuid(UUID.randomUUID().toString());
 
-                Tasks.await(auth.createCustomToken(UUID.randomUUID().toString())
-                                .addOnFailureListener((exception) -> {
-                                    throw new IllegalStateException("Could not retrieve firebase token for dev config");
-                                })
-                                .addOnSuccessListener(clientClient::setFirebaseToken));
+                // Info: For testing if notification gets send via FCM
+//                Tasks.await(auth.createCustomToken(UUID.randomUUID().toString())
+//                                .addOnFailureListener((exception) -> {
+//                                    throw new IllegalStateException("Could not retrieve firebase token for dev config");
+//                                })
+//                                .addOnSuccessListener(clientClient::setFirebaseToken));
 
                 clientRepo.save(clientAdmin);
                 clientRepo.save(clientClient);
