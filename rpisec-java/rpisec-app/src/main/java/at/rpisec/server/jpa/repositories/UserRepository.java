@@ -17,6 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByUsername(String username);
 
+    User findByUsernameAndVerifyDateNotNull(String username);
+
     @Query(name = "User.findByUsernameAndClientUuid")
     User findByUsernameAndClientUuid(@Param("username") String username,
                                      @Param("uuid") String uuid);

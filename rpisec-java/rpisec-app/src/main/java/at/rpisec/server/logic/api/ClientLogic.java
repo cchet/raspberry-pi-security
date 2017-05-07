@@ -8,11 +8,16 @@ import at.rpisec.server.shared.rest.model.UserDto;
  */
 public interface ClientLogic {
 
+    void checkIfClientExists(String uuid,
+                             String username);
+
     Long register(String uuid,
                   String username);
 
     void unregister(String uuid,
                     String username);
+
+    void registerFirebaseToken(String token, String uuid, String username);
 
     Long updateProfile(String uuid,
                        String username,

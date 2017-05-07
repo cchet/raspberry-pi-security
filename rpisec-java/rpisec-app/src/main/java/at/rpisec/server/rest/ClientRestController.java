@@ -36,14 +36,16 @@ public class ClientRestController {
     public DeferredResult<TokenResponse> token(final @RequestParam(ClientRestConstants.PARAM_UUID) String uuid,
                                                final Authentication auth) {
         final DeferredResult<TokenResponse> asyncResult = new DeferredResult<>();
+        clientLogic.checkIfClientExists(uuid, auth.getPrincipal().toString());
 
         firebaseAuth.createCustomToken(UUID.randomUUID().toString())
                     .addOnFailureListener((exception) -> {
-                        log.error("Token creation failed.", exception);
+                        log.error("Token creation failed for client with uuid '{}'", uuid, exception);
                         asyncResult.setResult(new TokenResponse("?", exception.getClass().getName()));
                     })
                     .addOnSuccessListener((token) -> {
-                        log.info("Token successfully created.\ntoken: " + token + "\nclient: " + auth.getPrincipal().toString());
+                        clientLogic.registerFirebaseToken(token, uuid, auth.getPrincipal().toString());
+                        log.info("Token successfully created.\ntoken: {}\nusername: {}\nclient: {}", token, auth.getPrincipal().toString(), uuid);
                         asyncResult.setResult(new TokenResponse(token));
                     });
 

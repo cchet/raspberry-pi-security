@@ -1,16 +1,13 @@
 package at.rpisec.server;
 
-import at.rpisec.server.config.*;
+import at.rpisec.server.config.ModelMapperConfigurer;
+import at.rpisec.server.config.SecurityConfiguration;
+import at.rpisec.server.config.ServletContextConfig;
+import at.rpisec.server.config.WebMvConfiguration;
 import at.rpisec.server.jpa.model.User;
 import at.rpisec.server.jpa.repositories.UserRepository;
 import at.rpisec.server.security.DbUsernamePasswordAuthenticationManager;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import ma.glasnost.orika.MapperFacade;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InjectionPoint;
@@ -40,9 +37,6 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Locale;
 
 @SpringBootApplication
@@ -74,7 +68,7 @@ public class Application {
     }
 
     @Bean
-    ServletContextInitializer produceWebApplicationInitializer(){
+    ServletContextInitializer produceWebApplicationInitializer() {
         return new ServletContextConfig();
     }
 
@@ -108,28 +102,6 @@ public class Application {
         return new ModelMapperConfigurer();
     }
 
-    // See: https://firebase.google.com/docs/auth/admin/create-custom-tokens
-
-    @Bean
-    FirebaseApp produceFirebaseApp(final ConfigProperties.FirebaseProperties firebaseConfig) throws IOException {
-        final File file = Paths.get(firebaseConfig.getConfigFile()).toFile();
-        if (!file.exists()) {
-            throw new IllegalArgumentException("firebaseConfig: '" + firebaseConfig.getConfigFile() + "' does not exist");
-        }
-
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setServiceAccount(FileUtils.openInputStream(file))
-                .setDatabaseUrl(firebaseConfig.getDatabaseUrl())
-                .build();
-
-        return FirebaseApp.initializeApp(options);
-    }
-
-    @Bean
-    FirebaseAuth produceFirebaseAuth(final FirebaseApp firebaseApp) {
-        return FirebaseAuth.getInstance(firebaseApp);
-    }
-
     @Bean
     MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
@@ -147,7 +119,7 @@ public class Application {
     /**
      * Builds the baseUrl of the hosted application
      *
-     * @param baseUrl the base url to use in the format e.g. 'http://server:8080'
+     * @param baseUrl     the base url to use in the format e.g. 'http://server:8080'
      * @param contextPath the server.context-path property value
      * @return the build server root url
      */

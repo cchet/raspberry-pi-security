@@ -1,8 +1,16 @@
 package at.rpisec.server.config;
 
 import at.rpisec.server.exception.DbEntryNotFoundException;
+import at.rpisec.server.jpa.model.Client;
+import at.rpisec.server.jpa.repositories.ClientRepository;
+import at.rpisec.server.jpa.repositories.UserRepository;
+import at.rpisec.server.logic.api.IncidentLogic;
 import at.rpisec.server.logic.api.UserLogic;
 import at.rpisec.server.shared.rest.model.UserDto;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.tasks.Tasks;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +19,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.Locale;
+import java.util.UUID;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -21,7 +30,18 @@ import java.util.Locale;
 public class ConfigurationDev {
 
     @Autowired
+    private UserRepository userRepo;
+    @Autowired
+    private ClientRepository clientRepo;
+    @Autowired
     private UserLogic userLogic;
+    @Autowired
+    private IncidentLogic incidentLogic;
+
+    @Autowired
+    private FirebaseAuth auth;
+    @Autowired
+    private Logger log;
 
     @Bean
     CommandLineRunner produceCommandLineRunner() {
@@ -43,9 +63,43 @@ public class ConfigurationDev {
                 client.setUsername("client");
                 client.setEmail("fh.ooe.mus.rpisec@gmail.com");
 
-                userLogic.create(admin);
-                userLogic.create(client);
+                final Long adminId = userLogic.create(admin);
+                final Long clientId = userLogic.create(client);
+
+                final Client clientAdmin = new Client();
+                clientAdmin.setUser(userRepo.findOne(adminId));
+                clientAdmin.setUuid(UUID.randomUUID().toString());
+
+                Tasks.await(auth.createCustomToken(UUID.randomUUID().toString())
+                                .addOnFailureListener((exception) -> {
+                                    throw new IllegalStateException("Could not retrieve firebase token for dev config");
+                                })
+                                .addOnSuccessListener(clientAdmin::setFirebaseToken));
+
+                final Client clientClient = new Client();
+                clientClient.setUser(userRepo.findOne(clientId));
+                clientClient.setUuid(UUID.randomUUID().toString());
+
+                Tasks.await(auth.createCustomToken(UUID.randomUUID().toString())
+                                .addOnFailureListener((exception) -> {
+                                    throw new IllegalStateException("Could not retrieve firebase token for dev config");
+                                })
+                                .addOnSuccessListener(clientClient::setFirebaseToken));
+
+                clientRepo.save(clientAdmin);
+                clientRepo.save(clientClient);
+
+                log.info("Username: {}, Client-UUID: {}", admin.getUsername(), clientAdmin.getUuid());
+                log.info("Username: {}, Client-UUID: {}", client.getUsername(), clientClient.getUuid());
             }
+
+            final byte[] data = IOUtils.toByteArray(ConfigurationDev.class.getResourceAsStream("/giraffe.jpg"));
+            incidentLogic.logIncidentWithImage(data, "jpg");
+            incidentLogic.logIncidentWithImage(data, "jpg");
+            incidentLogic.logIncidentWithImage(data, "jpg");
+            incidentLogic.logIncidentWithImage(data, "jpg");
+            incidentLogic.logIncidentWithImage(data, "jpg");
+            incidentLogic.logIncidentWithImage(data, "jpg");
         };
     }
 }

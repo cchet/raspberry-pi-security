@@ -1,5 +1,4 @@
 include ':rpisec-app'
-include ':rpisec-oauth'
 include ':rpisec-shared'
 include ':rpisec-sensor/api'
 include ':rpisec-sensor/impl'

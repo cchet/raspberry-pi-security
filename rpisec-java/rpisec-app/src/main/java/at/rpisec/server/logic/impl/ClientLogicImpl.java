@@ -8,7 +8,6 @@ import at.rpisec.server.jpa.model.User;
 import at.rpisec.server.jpa.repositories.ClientRepository;
 import at.rpisec.server.jpa.repositories.UserRepository;
 import at.rpisec.server.logic.api.ClientLogic;
-import at.rpisec.server.logic.api.UserLogic;
 import at.rpisec.server.shared.rest.model.UserDto;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -35,6 +36,23 @@ public class ClientLogicImpl implements ClientLogic {
     private UserRepository userRepo;
     @Autowired
     private MapperFacade mapper;
+
+
+    @Override
+    public void checkIfClientExists(String uuid,
+                                    String username) {
+        Objects.requireNonNull(uuid, "Cannot check if exists with null uuid");
+        Objects.requireNonNull(username, "Cannot check if exists with null username");
+
+        final User user = userRepo.findByUsernameAndVerifyDateNotNull(username);
+        if (user == null) {
+            throw new DbEntryNotFoundException(String.format("User not found for id %s", username), User.class);
+        }
+        final Client client = clientRepo.findByUuidAndUser(uuid, user);
+        if (client == null) {
+            throw new DbEntryNotFoundException(String.format("Client not found for username=%s and uuid=%s", username, uuid), Client.class);
+        }
+    }
 
     @Override
     public Long register(final String uuid,
@@ -64,6 +82,24 @@ public class ClientLogicImpl implements ClientLogic {
         }
 
         clientRepo.delete(client.getId());
+    }
+
+    @Override
+    public void registerFirebaseToken(String token,
+                                      String uuid,
+                                      String username) {
+        final User user = userRepo.findByUsername(username);
+        if (user == null) {
+            throw new DbEntryNotFoundException("User not found", User.class);
+        }
+        Client client = clientRepo.findByUuidAndUser(uuid, user);
+
+        if (client == null) {
+            throw new DbEntryNotFoundException("Client entry not found", Client.class);
+        }
+
+        client.setFirebaseToken(token);
+        clientRepo.save(client);
     }
 
     @Override
