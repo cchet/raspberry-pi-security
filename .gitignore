@@ -1,6 +1,7 @@
 .idea/
 out/
 classes/
+lib/
 target/
 .gradle/
 build/
