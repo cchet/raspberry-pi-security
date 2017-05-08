@@ -17,7 +17,7 @@ public interface ClientLogic {
     void unregister(String uuid,
                     String username);
 
-    void registerFirebaseToken(String token, String uuid, String username);
+    void registerFcmToken(String token, String uuid, String username);
 
     Long updateProfile(String uuid,
                        String username,

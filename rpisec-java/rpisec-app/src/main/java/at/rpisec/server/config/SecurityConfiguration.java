@@ -25,7 +25,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
             .antMatchers("/api/user/**").hasAnyRole(SecurityProperties.ADMIN)
-            .antMatchers("/api/**").hasAnyRole(SecurityProperties.ADMIN, SecurityProperties.CLIENT)
+            .antMatchers("/api/client/notify**").permitAll()
+            .antMatchers("/api/client/**").hasAnyRole(SecurityProperties.CLIENT)
             .and()
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

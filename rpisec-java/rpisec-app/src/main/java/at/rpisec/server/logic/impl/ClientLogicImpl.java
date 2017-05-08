@@ -85,9 +85,9 @@ public class ClientLogicImpl implements ClientLogic {
     }
 
     @Override
-    public void registerFirebaseToken(String token,
-                                      String uuid,
-                                      String username) {
+    public void registerFcmToken(String token,
+                                 String uuid,
+                                 String username) {
         final User user = userRepo.findByUsername(username);
         if (user == null) {
             throw new DbEntryNotFoundException("User not found", User.class);
@@ -98,7 +98,7 @@ public class ClientLogicImpl implements ClientLogic {
             throw new DbEntryNotFoundException("Client entry not found", Client.class);
         }
 
-        client.setFirebaseToken(token);
+        client.setFcmToken(token);
         clientRepo.save(client);
     }
 

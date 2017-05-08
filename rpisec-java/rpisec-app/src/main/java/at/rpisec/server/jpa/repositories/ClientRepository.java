@@ -21,5 +21,5 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     Client findByUuidAndUser(String uuid,
                              User user);
 
-    List<ClientFirebaseToken> findDistinctByFirebaseTokenIsNotNull();
+    List<ClientFirebaseToken> findDistinctByFcmTokenIsNotNull();
 }

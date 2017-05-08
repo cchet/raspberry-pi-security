@@ -1,12 +1,12 @@
 package at.rpisec.server.logic.impl;
 
-import at.rpisec.server.jpa.model.Client;
 import at.rpisec.server.jpa.projection.ClientFirebaseToken;
 import at.rpisec.server.jpa.repositories.ClientRepository;
 import at.rpisec.server.logic.api.IncidentLogic;
 import at.rpisec.server.shared.rest.constants.FirebaseConstants;
 import at.rpisec.server.shared.rest.model.FirebaseDatabaseItem;
 import at.rpisec.server.shared.rest.model.FirebaseMessage;
+import at.rpisec.server.shared.rest.model.FirebaseMessageResponse;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.tasks.Task;
@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -50,7 +51,6 @@ public class IncidentLogicImpl implements IncidentLogic {
     @Override
     public void logIncidentWithImage(final byte[] image,
                                      final String extension) {
-
         final Task<Void> task = logIncidentWithImageAsync(image, extension);
         Tasks.whenAll(task);
     }
@@ -70,14 +70,19 @@ public class IncidentLogicImpl implements IncidentLogic {
                              .addOnSuccessListener((var) -> log.info("Successfully reported incident to firebase database '{}'", occurringDate));
 
         // Send notifications to all known client apps
-        final List<ClientFirebaseToken> tokens = clientRepo.findDistinctByFirebaseTokenIsNotNull();
+        final List<ClientFirebaseToken> tokens = clientRepo.findDistinctByFcmTokenIsNotNull();
         if (!tokens.isEmpty()) {
             for (final ClientFirebaseToken token : tokens) {
                 final FirebaseMessage.FirebaseMessageBody notificationBody = new FirebaseMessage.FirebaseMessageBody(messages.getMessage("incident.fcm.title", null, locale),
                                                                                                                      messages.getMessage("incident.fcm.message", null, locale),
                                                                                                                      occurringDate);
                 final FirebaseMessage notification = new FirebaseMessage(token.getToken(), notificationBody);
-                fcmRestTemplate.postForLocation(fcmSendUrl, notification);
+                ResponseEntity<FirebaseMessageResponse> result = fcmRestTemplate.postForEntity(fcmSendUrl, notification, FirebaseMessageResponse.class);
+                if ((result.hasBody()) && (result.getBody().getFailure())) {
+                    log.error("Notification failed for error: {}", result.getBody());
+                } else {
+                    log.info("Notification successfully send: fcmToken: {}", token.getToken());
+                }
             }
         }
 

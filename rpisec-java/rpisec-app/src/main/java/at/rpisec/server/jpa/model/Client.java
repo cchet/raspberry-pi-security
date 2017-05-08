@@ -37,7 +37,7 @@ public class Client extends BaseEntity<Long> {
     @Column(name = "FIREBASE_TOKEN", length = 1024)
     @Getter
     @Setter
-    private String firebaseToken;
+    private String fcmToken;
 
     @NotNull
     @Column(name = "CREATED", updatable = false)
