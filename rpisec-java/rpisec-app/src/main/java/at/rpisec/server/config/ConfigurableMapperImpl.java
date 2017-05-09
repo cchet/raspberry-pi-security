@@ -11,7 +11,7 @@ import ma.glasnost.orika.impl.ConfigurableMapper;
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/19/17
  */
-public class ModelMapperConfigurer extends ConfigurableMapper {
+public class ConfigurableMapperImpl extends ConfigurableMapper {
 
     @Override
     protected void configure(MapperFactory factory) {

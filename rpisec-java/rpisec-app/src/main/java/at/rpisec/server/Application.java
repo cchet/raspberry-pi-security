@@ -1,12 +1,8 @@
 package at.rpisec.server;
 
-import at.rpisec.server.config.ModelMapperConfigurer;
-import at.rpisec.server.config.SecurityConfiguration;
-import at.rpisec.server.config.ServletContextConfig;
-import at.rpisec.server.config.WebMvConfiguration;
+import at.rpisec.server.config.ConfigurableMapperImpl;
 import at.rpisec.server.jpa.model.User;
 import at.rpisec.server.jpa.repositories.UserRepository;
-import at.rpisec.server.security.DbUsernamePasswordAuthenticationManager;
 import ma.glasnost.orika.MapperFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,26 +11,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.Locale;
@@ -58,40 +45,6 @@ public class Application {
     }
 
     @Bean
-    WebSecurityConfigurerAdapter produceWebSecurityConfigurerAdapter() {
-        return new SecurityConfiguration();
-    }
-
-    @Bean
-    WebMvcConfigurerAdapter produceWebMvcConfigurationAdaptor() {
-        return new WebMvConfiguration();
-    }
-
-    @Bean
-    ServletContextInitializer produceWebApplicationInitializer() {
-        return new ServletContextConfig();
-    }
-
-    @Bean
-    Docket produceSwaggerDocket() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .pathMapping("/rpisec")
-                .select()
-                .paths(PathSelectors.ant("/rest/**"))
-                .build();
-    }
-
-    @Bean
-    AuthenticationManager produceAuthManager() {
-        return new DbUsernamePasswordAuthenticationManager();
-    }
-
-    @Bean
-    PasswordEncoder producePasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     @Scope("prototype")
     Logger logger(InjectionPoint injectionPoint) {
         return LoggerFactory.getLogger(injectionPoint.getMember().getDeclaringClass());
@@ -99,7 +52,7 @@ public class Application {
 
     @Bean
     public MapperFacade produceConfigurableMapper() {
-        return new ModelMapperConfigurer();
+        return new ConfigurableMapperImpl();
     }
 
     @Bean

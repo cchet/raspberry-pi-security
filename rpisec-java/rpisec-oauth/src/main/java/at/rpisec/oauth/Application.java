@@ -1,16 +1,15 @@
 package at.rpisec.oauth;
 
-import at.rpisec.oauth.config.AuthorizationServerConfig;
-import at.rpisec.oauth.config.WebSecurityConfig;
+import at.rpisec.oauth.config.StartupRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InjectionPoint;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -31,17 +30,13 @@ public class Application {
     }
 
     @Bean
-    AuthorizationServerConfigurerAdapter produceAuthorizationServerConfigurerAdapter() {
-        return new AuthorizationServerConfig();
+    @Scope("prototype")
+    Logger logger(InjectionPoint injectionPoint) {
+        return LoggerFactory.getLogger(injectionPoint.getMember().getDeclaringClass());
     }
 
     @Bean
-    WebSecurityConfigurerAdapter produceWebSecurityConfigurerAdapter() {
-        return new WebSecurityConfig();
-    }
-
-    @Bean
-    PasswordEncoder createPasswordEncoder() {
-        return new BCryptPasswordEncoder();
+    CommandLineRunner produceStartupRunner(){
+        return new StartupRunner();
     }
 }
