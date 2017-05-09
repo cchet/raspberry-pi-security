@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+        xmlns="http://java.sun.com/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+        version="2.0">
+
+    <named-query name="OauthClientToken.findByClientTokenId">
+        <query>
+            SELECT
+                _client_token
+            FROM
+                OauthClientToken _client_token
+            INNER JOIN
+                _client_token.client _client
+            WHERE
+                _client.tokenId = :tokenId
+        </query>
+    </named-query>
+
+    <named-query name="OauthAccessToken.findByClientTokenId">
+        <query>
+            SELECT
+            _access_token
+            FROM
+                OauthAccessToken _access_token
+            INNER JOIN
+                _access_token.client _client
+            WHERE
+                _client.tokenId = :tokenId
+        </query>
+    </named-query>
+
+    <named-query name="OauthAccessToken.findByClientIdAndUsername">
+        <query>
+            SELECT
+            _access_token
+            FROM
+                OauthAccessToken _access_token
+            INNER JOIN
+                _access_token.client _client
+            INNER JOIN
+                _access_token.user _user
+            WHERE
+                _client.tokenId = :tokenId
+            AND
+                _user.username = :username
+        </query>
+    </named-query>
+
+
+    <named-query name="OauthAccessToken.findByRefreshTokenId">
+        <query>
+            SELECT
+            _access_token
+            FROM
+                OauthAccessToken _access_token
+            WHERE
+                _access_token.refreshToken.id = :refreshTokenId
+        </query>
+    </named-query>
+</entity-mappings>
