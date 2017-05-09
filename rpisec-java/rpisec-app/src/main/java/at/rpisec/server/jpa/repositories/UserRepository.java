@@ -6,8 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.websocket.server.PathParam;
-
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/15/17

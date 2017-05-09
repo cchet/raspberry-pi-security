@@ -8,7 +8,6 @@ import at.rpisec.server.logic.api.IncidentLogic;
 import at.rpisec.server.logic.api.UserLogic;
 import at.rpisec.server.shared.rest.model.UserDto;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.tasks.Tasks;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

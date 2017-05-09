@@ -1,11 +1,7 @@
 package at.rpisec.server.shared.rest.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -17,9 +13,7 @@ import java.util.Objects;
 public class TokenResponse {
 
     @Getter
-    @JsonFormat(pattern = "dd.MM.yyyy hh:mm:ss")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private final LocalDateTime created;
+    private final String created;
 
     @Getter
     private final String token;
@@ -27,16 +21,7 @@ public class TokenResponse {
     @Getter
     private final String error;
 
-    public TokenResponse(String token) {
-        this(LocalDateTime.now(), token, null);
-    }
-
-    public TokenResponse(String token,
-                         String error) {
-        this(LocalDateTime.now(), token, error);
-    }
-
-    public TokenResponse(LocalDateTime created,
+    public TokenResponse(String created,
                          String token,
                          String error) {
         Objects.requireNonNull(created, "Created date time must not be null");

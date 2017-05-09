@@ -17,6 +17,8 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 /**
@@ -55,11 +57,11 @@ public class ClientRestController {
         firebaseAuth.createCustomToken(UUID.randomUUID().toString())
                     .addOnFailureListener((exception) -> {
                         log.error("Token creation failed for client with uuid '{}'", uuid, exception);
-                        asyncResult.setResult(new TokenResponse("?", exception.getClass().getName()));
+                        asyncResult.setResult(new TokenResponse(LocalDateTime.now().format(DateTimeFormatter.ofPattern(ClientRestConstants.PARAM_FCM_TOKEN)), "?", exception.getClass().getName()));
                     })
                     .addOnSuccessListener((token) -> {
                         log.info("Token successfully created. token: {} / username: {} / client: {}", token, auth.getPrincipal().toString(), uuid);
-                        asyncResult.setResult(new TokenResponse(token));
+                        asyncResult.setResult(new TokenResponse(LocalDateTime.now().format(DateTimeFormatter.ofPattern(ClientRestConstants.PARAM_FCM_TOKEN)), token, null));
                     });
 
         return asyncResult;
