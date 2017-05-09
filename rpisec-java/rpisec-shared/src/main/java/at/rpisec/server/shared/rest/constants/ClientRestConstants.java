@@ -11,6 +11,7 @@ public class ClientRestConstants {
     private ClientRestConstants() {
     }
 
+    public static final String PATTERN_DATE_TIME = "dd.MM.yyyy hh:mm:ss";
     public static final String BASE_URI = "/api/client";
     public static final String REL_URI_TOKEN = "/getToken";
     public static final String REL_URI_REGISTER_FCM_TOKEN = "/registerFcmToken";
