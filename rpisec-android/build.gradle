@@ -16,9 +16,10 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        maven {
-            url 'https://repo.spring.io/libs-milestone'
-        }
+        mavenLocal()
+
+        maven {url 'https://repo.spring.io/libs-milestone'}
+        maven { url "${System.getProperty('user.home')}\\.m2\\repository"}
     }
 }
 
