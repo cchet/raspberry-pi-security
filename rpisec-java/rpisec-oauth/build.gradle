@@ -1,0 +1,48 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+
+    ext {
+        springloadedVersion = '1.2.7.RELEASE'
+        isProd = System.getProperty('spring.profiles.active')?.contains("prod") ?: false
+    }
+
+    dependencies {
+        classpath "org.springframework:springloaded:${springloadedVersion}"
+    }
+}
+
+apply plugin: 'org.springframework.boot'
+
+bootRun {
+    // Must always be provided
+    systemProperties['spring.profiles.active'] = System.getProperty('spring.profiles.active')
+}
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = file("$buildDir/classes/main/")
+    }
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-jdbc')
+    compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.security.oauth:spring-security-oauth2')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    if (isProd) {
+        compile("org.postgresql:postgresql")
+    } else {
+        compile("com.h2database:h2")
+    }
+    compile("io.springfox:springfox-bean-validators")
+    compile("org.apache.commons:commons-io")
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    compile('org.webjars:bootstrap')
+
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
