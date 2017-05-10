@@ -17,6 +17,8 @@ import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import javax.sql.DataSource;
 
 /**
+ *
+ * url: https://spring.io/guides/tutorials/spring-boot-oauth2/
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/29/17
  */
@@ -33,6 +35,7 @@ public class AuthorizationServerConfigurerAdapterImpl extends AuthorizationServe
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security.tokenKeyAccess("permitAll()")
                 .checkTokenAccess("isAuthenticated()")
+                .allowFormAuthenticationForClients()
                 .passwordEncoder(pwdEncoder);
     }
 
@@ -46,12 +49,10 @@ public class AuthorizationServerConfigurerAdapterImpl extends AuthorizationServe
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.jdbc(dataSource)
                .passwordEncoder(pwdEncoder)
-               .withClient("rpisec-server")
-               .secret("password")
-               .authorizedGrantTypes("client_credentials")
-               .authorities("ROLE_CLIENT").scopes("read")
-               .resourceIds("oauth2-resource")
-               .secret("secret");
+               .withClient("mobile")
+               .scopes("read", "write")
+               .redirectUris("https://localhost:808/rpisec/api/client")
+               .authorizedGrantTypes("password");
     }
 
     @Bean
