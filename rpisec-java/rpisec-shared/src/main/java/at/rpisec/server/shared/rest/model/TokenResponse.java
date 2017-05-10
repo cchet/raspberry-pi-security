@@ -1,6 +1,8 @@
 package at.rpisec.server.shared.rest.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Objects;
 
@@ -10,16 +12,17 @@ import java.util.Objects;
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/19/17
  */
+
+@NoArgsConstructor
+@Getter
+@Setter
 public class TokenResponse {
 
-    @Getter
-    private final String created;
+    private String created;
 
-    @Getter
-    private final String token;
+    private String token;
 
-    @Getter
-    private final String error;
+    private String error;
 
     public TokenResponse(String created,
                          String token,
