@@ -16,7 +16,7 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/21/17
  */
-public class WebMvConfiguration extends WebMvcConfigurerAdapter {
+public class WebMvcConfigurerAdapterImpl extends WebMvcConfigurerAdapter {
 
     @Autowired
     private ConfigProperties.WebjarProperties webjarProperties;

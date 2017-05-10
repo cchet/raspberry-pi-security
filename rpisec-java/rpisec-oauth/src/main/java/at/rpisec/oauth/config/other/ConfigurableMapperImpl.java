@@ -1,9 +1,10 @@
-package at.rpisec.server.config;
+package at.rpisec.oauth.config.other;
 
-import at.rpisec.server.jpa.model.User;
+import at.rpisec.oauth.jpa.model.User;
 import at.rpisec.server.shared.rest.model.UserDto;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.ConfigurableMapper;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * This class configures the {@link ma.glasnost.orika.MapperFacade} for usage with our models.
@@ -11,10 +12,10 @@ import ma.glasnost.orika.impl.ConfigurableMapper;
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/19/17
  */
-public class ModelMapperConfigurer extends ConfigurableMapper {
+public class ConfigurableMapperImpl extends ConfigurableMapper {
 
     @Override
     protected void configure(MapperFactory factory) {
-        factory.classMap(User.class, UserDto.class).byDefault().register();
+        factory.classMap(User.class, UserDetails.class).byDefault().register();
     }
 }

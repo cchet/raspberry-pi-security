@@ -1,7 +1,6 @@
 package at.rpisec.server.config;
 
 import org.springframework.boot.web.servlet.ServletContextInitializer;
-import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
 import javax.servlet.FilterRegistration;
@@ -12,7 +11,7 @@ import javax.servlet.ServletException;
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/23/17
  */
-public class ServletContextConfig implements ServletContextInitializer {
+public class ServletContextInitializerImpl implements ServletContextInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {

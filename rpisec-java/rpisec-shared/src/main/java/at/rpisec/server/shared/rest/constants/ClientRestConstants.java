@@ -11,8 +11,10 @@ public class ClientRestConstants {
     private ClientRestConstants() {
     }
 
+    public static final String PATTERN_DATE_TIME = "dd.MM.yyyy hh:mm:ss";
     public static final String BASE_URI = "/api/client";
-    public static final String REL_URI_TOKEN = "/token";
+    public static final String REL_URI_TOKEN = "/getToken";
+    public static final String REL_URI_REGISTER_FCM_TOKEN = "/registerFcmToken";
     public static final String REL_URI_REGISTER = "/register";
     public static final String REL_URI_UNREGISTER = "/unregister";
     public static final String REL_URI_PROFILE = "/profile";
@@ -22,7 +24,13 @@ public class ClientRestConstants {
      * The uri for the 'GET' request to retrieve a firebase token.
      * Requires the request param {@link ClientRestConstants#PARAM_UUID}
      */
-    public static final String URI_TOKEN = BASE_URI + REL_URI_TOKEN;
+    public static final String URI_GET_TOKEN = BASE_URI + REL_URI_TOKEN;
+
+    /**
+     * The uri for the 'PUT' request to register the client firebase cloud messaging token.
+     * Requires the request param {@link ClientRestConstants#PARAM_FCM_TOKEN}
+     */
+    public static final String URI_REGISTER_FCM_TOKEN = BASE_URI + REL_URI_REGISTER_FCM_TOKEN;
 
     /**
      * The uri for the 'PUT' request to register a client.
@@ -52,6 +60,12 @@ public class ClientRestConstants {
      * The request parameter for identifying the client uuid.
      */
     public static final String PARAM_UUID = "uuid";
+
+    /**
+     * The request parameter for the firebase cloud messaging token.
+     */
+    public static final String PARAM_FCM_TOKEN = "fcmToken";
+
     /**
      * The request parameter for identifying the client password.
      */

@@ -17,7 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.text.style.QuoteSpan;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -36,10 +36,32 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.springframework.http.HttpAuthentication;
+import org.springframework.http.HttpBasicAuthentication;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.Executor;
+
+import at.rpisec.server.shared.rest.constants.ClientRestConstants;
+import at.rpisec.server.shared.rest.model.FirebaseMessage;
+import at.rpisec.server.shared.rest.model.TokenResponse;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -47,6 +69,9 @@ import static android.Manifest.permission.READ_CONTACTS;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+
+    //for development only
+    private static final String DEV_BASE_ADDRESS = "http://192.168.1.104:8080";
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -77,10 +102,58 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
 
+    private static HttpAuthentication authHeader;
+    private static HttpHeaders requestHeaders;
+    private static HttpEntity<Object> httpEntity;
+
+    private static HttpHeaders getRequestHeader(String userName, String password, MediaType mediaType)
+    {
+        /*
+        String plainCreds = "willie:p@ssword";
+byte[] plainCredsBytes = plainCreds.getBytes();
+byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
+String base64Creds = new String(base64CredsBytes);
+
+HttpHeaders headers = new HttpHeaders();
+headers.add("Authorization", "Basic " + base64Creds);
+
+         */
+/*        StringBuilder plainCreds = new StringBuilder();
+        plainCreds.append(userName);
+        plainCreds.append(":");
+        plainCreds.append(password);
+
+        StringBuilder authStr = new StringBuilder();
+        authStr.append("Basic ");
+        authStr.append(Base64.encodeToString(plainCreds.toString().getBytes(), Base64.URL_SAFE));
+
+        System.out.println("[DEBUG] AuthStr: "+ authStr.toString());*/
+
+        authHeader = new HttpBasicAuthentication(userName, password);
+        requestHeaders = new HttpHeaders();
+        requestHeaders.setAuthorization(authHeader);
+        //requestHeaders.add("Authorization", authStr.toString());
+        requestHeaders.setAccept(Collections.singletonList(mediaType));
+
+        return requestHeaders;
+    }
+
+    private static void initHttpCredentials(String userName, String password, MediaType mediaType)
+    {
+        if(httpEntity == null)
+            httpEntity = new HttpEntity<Object>(getRequestHeader(userName, password, mediaType));
+    }
+
+    private static HttpEntity<Object> getHttpEntity()
+    {
+        return httpEntity;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -231,29 +304,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView.requestFocus();
         } else {
 
-            /*
-            RestTemplate restTemplate = new RestTemplate();
-        Quote quote = restTemplate.getForObject("http://gturnquist-quoters.cfapps.io/api/random", Quote.class);
-
-             */
-
-            RestTemplate restTemplate = new RestTemplate();
-
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            Log.d(DEBUG_LOGIN_TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-                            if (!task.isSuccessful()) {
-                                Log.w(DEBUG_LOGIN_TAG, "signInWithEmail:failed", task.getException());
-                                Toast.makeText(LoginActivity.this, "signInWithEmail:failed", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Log.d(DEBUG_LOGIN_TAG, "signInWithEmail:success");
-                                Toast.makeText(LoginActivity.this, "signInWithEmail:success", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+            new UserLoginTask(email, password).execute();
         }
     }
 
@@ -376,6 +427,85 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
+
+            try {
+                final String genUUID = UUID.randomUUID().toString();
+                final String UrlRegToken = DEV_BASE_ADDRESS + "/rpisec" + ClientRestConstants.URI_REGISTER + "?uuid=" + genUUID;
+                final String UrlToken = DEV_BASE_ADDRESS + "/rpisec" + ClientRestConstants.URI_GET_TOKEN + "?uuid=" + genUUID;
+                final String UrlFCMToken = DEV_BASE_ADDRESS + "/rpisec" + ClientRestConstants.URI_REGISTER_FCM_TOKEN + "?uuid=" + genUUID + "&fcmToken=";
+                final String UrlPostNotify = DEV_BASE_ADDRESS + "/rpisec" + ClientRestConstants.BASE_URI + "/notify";
+
+                initHttpCredentials("admin", mPassword, MediaType.ALL);
+
+                RestTemplate restTemplate = new RestTemplate();
+
+                System.out.println("[DEBUG]: " + UrlToken);
+
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+                ResponseEntity<String> registerResponse = restTemplate.exchange(UrlRegToken, HttpMethod.PUT, getHttpEntity(), String.class);
+
+                if (registerResponse.getStatusCode() == HttpStatus.OK) {
+
+                    ResponseEntity<TokenResponse> response = restTemplate.exchange(UrlToken, HttpMethod.GET, getHttpEntity(), TokenResponse.class);
+
+                    if (response.getBody() != null) {
+                        ResponseEntity<FirebaseMessage> fm = restTemplate.exchange(UrlFCMToken + response.getBody().getToken(), HttpMethod.GET, getHttpEntity(), FirebaseMessage.class);
+                        if (fm != null) {
+                            MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
+                            parts.add("msg", "TestMessage");
+
+                            ResponseEntity<String> postResponse = restTemplate.exchange(UrlPostNotify, HttpMethod.POST, getHttpEntity(), String.class);
+
+                            if (postResponse.getBody() != null && !postResponse.getBody().isEmpty()) {
+                                Log.w(DEBUG_LOGIN_TAG, "postForObject:notnull");
+                                //Toast.makeText(LoginActivity.this, "postForObject:notnull", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Log.w(DEBUG_LOGIN_TAG, "postForObject:null");
+                                //Toast.makeText(LoginActivity.this, "postForObject:null", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Log.w(DEBUG_LOGIN_TAG, "getForObjectFM:null");
+                            //Toast.makeText(LoginActivity.this, "getForObjectFM:null", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Log.w(DEBUG_LOGIN_TAG, "getForObjectToken:null");
+                        //Toast.makeText(LoginActivity.this, "getForObjectToken:null", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+            catch(HttpClientErrorException e){
+                    System.out.println(e.getStatusCode());
+                    System.out.println(e.getResponseBodyAsString());
+                    e.printStackTrace();
+                }
+            catch(HttpServerErrorException e){
+                    System.out.println(e.getStatusCode());
+                    System.out.println(e.getResponseBodyAsString());
+                    System.out.println(e.getResponseHeaders());
+                    e.printStackTrace();
+                }
+            catch(Exception e){
+                    e.printStackTrace();
+                }
+
+            mAuth.signInWithEmailAndPassword(mEmail, mPassword)
+                    .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            Log.d(DEBUG_LOGIN_TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
+                            if (!task.isSuccessful()) {
+                                Log.w(DEBUG_LOGIN_TAG, "signInWithEmail:failed", task.getException());
+                                Toast.makeText(LoginActivity.this, "signInWithEmail:failed", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Log.d(DEBUG_LOGIN_TAG, "signInWithEmail:success");
+                                Toast.makeText(LoginActivity.this, "signInWithEmail:success", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+
             return true;
         }
 

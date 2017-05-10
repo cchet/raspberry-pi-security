@@ -34,6 +34,11 @@ public class Client extends BaseEntity<Long> {
     @Setter
     private String uuid;
 
+    @Column(name = "FIREBASE_TOKEN", length = 1024)
+    @Getter
+    @Setter
+    private String fcmToken;
+
     @NotNull
     @Column(name = "CREATED", updatable = false)
     @Getter

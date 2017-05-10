@@ -1,3 +1,5 @@
+import at.rpisec.server.shared.rest.constants.FirebaseConstants;
+import at.rpisec.server.shared.rest.model.FirebaseDatabaseItem;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
@@ -5,7 +7,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Logger;
 import com.google.firebase.tasks.Task;
-import lombok.Getter;
+import com.google.firebase.tasks.Tasks;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -13,7 +15,6 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Semaphore;
 
 /**
  * FCM-JAva-Client: http://bytefish.de/blog/fcmjava/
@@ -24,49 +25,37 @@ import java.util.concurrent.Semaphore;
 public class FirebaseLogicTrials {
 
     private FirebaseDatabase firebaseDatabase;
-    private static Semaphore s = new Semaphore(1);
+//    private static Semaphore s = new Semaphore(1);
 
     public FirebaseLogicTrials(@Qualifier("incidentFirebaseDatabase") FirebaseDatabase firebaseDatabase) {
         this.firebaseDatabase = firebaseDatabase;
     }
 
-    public static class IncidentObj {
-        @Getter
-        private final String message;
-
-        public IncidentObj(String message) {
-            this.message = message;
-        }
-    }
-
     public void trials() {
-        try {
-            s.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            s.acquire();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         final FirebaseDatabase database = firebaseDatabase;
 
         database.setLogLevel(Logger.Level.INFO);
         //        database.goOnline();
 
-        final Map<String, IncidentObj> data = new HashMap<String, IncidentObj>() {{
-            put("1", new IncidentObj("asdgwetbntebsbesrb"));
-            put("2", new IncidentObj("asdgwetbntebsbesrb"));
-            put("3", new IncidentObj("asdgwetbntebsbesrb"));
-            put("4", new IncidentObj("asdgwetbntebsbesrb"));
-            put("5", new IncidentObj("asdgwetbntebsbesrb"));
+        final Map<String, FirebaseDatabaseItem> data = new HashMap<String, FirebaseDatabaseItem>() {{
+            put("1", new FirebaseDatabaseItem("incident occured", false, "jpg", "base64Data"));
+            put("2", new FirebaseDatabaseItem("incident occured", false, "jpg", "base64Data"));
         }};
 
-        DatabaseReference ref = database.getReference();
+        DatabaseReference ref = database.getReference(FirebaseConstants.DB_ITEM_INCIDENT);
 
         Task t2 = database.getReference("incidents").setValue(data).addOnCompleteListener((task) -> {
             System.out.println("Callback called");
             database.goOffline();
             database.purgeOutstandingWrites();
-            s.release();
+//            s.release();
         });
-        //        Tasks.whenAll(t2);
+        Tasks.whenAll(t2);
     }
 
 
@@ -87,7 +76,7 @@ public class FirebaseLogicTrials {
 
         System.out.println("waiting for semaphore");
 
-        s.acquire();
+//        s.acquire();
 
         System.out.println("Done");
     }

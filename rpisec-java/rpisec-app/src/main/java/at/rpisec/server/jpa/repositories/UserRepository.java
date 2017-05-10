@@ -6,8 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.websocket.server.PathParam;
-
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/15/17
@@ -16,6 +14,8 @@ import javax.websocket.server.PathParam;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByUsername(String username);
+
+    User findByUsernameAndVerifyDateNotNull(String username);
 
     @Query(name = "User.findByUsernameAndClientUuid")
     User findByUsernameAndClientUuid(@Param("username") String username,

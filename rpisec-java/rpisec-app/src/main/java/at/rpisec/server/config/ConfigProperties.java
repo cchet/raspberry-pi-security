@@ -3,6 +3,7 @@ package at.rpisec.server.config;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -28,6 +29,13 @@ public class ConfigProperties {
         @Setter
         private String configFile;
 
+        @Getter
+        @Setter
+        private String cloudMsgApiKey;
+
+        @Getter
+        @Setter
+        private String cloudMessagingUrl;
     }
 
     @Component
