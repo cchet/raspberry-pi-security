@@ -1,17 +1,11 @@
 package at.rpisec.oauth.rest;
 
-import at.rpisec.oauth.config.SecurityProperties;
 import at.rpisec.oauth.logic.api.UserLogic;
 import at.rpisec.server.shared.rest.constants.UserRestConstants;
 import at.rpisec.server.shared.rest.model.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.GroupManager;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**

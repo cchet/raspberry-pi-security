@@ -1,6 +1,6 @@
 package at.rpisec.oauth.jpa.model;
 
-import at.rpisec.oauth.config.SecurityProperties;
+import at.rpisec.oauth.config.other.SecurityProperties;
 import at.rpisec.oauth.jpa.api.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalUnit;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -86,7 +85,7 @@ public class User extends BaseEntity<Long> {
 
     @NotNull
     @Column(name = "deactivated", length = 1)
-    private Boolean deactivated;
+    private Boolean deactivated = Boolean.FALSE;
 
     @NotNull
     @ElementCollection(fetch = FetchType.EAGER)
@@ -96,8 +95,7 @@ public class User extends BaseEntity<Long> {
 
     @PrePersist
     public void prePersist() {
-        createdAt = updatedAt = passwordValidityDate = LocalDateTime.now();
-        passwordValidityDate.plusMonths(SecurityProperties.PASSWWORD_VALIDITY_DURATION_MONTHS);
+        createdAt = updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate

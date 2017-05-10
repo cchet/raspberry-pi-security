@@ -1,4 +1,4 @@
-package at.rpisec.oauth.config;
+package at.rpisec.oauth.config.other;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>

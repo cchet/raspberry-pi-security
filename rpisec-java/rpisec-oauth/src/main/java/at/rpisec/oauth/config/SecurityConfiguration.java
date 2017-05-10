@@ -1,5 +1,7 @@
 package at.rpisec.oauth.config;
 
+import at.rpisec.oauth.config.adapter.AuthorizationServerConfigurerAdapterImpl;
+import at.rpisec.oauth.config.adapter.WebSecurityConfigurerAdapterImpl;
 import at.rpisec.oauth.logic.impl.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,10 +10,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
-import org.springframework.security.provisioning.UserDetailsManager;
-
-import javax.sql.DataSource;
 
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
@@ -36,17 +34,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    UserDetailsService produceUserDetailsManager(){
+    UserDetailsService produceUserDetailsManager() {
         return new UserDetailsServiceImpl();
-    }
-
-    @Bean
-    UserDetailsManager produceUserDetailsManager(final DataSource dataSource) {
-        final JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager();
-        userDetailsManager.setDataSource(dataSource);
-        userDetailsManager.setEnableAuthorities(false);
-        userDetailsManager.setEnableGroups(true);
-
-        return userDetailsManager;
     }
 }

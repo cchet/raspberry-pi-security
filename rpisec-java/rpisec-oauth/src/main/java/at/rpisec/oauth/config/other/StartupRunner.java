@@ -1,4 +1,4 @@
-package at.rpisec.oauth.config;
+package at.rpisec.oauth.config.other;
 
 import at.rpisec.oauth.logic.api.UserLogic;
 import at.rpisec.server.shared.rest.model.UserDto;

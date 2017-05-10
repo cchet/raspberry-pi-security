@@ -1,6 +1,6 @@
 package at.rpisec.oauth.logic.impl;
 
-import at.rpisec.oauth.config.SecurityProperties;
+import at.rpisec.oauth.config.other.SecurityProperties;
 import at.rpisec.oauth.exception.DbEntryNotFoundException;
 import at.rpisec.oauth.jpa.model.User;
 import at.rpisec.oauth.jpa.repositories.UserRepository;
@@ -45,6 +45,8 @@ public class UserLogicImpl implements UserLogic {
     private ApplicationEventPublisher publisher;
     @Autowired
     public MapperFacade mapper;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -166,6 +168,11 @@ public class UserLogicImpl implements UserLogic {
         User user = mapper.map(model, User.class);
         user.setPassword(UUID.randomUUID().toString());
         user.setVerifyUUID(UUID.randomUUID().toString());
+        user.setPasswordValidityDate(LocalDateTime.now().plusMonths(SecurityProperties.PASSWWORD_VALIDITY_DURATION_MONTHS));
+        if (user.getAdmin()) {
+            user.getRoles().add(SecurityProperties.ROLE_ADMIN);
+        }
+        user.getRoles().add(SecurityProperties.ROLE_CLIENT);
 
         user = userRepo.save(user);
 

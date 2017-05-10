@@ -8,7 +8,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,45 +30,47 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         if (username != null) {
             final User user = userRepo.findByUsername(username);
-            return new UserDetails() {
+            if (user != null) {
+                return new UserDetails() {
 
-                private final LocalDateTime now = LocalDateTime.now();
+                    private final LocalDateTime now = LocalDateTime.now();
 
-                @Override
-                public Collection<? extends GrantedAuthority> getAuthorities() {
-                    return user.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-                }
+                    @Override
+                    public Collection<? extends GrantedAuthority> getAuthorities() {
+                        return user.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+                    }
 
-                @Override
-                public String getPassword() {
-                    return user.getPassword();
-                }
+                    @Override
+                    public String getPassword() {
+                        return user.getPassword();
+                    }
 
-                @Override
-                public String getUsername() {
-                    return user.getUsername();
-                }
+                    @Override
+                    public String getUsername() {
+                        return user.getUsername();
+                    }
 
-                @Override
-                public boolean isAccountNonExpired() {
-                    return !user.getDeactivated();
-                }
+                    @Override
+                    public boolean isAccountNonExpired() {
+                        return !user.getDeactivated();
+                    }
 
-                @Override
-                public boolean isAccountNonLocked() {
-                    return user.getVerifiedAt() != null;
-                }
+                    @Override
+                    public boolean isAccountNonLocked() {
+                        return user.getVerifiedAt() != null;
+                    }
 
-                @Override
-                public boolean isCredentialsNonExpired() {
-                    return now.isBefore(user.getPasswordValidityDate());
-                }
+                    @Override
+                    public boolean isCredentialsNonExpired() {
+                        return now.isBefore(user.getPasswordValidityDate());
+                    }
 
-                @Override
-                public boolean isEnabled() {
-                    return !user.getDeactivated();
-                }
-            };
+                    @Override
+                    public boolean isEnabled() {
+                        return !user.getDeactivated();
+                    }
+                };
+            }
         }
 
         return null;

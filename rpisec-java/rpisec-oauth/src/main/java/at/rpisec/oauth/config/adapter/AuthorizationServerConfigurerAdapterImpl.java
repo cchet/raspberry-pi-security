@@ -1,7 +1,8 @@
-package at.rpisec.oauth.config;
+package at.rpisec.oauth.config.adapter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -25,6 +26,8 @@ public class AuthorizationServerConfigurerAdapterImpl extends AuthorizationServe
     private DataSource dataSource;
     @Autowired
     private PasswordEncoder pwdEncoder;
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -36,33 +39,19 @@ public class AuthorizationServerConfigurerAdapterImpl extends AuthorizationServe
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.tokenStore(createTokenStore())
-                 .authenticationManager(new OAuth2AuthenticationManager());
+                 .userDetailsService(userDetailsService);
     }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.jdbc(dataSource)
                .passwordEncoder(pwdEncoder)
-               .withClient("my-trusted-client")
-               .secret("123456789")
-               .authorizedGrantTypes("password", "authorization_code", "refresh_token", "implicit")
-               .authorities("ROLE_CLIENT", "ROLE_TRUSTED_CLIENT")
-               .scopes("read", "write")
-               .resourceIds("oauth2-resource")
-               .accessTokenValiditySeconds(60)
-               .and()
-               .withClient("my-client-with-registered-redirect")
-               .secret("123456789")
-               .authorizedGrantTypes("authorization_code")
-               .authorities("ROLE_CLIENT").scopes("read", "trust")
-               .resourceIds("oauth2-resource")
-               .redirectUris("http://anywhere?key=value")
-               .and()
-               .withClient("my-client-with-secret")
-               .secret("123456789")
-               .authorizedGrantTypes("client_credentials", "password")
+               .withClient("rpisec-server")
+               .secret("password")
+               .authorizedGrantTypes("client_credentials")
                .authorities("ROLE_CLIENT").scopes("read")
-               .resourceIds("oauth2-resource").secret("secret");
+               .resourceIds("oauth2-resource")
+               .secret("secret");
     }
 
     @Bean

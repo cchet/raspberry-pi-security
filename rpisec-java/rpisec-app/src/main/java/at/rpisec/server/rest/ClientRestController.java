@@ -1,6 +1,6 @@
 package at.rpisec.server.rest;
 
-import at.rpisec.server.config.ConfigurationDev;
+import at.rpisec.server.Application;
 import at.rpisec.server.logic.api.ClientLogic;
 import at.rpisec.server.logic.api.IncidentLogic;
 import at.rpisec.server.logic.api.UserLogic;
@@ -43,7 +43,7 @@ public class ClientRestController {
     //region For Testing notifications
     @PutMapping("/notify")
     public void notifyTest() throws IOException {
-        final byte[] data = IOUtils.toByteArray(ConfigurationDev.class.getResourceAsStream("/giraffe.jpg"));
+        final byte[] data = IOUtils.toByteArray(Application.class.getResourceAsStream("/giraffe.jpg"));
         incidentLogic.logIncidentWithImage(data, "jpg");
     }
     //endregion
