@@ -51,13 +51,6 @@ public class Client extends BaseEntity<Long> {
     @Setter
     private LocalDateTime updatedDate;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", updatable = false)
-    @Getter
-    @Setter
-    private User user;
-
     @PrePersist
     public void prePersist() {
         createdDate = updatedDate = LocalDateTime.now();

@@ -1,7 +1,6 @@
 package at.rpisec.server.jpa.repositories;
 
 import at.rpisec.server.jpa.model.Client;
-import at.rpisec.server.jpa.model.User;
 import at.rpisec.server.jpa.projection.ClientFirebaseToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -15,8 +14,7 @@ import java.util.List;
 @Repository
 public interface ClientRepository extends JpaRepository<Client, Long> {
 
-    Client findByUuidAndUser(String uuid,
-                             User user);
+    Client findByUuid(String uuid);
 
     List<ClientFirebaseToken> findDistinctByFcmTokenIsNotNull();
 }

@@ -10,16 +10,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.sql.DataSource;
-
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 05/09/17
  */
 public class WebSecurityConfigurerAdapterImpl extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private DataSource dataSource;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -29,18 +25,26 @@ public class WebSecurityConfigurerAdapterImpl extends WebSecurityConfigurerAdapt
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+        auth.userDetailsService(userDetailsService)
+            .passwordEncoder(passwordEncoder);
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic()
+        http.authorizeRequests()
+            .antMatchers("/oauth/**").permitAll()
+            .and()
+            .httpBasic()
             .and()
             .authorizeRequests()
             .antMatchers("/api/user/**").hasAnyRole(SecurityProperties.ADMIN)
-            .antMatchers("/oauth/**").hasAnyRole(SecurityProperties.CLIENT)
             .and()
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return authenticationManager;
     }
 }

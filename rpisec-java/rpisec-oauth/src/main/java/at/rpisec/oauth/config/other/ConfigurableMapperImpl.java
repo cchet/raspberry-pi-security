@@ -1,7 +1,6 @@
 package at.rpisec.oauth.config.other;
 
 import at.rpisec.oauth.jpa.model.User;
-import at.rpisec.server.shared.rest.model.UserDto;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.ConfigurableMapper;
 import org.springframework.security.core.userdetails.UserDetails;

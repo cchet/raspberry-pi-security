@@ -8,8 +8,6 @@ import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>

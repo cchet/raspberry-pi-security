@@ -1,8 +1,8 @@
 package at.rpisec.server;
 
 import at.rpisec.server.config.ConfigurableMapperImpl;
-import at.rpisec.server.jpa.model.User;
-import at.rpisec.server.jpa.repositories.UserRepository;
+import at.rpisec.server.jpa.model.Client;
+import at.rpisec.server.jpa.repositories.ClientRepository;
 import ma.glasnost.orika.MapperFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,12 +29,12 @@ import java.util.Locale;
 @SpringBootApplication
 @ComponentScan(basePackageClasses = {Application.class, Jsr310JpaConverters.class})
 @EnableWebMvc
-@EnableJpaRepositories(basePackageClasses = {UserRepository.class})
+@EnableJpaRepositories(basePackageClasses = {ClientRepository.class})
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableSwagger2
-@EntityScan(basePackageClasses = User.class)
+@EntityScan(basePackageClasses = Client.class)
 @Import({
         BeanValidatorPluginsConfiguration.class
 })

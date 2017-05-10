@@ -1,6 +1,5 @@
 package at.rpisec.oauth.jpa.model;
 
-import at.rpisec.oauth.config.other.SecurityProperties;
 import at.rpisec.oauth.jpa.api.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

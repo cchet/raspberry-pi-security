@@ -6,6 +6,7 @@ import at.rpisec.server.shared.rest.model.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -17,13 +18,12 @@ import java.util.List;
 public class UserRestController {
 
     @Autowired
-    private UserLogic userLogic;
+    private UserLogic logic;
 
     @GetMapping(value = UserRestConstants.REL_URI_LIST)
     public List<UserDto> list() {
-        return null;
+        return logic.list();
     }
-  /*
 
     @GetMapping(value = UserRestConstants.REL_URI_GET + "/{username}")
     public UserDto get(@PathVariable String username) {
@@ -45,5 +45,5 @@ public class UserRestController {
     public UserDto update(@RequestBody @Valid UserDto model) {
         final Long id = logic.update(model);
         return logic.byId(id);
-    }*/
+    }
 }

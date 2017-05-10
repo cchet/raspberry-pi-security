@@ -1,7 +1,5 @@
 package at.rpisec.server.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,9 +14,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
  */
 public class WebSecurityConfigurerAdapterImpl extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private AuthenticationManager authManager;
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic()
@@ -30,10 +25,5 @@ public class WebSecurityConfigurerAdapterImpl extends WebSecurityConfigurerAdapt
             .and()
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    }
-
-    @Override
-    public AuthenticationManager authenticationManager() throws Exception {
-        return authManager;
     }
 }

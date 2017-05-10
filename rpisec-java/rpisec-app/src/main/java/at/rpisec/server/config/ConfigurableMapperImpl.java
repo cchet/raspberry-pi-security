@@ -1,7 +1,5 @@
 package at.rpisec.server.config;
 
-import at.rpisec.server.jpa.model.User;
-import at.rpisec.server.shared.rest.model.UserDto;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.ConfigurableMapper;
 
@@ -15,6 +13,6 @@ public class ConfigurableMapperImpl extends ConfigurableMapper {
 
     @Override
     protected void configure(MapperFactory factory) {
-        factory.classMap(User.class, UserDto.class).byDefault().register();
+
     }
 }

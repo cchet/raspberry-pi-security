@@ -1,35 +1,34 @@
 package at.rpisec.oauth.config.adapter;
 
+import at.rpisec.oauth.logic.impl.DomainAuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager;
-import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
-import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
 import javax.sql.DataSource;
 
 /**
- *
  * url: https://spring.io/guides/tutorials/spring-boot-oauth2/
+ * token
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/29/17
  */
 public class AuthorizationServerConfigurerAdapterImpl extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
-    private DataSource dataSource;
-    @Autowired
     private PasswordEncoder pwdEncoder;
     @Autowired
     private UserDetailsService userDetailsService;
+    @Autowired
+    private DomainAuthenticationManager authenticationManager;
+    @Autowired
+    private TokenStore tokenStore;
+    @Autowired
+    private DataSource dataSource;
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -41,27 +40,8 @@ public class AuthorizationServerConfigurerAdapterImpl extends AuthorizationServe
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(createTokenStore())
-                 .userDetailsService(userDetailsService);
-    }
-
-    @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.jdbc(dataSource)
-               .passwordEncoder(pwdEncoder)
-               .withClient("mobile")
-               .scopes("read", "write")
-               .redirectUris("https://localhost:808/rpisec/api/client")
-               .authorizedGrantTypes("password");
-    }
-
-    @Bean
-    AuthorizationCodeServices authorizationCodeServices() {
-        return new JdbcAuthorizationCodeServices(dataSource);
-    }
-
-    @Bean
-    TokenStore createTokenStore() {
-        return new JdbcTokenStore(dataSource);
+        endpoints.tokenStore(tokenStore)
+                 .userDetailsService(userDetailsService)
+                 .authenticationManager(authenticationManager);
     }
 }
