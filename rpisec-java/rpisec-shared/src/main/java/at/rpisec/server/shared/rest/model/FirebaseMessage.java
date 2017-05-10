@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FirebaseMessage {
 
+    private String to;
+    private FirebaseMessageBody data;
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -22,7 +25,4 @@ public class FirebaseMessage {
         private String message;
         private String dbItemId;
     }
-
-    private String to;
-    private FirebaseMessageBody data;
 }
