@@ -1,8 +1,10 @@
 package at.rpisec.oauth.config;
 
+import at.rpisec.oauth.logic.impl.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -34,9 +36,16 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    UserDetailsService produceUserDetailsManager(){
+        return new UserDetailsServiceImpl();
+    }
+
+    @Bean
     UserDetailsManager produceUserDetailsManager(final DataSource dataSource) {
         final JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager();
         userDetailsManager.setDataSource(dataSource);
+        userDetailsManager.setEnableAuthorities(false);
+        userDetailsManager.setEnableGroups(true);
 
         return userDetailsManager;
     }

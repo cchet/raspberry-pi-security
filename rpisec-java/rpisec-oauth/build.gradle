@@ -19,6 +19,7 @@ apply plugin: 'org.springframework.boot'
 bootRun {
     // Must always be provided
     systemProperties['spring.profiles.active'] = System.getProperty('spring.profiles.active')
+    systemProperties['spring.config.location'] = System.getProperty("spring.config.location")
 }
 
 idea {
@@ -30,10 +31,12 @@ idea {
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-jdbc')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.security.oauth:spring-security-oauth2')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    compile('org.springframework.boot:spring-boot-starter-mail')
     if (isProd) {
         compile("org.postgresql:postgresql")
     } else {
@@ -41,8 +44,11 @@ dependencies {
     }
     compile("io.springfox:springfox-bean-validators")
     compile("org.apache.commons:commons-io")
+    compile("ma.glasnost.orika:orika-core")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     compile('org.webjars:bootstrap')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
+
+    compile project(':rpisec-shared')
 }

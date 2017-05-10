@@ -50,7 +50,6 @@ create table oauth_approvals (
   lastModifiedAt TIMESTAMP
 );
 
-
 -- customized oauth_client_details table
 create table ClientDetails (
   appId VARCHAR(256) PRIMARY KEY,
