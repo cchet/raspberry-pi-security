@@ -1,7 +1,6 @@
 package at.rpisec.server.config;
 
 import org.springframework.boot.web.servlet.ServletContextInitializer;
-import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
 import javax.servlet.FilterRegistration;
