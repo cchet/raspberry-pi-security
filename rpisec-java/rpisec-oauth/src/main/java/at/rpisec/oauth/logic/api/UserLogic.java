@@ -63,6 +63,4 @@ public interface UserLogic {
                 String username);
 
     void delete(String username);
-
-
 }

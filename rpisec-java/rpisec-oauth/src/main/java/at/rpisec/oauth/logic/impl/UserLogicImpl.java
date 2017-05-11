@@ -1,17 +1,22 @@
 package at.rpisec.oauth.logic.impl;
 
+import at.rpisec.oauth.config.SecurityConfiguration;
 import at.rpisec.oauth.exception.DbEntryNotFoundException;
 import at.rpisec.oauth.jpa.model.User;
 import at.rpisec.oauth.jpa.repositories.UserRepository;
 import at.rpisec.oauth.logic.api.UserLogic;
+import at.rpisec.oauth.logic.event.UserVerifiedEvent;
 import at.rpisec.oauth.logic.event.UserCreatedEvent;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import at.rpisec.server.shared.rest.model.UserDto;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.ClientRegistrationService;
+import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +37,12 @@ import java.util.stream.Collectors;
 public class UserLogicImpl implements UserLogic {
 
     @Autowired
-    private PasswordEncoder encoder;
+    @Qualifier(SecurityConfiguration.QUALIFIER_APP_SERVER_RESOURCE_ID)
+    private String resourceId;
+    @Autowired
+    private PasswordEncoder pwdEncoder;
+    @Autowired
+    private ClientRegistrationService clientRegistrationService;
     @Autowired
     private UserRepository userRepo;
     @Autowired
@@ -52,9 +62,23 @@ public class UserLogicImpl implements UserLogic {
 
         user.setVerifyUUID(null);
         user.setVerifiedAt(LocalDateTime.now());
-        user.setPassword(encoder.encode(password));
+        user.setPassword(pwdEncoder.encode(password));
 
-        userRepo.save(user);
+        userRepo.saveAndFlush(user);
+
+        final String secret = UUID.randomUUID().toString();
+        final BaseClientDetails client = new BaseClientDetails(UUID.randomUUID().toString(),
+                                                               resourceId,
+                                                               "read,write",
+                                                               "password,authorization_code",
+                                                               SecurityConstants.CLIENT);
+        client.setAccessTokenValiditySeconds(SecurityConstants.TOKEN_VALIDITY_DURATION_SECONDS);
+        client.setRefreshTokenValiditySeconds(SecurityConstants.REFRESH_TOKEN_VALIDITY_DURATION_SECONDS);
+        client.setClientSecret(pwdEncoder.encode(secret));
+
+        clientRegistrationService.addClientDetails(client);
+
+        publisher.publishEvent(new UserVerifiedEvent(client.getClientId(), secret, user.getId(), user.getUsername(), user.getEmail()));
 
         return user.getId();
     }
@@ -69,7 +93,7 @@ public class UserLogicImpl implements UserLogic {
             throw new DbEntryNotFoundException(String.format("User not found by username: '%s' during passwort set", username), User.class);
         }
 
-        user.setPassword(encoder.encode(password));
+        user.setPassword(pwdEncoder.encode(password));
 
         userRepo.save(user);
 
@@ -87,7 +111,7 @@ public class UserLogicImpl implements UserLogic {
             throw new DbEntryNotFoundException(String.format("USer not found for username: %s", username), User.class);
         }
 
-        return encoder.matches(password, user.getPassword());
+        return pwdEncoder.matches(password, user.getPassword());
     }
 
     @Override
@@ -190,6 +214,8 @@ public class UserLogicImpl implements UserLogic {
         if (user == null) {
             throw new DbEntryNotFoundException(String.format("USer not found for username %s", username), User.class);
         }
+
+        user.getClientIds().forEach(clientRegistrationService::removeClientDetails);
 
         userRepo.delete(user);
     }

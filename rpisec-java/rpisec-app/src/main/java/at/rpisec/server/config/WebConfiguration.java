@@ -31,7 +31,7 @@ public class WebConfiguration {
         return new Docket(DocumentationType.SWAGGER_2)
                 .pathMapping("/rpisec")
                 .select()
-                .paths(PathSelectors.ant("/rest/**"))
+                .paths(PathSelectors.ant("/api/**"))
                 .build();
     }
 }

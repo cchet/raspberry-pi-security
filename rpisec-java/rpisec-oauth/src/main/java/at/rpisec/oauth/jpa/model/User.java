@@ -92,6 +92,12 @@ public class User extends BaseEntity<Long> {
     @Column(name = "role")
     private Set<String> roles = new HashSet<>(0);
 
+    @NotNull
+    @ElementCollection(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_client", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
+    @Column(name = "client_id", length = 1024)
+    private Set<String> clientIds = new HashSet<>(0);
+
     @PrePersist
     public void prePersist() {
         createdAt = updatedAt = LocalDateTime.now();

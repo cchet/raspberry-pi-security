@@ -22,11 +22,11 @@ public class Client extends BaseEntity<String> {
 
     @NotNull
     @Id
-    @Column(name = "id")
+    @Column(name = "id", updatable = false)
     private String id;
 
     @NotNull
-    @Column(name = "user_id", length = 1024)
+    @Column(name = "user_id", length = 1024, updatable = false)
     private Long userId;
 
     @Column(name = "fcm_token", length = 1024)

@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -69,12 +70,13 @@ public class ClientRestController {
         log.info("FCM token successfully registered for client. client-clientId:{} / token:{}", uuid, fcmToken);
     }
 
-    @PutMapping(ClientRestConstants.REL_URI_REGISTER)
-    public void registerClient(final @RequestParam(ClientRestConstants.PARAM_UUID) String uuid) {
-        clientLogic.register(uuid);
+    @PostMapping(value = ClientRestConstants.REL_URI_REGISTER, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public void registerClient(final @RequestParam(ClientRestConstants.PARAM_UUID) String uuid,
+                               final @RequestParam(ClientRestConstants.PARAM_USER_ID) Long userId) {
+        clientLogic.register(uuid, userId);
     }
 
-    @DeleteMapping(ClientRestConstants.REL_URI_UNREGISTER)
+    @PostMapping(value = ClientRestConstants.REL_URI_UNREGISTER, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void unregisterClient(final @RequestParam(ClientRestConstants.PARAM_UUID) String uuid) {
         clientLogic.unregister(uuid);
     }

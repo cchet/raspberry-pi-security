@@ -7,9 +7,11 @@ import lombok.Value;
  * @since 04/21/17
  */
 @Value
-public final class UserCreatedEvent {
+public final class UserVerifiedEvent {
 
-    private String email;
+    private String clientId;
+    private String clientSecret;
+    private Long userId;
     private String username;
-    private String uuid;
+    private String email;
 }

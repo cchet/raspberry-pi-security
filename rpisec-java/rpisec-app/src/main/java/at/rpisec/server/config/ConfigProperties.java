@@ -1,6 +1,7 @@
 package at.rpisec.server.config;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ public class ConfigProperties {
     @ConfigurationProperties("firebase")
     @Getter
     @Setter
+    @NoArgsConstructor
     public static final class FirebaseProperties {
 
         private String databaseUrl;
@@ -32,6 +34,7 @@ public class ConfigProperties {
     @ConfigurationProperties("webjar")
     @Getter
     @Setter
+    @NoArgsConstructor
     public static final class WebjarProperties {
 
         private String jquery;
@@ -40,14 +43,17 @@ public class ConfigProperties {
     }
 
     @Component
-    @ConfigurationProperties("rpisec")
+    @ConfigurationProperties("rpisec-oauth")
     @Getter
     @Setter
-    public static final class RpisecProperties{
+    @NoArgsConstructor
+    public static final class OauthProperties {
 
+        private String baseUrl;
         private String resourceId;
         private String clientId;
         private String clientSecret;
         private String checkTokenEndpoint;
+        private String systemPassword;
     }
 }

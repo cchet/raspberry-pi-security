@@ -6,12 +6,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.database.FirebaseDatabase;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpHeaders;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
@@ -28,10 +31,11 @@ import java.util.Collections;
 @Configuration
 public class FirebaseConfiguration {
 
-    // See: https://firebase.google.com/docs/auth/admin/create-custom-tokens
+    @Autowired
+    private ConfigProperties.FirebaseProperties firebaseConfig;
 
     @Bean
-    FirebaseApp produceFirebaseApp(final ConfigProperties.FirebaseProperties firebaseConfig) throws IOException {
+    FirebaseApp produceFirebaseApp() throws IOException {
         final File file = Paths.get(firebaseConfig.getConfigFile()).toFile();
         if (!file.exists()) {
             throw new IllegalArgumentException("firebaseConfig: '" + firebaseConfig.getConfigFile() + "' does not exist");
@@ -59,12 +63,11 @@ public class FirebaseConfiguration {
     @Bean
     @Scope("prototype")
     @Qualifier("fcmRestTemplate")
-    RestTemplate produceFcmRestTemplate(final ConfigProperties.FirebaseProperties firebaseConfig,
-                                        final Logger log) {
+    RestTemplate produceFcmRestTemplate(final Logger log) {
         final RestTemplate fcmRestTemplate = new RestTemplate();
         fcmRestTemplate.getInterceptors().add((request, body, execution) -> {
-            request.getHeaders().put("Content-Type", Collections.singletonList("application/json"));
-            request.getHeaders().put("Authorization", Collections.singletonList(String.format("key=%s", firebaseConfig.getCloudMsgApiKey())));
+            request.getHeaders().put(HttpHeaders.CONTENT_TYPE, Collections.singletonList(MediaType.APPLICATION_JSON_VALUE));
+            request.getHeaders().put(HttpHeaders.AUTHORIZATION, Collections.singletonList(String.format("key=%s", firebaseConfig.getCloudMsgApiKey())));
             return execution.execute(request, body);
         });
         fcmRestTemplate.setErrorHandler(new ResponseErrorHandler() {
@@ -75,7 +78,7 @@ public class FirebaseConfiguration {
 
             @Override
             public void handleError(ClientHttpResponse response) throws IOException {
-                log.error("Could not notify client applications. \nHttpStatus: {}\nBody: ", response.getStatusCode(), response.getBody());
+                log.error("Could not notify client via FCM. HttpStatus: {} / Body: {}", response.getStatusCode(), response.getBody());
             }
         });
 
@@ -85,7 +88,7 @@ public class FirebaseConfiguration {
     @Bean
     @Scope("prototype")
     @Qualifier("fcmSendUrl")
-    String produceFcmSendUrl(final ConfigProperties.FirebaseProperties firebaseConfig) {
+    String produceFcmSendUrl() {
         return firebaseConfig.getCloudMessagingUrl();
     }
 }

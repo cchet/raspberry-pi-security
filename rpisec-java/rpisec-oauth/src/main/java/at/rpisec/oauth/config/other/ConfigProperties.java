@@ -1,6 +1,7 @@
 package at.rpisec.oauth.config.other;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ public class ConfigProperties {
     @ConfigurationProperties("webjar")
     @Getter
     @Setter
+    @NoArgsConstructor
     public static final class WebjarProperties {
 
         private String jquery;
@@ -31,10 +33,14 @@ public class ConfigProperties {
     @ConfigurationProperties("rpisec")
     @Getter
     @Setter
-    public static final class RpisecProperties{
+    @NoArgsConstructor
+    public static final class RpisecProperties {
 
+        private String baseUrl;
         private String resourceId;
         private String clientId;
         private String clientSecret;
+        private String systemUser;
+        private String systemPassword;
     }
 }

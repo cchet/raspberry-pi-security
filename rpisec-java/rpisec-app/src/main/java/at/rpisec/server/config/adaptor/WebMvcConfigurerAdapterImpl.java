@@ -46,6 +46,12 @@ public class WebMvcConfigurerAdapterImpl extends WebMvcConfigurerAdapter {
                 .setCacheControl(CacheControl.empty().cachePublic())
                 .resourceChain(false)
                 .addResolver(createResourceResolver());
+
+        registry.addResourceHandler("/js/**")
+                .addResourceLocations("classpath:/js/")
+                .setCacheControl(CacheControl.empty().cachePublic())
+                .resourceChain(false)
+                .addResolver(createResourceResolver());
     }
 
     @Bean

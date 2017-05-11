@@ -6,10 +6,9 @@ import at.rpisec.server.jpa.model.Client;
 import at.rpisec.server.jpa.repositories.ClientRepository;
 import at.rpisec.server.logic.api.ClientLogic;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
-import ma.glasnost.orika.MapperFacade;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,15 +25,12 @@ import java.util.Objects;
 public class ClientLogicImpl implements ClientLogic {
 
     @Autowired
-    private PasswordEncoder encoder;
-    @Autowired
     private ClientRepository clientRepo;
     @Autowired
-    private MapperFacade mapper;
-
+    private Logger log;
 
     @Override
-    public void checkIfClientExists(String uuid) {
+    public void checkIfClientExists(final String uuid) {
         Objects.requireNonNull(uuid, "Cannot check if exists with null clientId");
 
         final Client client = clientRepo.findOne(uuid);
@@ -44,7 +40,9 @@ public class ClientLogicImpl implements ClientLogic {
     }
 
     @Override
-    public String register(final String uuid) {
+    @Secured(SecurityConstants.ROLE_SYSTEM)
+    public void register(final String uuid,
+                         final Long userId) {
         Client client = clientRepo.findOne(uuid);
 
         if (client != null) {
@@ -53,12 +51,14 @@ public class ClientLogicImpl implements ClientLogic {
 
         client = new Client();
         client.setId(uuid);
+        client.setUserId(userId);
 
-        return clientRepo.save(client).getId();
+        clientRepo.save(client);
     }
 
     @Override
-    public void unregister(String uuid) {
+    @Secured(SecurityConstants.ROLE_SYSTEM)
+    public void unregister(final String uuid) {
         Client client = clientRepo.findOne(uuid);
 
         if (client == null) {
@@ -69,8 +69,8 @@ public class ClientLogicImpl implements ClientLogic {
     }
 
     @Override
-    public void registerFcmToken(String token,
-                                 String uuid) {
+    public void registerFcmToken(final String token,
+                                 final String uuid) {
         Client client = clientRepo.findOne(uuid);
 
         if (client == null) {

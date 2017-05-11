@@ -9,21 +9,25 @@ package at.rpisec.server.shared.rest.constants;
 public enum ResponseErrorCode {
 
     /**
-     * Generic error if not concrete error has been handled
+     * Db access error which indicates an error with the communication with the database and or services.
      */
     DB_ACCESS_ERROR,
     /**
-     * Error if the bean validation failed on the submitted json model
+     * Auth error which indicates a error with the authentication server
+     */
+    AUTH_ERROR,
+    /**
+     * Error if the user could not be found
+     */
+    USER_NOT_FOUND,
+    /**
+     * Validation error which indicates an error with the request data
      */
     VALIDATION_ERROR,
     /**
-     * Error if the client has not been found on the database
+     * Error which tells that the client could nto be found
      */
     CLIENT_NOT_FOUND,
-    /**
-     * Error if the user could not be found on the database
-     */
-    USER_NOT_FOUND,
     /**
      * Error if the client has been already registered to the user
      */

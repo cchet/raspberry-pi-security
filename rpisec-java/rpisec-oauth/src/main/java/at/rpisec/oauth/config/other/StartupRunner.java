@@ -1,14 +1,12 @@
 package at.rpisec.oauth.config.other;
 
 import at.rpisec.oauth.logic.api.UserLogic;
-import at.rpisec.server.shared.rest.constants.OauthConstants;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import at.rpisec.server.shared.rest.model.UserDto;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 
@@ -51,7 +49,6 @@ public class StartupRunner implements CommandLineRunner {
 
             userLogic.create(admin);
 
-
             final String secret;
             final String clientId;
 
@@ -64,14 +61,14 @@ public class StartupRunner implements CommandLineRunner {
             }
 
             final BaseClientDetails client = new BaseClientDetails(clientId,
-                                                               rpisecProperties.getResourceId(),
-                                                               "read,write",
-                                                               "password,authorization_code",
-                                                               String.format("%s,%s", SecurityConstants.ADMIN, SecurityConstants.CLIENT));
+                                                                   rpisecProperties.getResourceId(),
+                                                                   "read,write",
+                                                                   "password,authorization_code",
+                                                                   String.format("%s,%s", SecurityConstants.ADMIN, SecurityConstants.CLIENT));
             client.setAccessTokenValiditySeconds(10);
-            client.setRefreshTokenValiditySeconds(60*60*24);
+            client.setRefreshTokenValiditySeconds(60 * 60 * 24);
+            client.setClientSecret(passwordEncoder.encode(secret));
             clientDetailsService.addClientDetails(client);
-            clientDetailsService.updateClientSecret(clientId, passwordEncoder.encode(secret));
 
             logger.info("Oauth client created for user admin. client-id={} / secret={}", client.getClientId(), secret);
         }
