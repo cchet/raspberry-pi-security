@@ -13,13 +13,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
 import javax.sql.DataSource;
+import java.util.UUID;
 
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
@@ -69,5 +71,10 @@ public class SecurityConfiguration {
     @Bean
     JdbcClientDetailsService produceClientRegistrationService() {
         return new JdbcClientDetailsService(dataSource);
+    }
+
+    @Bean
+    AuthenticationKeyGenerator produceAuthenticationKeyGenerator() {
+        return (auth) -> UUID.randomUUID().toString();
     }
 }

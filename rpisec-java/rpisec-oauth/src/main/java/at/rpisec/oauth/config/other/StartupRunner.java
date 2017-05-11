@@ -27,6 +27,8 @@ public class StartupRunner implements CommandLineRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
+    private ConfigProperties.RpisecProperties rpisecProperties;
+    @Autowired
     private Logger logger;
 
     private final boolean productive;
@@ -61,11 +63,13 @@ public class StartupRunner implements CommandLineRunner {
                 clientId = UUID.randomUUID().toString();
             }
 
-            final ClientDetails client = new BaseClientDetails(clientId,
-                                                               OauthConstants.RESOURCE_SERVER_ID,
+            final BaseClientDetails client = new BaseClientDetails(clientId,
+                                                               rpisecProperties.getResourceId(),
                                                                "read,write",
                                                                "password,authorization_code",
                                                                String.format("%s,%s", SecurityConstants.ADMIN, SecurityConstants.CLIENT));
+            client.setAccessTokenValiditySeconds(10);
+            client.setRefreshTokenValiditySeconds(60*60*24);
             clientDetailsService.addClientDetails(client);
             clientDetailsService.updateClientSecret(clientId, passwordEncoder.encode(secret));
 

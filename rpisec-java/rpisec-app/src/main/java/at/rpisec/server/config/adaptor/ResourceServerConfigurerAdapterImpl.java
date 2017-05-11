@@ -32,7 +32,8 @@ public class ResourceServerConfigurerAdapterImpl extends ResourceServerConfigure
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
             .antMatchers(String.format("%s/**", ClientRestConstants.BASE_URI))
-            .access(String.format("#oauth2.clientHasRole('%s') and #oauth2.isClient() and #oauth2.hasScope('read')", SecurityConstants.ROLE_CLIENT))
+            // #oauth2.clientHasRole('%s') and #oauth2.isClient() and
+            .access(String.format("#oauth2.hasAnyScope('%s','%s') and hasRole('%s')", SecurityConstants.SCOPE_READ, SecurityConstants.SCOPE_WRITE, SecurityConstants.CLIENT))
             .and()
             .csrf()
             .disable()
