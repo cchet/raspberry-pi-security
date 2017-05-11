@@ -2,6 +2,7 @@ package at.rpisec.oauth.config.other;
 
 import at.rpisec.oauth.logic.api.UserLogic;
 import at.rpisec.server.shared.rest.constants.OauthConstants;
+import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import at.rpisec.server.shared.rest.model.UserDto;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,13 @@ public class StartupRunner implements CommandLineRunner {
     @Autowired
     private Logger logger;
 
+    private final boolean productive;
+
     public static final String ADMIN_USERNAME = "admin";
+
+    public StartupRunner(boolean productive) {
+        this.productive = productive;
+    }
 
     @Override
     public void run(String... args) throws Exception {
@@ -42,13 +49,23 @@ public class StartupRunner implements CommandLineRunner {
 
             userLogic.create(admin);
 
-            final String secret = UUID.randomUUID().toString();
-            final String clientId = ("client-" + admin.getUsername());
+
+            final String secret;
+            final String clientId;
+
+            if (productive) {
+                secret = UUID.randomUUID().toString();
+                clientId = ("client-" + admin.getUsername());
+            } else {
+                secret = UUID.randomUUID().toString();
+                clientId = UUID.randomUUID().toString();
+            }
+
             final ClientDetails client = new BaseClientDetails(clientId,
                                                                OauthConstants.RESOURCE_SERVER_ID,
                                                                "read,write",
                                                                "password,authorization_code",
-                                                               "ROLE_ADMIN,ROLE_CLIENT");
+                                                               String.format("%s,%s", SecurityConstants.ADMIN, SecurityConstants.CLIENT));
             clientDetailsService.addClientDetails(client);
             clientDetailsService.updateClientSecret(clientId, passwordEncoder.encode(secret));
 

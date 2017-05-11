@@ -1,11 +1,11 @@
 package at.rpisec.server.logic.impl;
 
-import at.rpisec.server.config.SecurityProperties;
 import at.rpisec.server.exception.DbEntryAlreadyExistsException;
 import at.rpisec.server.exception.DbEntryNotFoundException;
 import at.rpisec.server.jpa.model.Client;
 import at.rpisec.server.jpa.repositories.ClientRepository;
 import at.rpisec.server.logic.api.ClientLogic;
+import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -22,7 +22,7 @@ import java.util.Objects;
  */
 @Service
 @Transactional(isolation = Isolation.READ_COMMITTED)
-@Secured(SecurityProperties.ROLE_CLIENT)
+@Secured(SecurityConstants.ROLE_CLIENT)
 public class ClientLogicImpl implements ClientLogic {
 
     @Autowired
@@ -35,31 +35,31 @@ public class ClientLogicImpl implements ClientLogic {
 
     @Override
     public void checkIfClientExists(String uuid) {
-        Objects.requireNonNull(uuid, "Cannot check if exists with null uuid");
+        Objects.requireNonNull(uuid, "Cannot check if exists with null clientId");
 
-        final Client client = clientRepo.findByUuid(uuid);
+        final Client client = clientRepo.findOne(uuid);
         if (client == null) {
-            throw new DbEntryNotFoundException(String.format("Client not found for uuid=%s", uuid), Client.class);
+            throw new DbEntryNotFoundException(String.format("Client not found for clientId=%s", uuid), Client.class);
         }
     }
 
     @Override
-    public Long register(final String uuid) {
-        Client client = clientRepo.findByUuid(uuid);
+    public String register(final String uuid) {
+        Client client = clientRepo.findOne(uuid);
 
         if (client != null) {
             throw new DbEntryAlreadyExistsException("Client already exists exception", Client.class);
         }
 
         client = new Client();
-        client.setUuid(uuid);
+        client.setId(uuid);
 
         return clientRepo.save(client).getId();
     }
 
     @Override
     public void unregister(String uuid) {
-        Client client = clientRepo.findByUuid(uuid);
+        Client client = clientRepo.findOne(uuid);
 
         if (client == null) {
             throw new DbEntryNotFoundException("Client entry not found", Client.class);
@@ -71,7 +71,7 @@ public class ClientLogicImpl implements ClientLogic {
     @Override
     public void registerFcmToken(String token,
                                  String uuid) {
-        Client client = clientRepo.findByUuid(uuid);
+        Client client = clientRepo.findOne(uuid);
 
         if (client == null) {
             throw new DbEntryNotFoundException("Client entry not found", Client.class);

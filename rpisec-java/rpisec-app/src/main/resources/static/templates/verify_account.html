@@ -27,7 +27,7 @@
                 <label th:text="#{label.confirmation}" for="confirm"/>
                 <input id="confirm" type="password" class="form-control" th:field="*{confirmPassword}"/>
             </div>
-            <input type="hidden" th:field="*{uuid}"/>
+            <input type="hidden" th:field="*{clientId}"/>
             <button type="submit" class="btn btn-primary" th:text="#{action.submit}"/>
         </form>
     </div>

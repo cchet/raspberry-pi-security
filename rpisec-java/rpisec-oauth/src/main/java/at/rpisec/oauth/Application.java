@@ -1,7 +1,6 @@
 package at.rpisec.oauth;
 
 import at.rpisec.oauth.config.other.ConfigurableMapperImpl;
-import at.rpisec.oauth.config.other.StartupRunner;
 import at.rpisec.oauth.jpa.model.User;
 import at.rpisec.oauth.jpa.repositories.UserRepository;
 import ma.glasnost.orika.MapperFacade;
@@ -9,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -54,11 +52,6 @@ public class Application {
     @Scope("prototype")
     Logger logger(InjectionPoint injectionPoint) {
         return LoggerFactory.getLogger(injectionPoint.getMember().getDeclaringClass());
-    }
-
-    @Bean
-    CommandLineRunner produceStartupRunner() {
-        return new StartupRunner();
     }
 
     @Bean

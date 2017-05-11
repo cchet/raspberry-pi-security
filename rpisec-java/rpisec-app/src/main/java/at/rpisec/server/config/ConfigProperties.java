@@ -18,36 +18,36 @@ public class ConfigProperties {
 
     @Component
     @ConfigurationProperties("firebase")
+    @Getter
+    @Setter
     public static final class FirebaseProperties {
 
-        @Getter
-        @Setter
         private String databaseUrl;
-
-        @Getter
-        @Setter
         private String configFile;
-
-        @Getter
-        @Setter
         private String cloudMsgApiKey;
-
-        @Getter
-        @Setter
         private String cloudMessagingUrl;
     }
 
     @Component
     @ConfigurationProperties("webjar")
+    @Getter
+    @Setter
     public static final class WebjarProperties {
 
-        @Getter
-        @Setter
         private String jquery;
-
-        @Getter
-        @Setter
         private String bootstrap;
 
+    }
+
+    @Component
+    @ConfigurationProperties("rpisec")
+    @Getter
+    @Setter
+    public static final class RpisecProperties{
+
+        private String resourceId;
+        private String clientId;
+        private String clientSecret;
+        private String checkTokenEndpoint;
     }
 }

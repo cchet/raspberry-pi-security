@@ -8,7 +8,7 @@ public interface ClientLogic {
 
     void checkIfClientExists(String uuid);
 
-    Long register(String uuid);
+    String register(String uuid);
 
     void unregister(String uuid);
 

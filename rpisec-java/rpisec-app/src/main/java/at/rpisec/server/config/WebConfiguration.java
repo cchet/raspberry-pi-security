@@ -1,5 +1,6 @@
 package at.rpisec.server.config;
 
+import at.rpisec.server.config.adaptor.WebMvcConfigurerAdapterImpl;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

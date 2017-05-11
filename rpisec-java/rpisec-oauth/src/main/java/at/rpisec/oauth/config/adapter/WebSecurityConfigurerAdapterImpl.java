@@ -1,6 +1,6 @@
 package at.rpisec.oauth.config.adapter;
 
-import at.rpisec.oauth.config.other.SecurityProperties;
+import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -37,7 +37,7 @@ public class WebSecurityConfigurerAdapterImpl extends WebSecurityConfigurerAdapt
             .httpBasic()
             .and()
             .authorizeRequests()
-            .antMatchers("/api/user/**").hasAnyRole(SecurityProperties.ADMIN)
+            .antMatchers("/api/user/**").hasAnyRole(SecurityConstants.ADMIN)
             .and()
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

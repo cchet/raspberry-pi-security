@@ -23,8 +23,18 @@ public class ConfigProperties {
     public static final class WebjarProperties {
 
         private String jquery;
-
         private String bootstrap;
 
+    }
+
+    @Component
+    @ConfigurationProperties("rpisec")
+    @Getter
+    @Setter
+    public static final class RpisecProperties{
+
+        private String resourceId;
+        private String clientId;
+        private String clientSecret;
     }
 }

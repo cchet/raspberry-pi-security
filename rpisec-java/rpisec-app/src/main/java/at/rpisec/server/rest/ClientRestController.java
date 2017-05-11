@@ -51,7 +51,7 @@ public class ClientRestController {
 
         firebaseAuth.createCustomToken(UUID.randomUUID().toString())
                     .addOnFailureListener((exception) -> {
-                        log.error("Token creation failed for client with uuid '{}'", uuid, exception);
+                        log.error("Token creation failed for client with clientId '{}'", uuid, exception);
                         asyncResult.setResult(new TokenResponse(LocalDateTime.now().format(DateTimeFormatter.ofPattern(ClientRestConstants.PATTERN_DATE_TIME)), "?", exception.getClass().getName()));
                     })
                     .addOnSuccessListener((token) -> {
@@ -64,10 +64,9 @@ public class ClientRestController {
 
     @PutMapping(ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
     public void registerFCMToken(final @RequestParam(ClientRestConstants.PARAM_UUID) String uuid,
-                                 final @RequestParam(ClientRestConstants.PARAM_FCM_TOKEN) String fcmToken,
-                                 final Authentication auth) {
+                                 final @RequestParam(ClientRestConstants.PARAM_FCM_TOKEN) String fcmToken) {
         clientLogic.registerFcmToken(fcmToken, uuid);
-        log.info("FCM token successfully registered for client. client-uuid:{} / token:{}", uuid, fcmToken);
+        log.info("FCM token successfully registered for client. client-clientId:{} / token:{}", uuid, fcmToken);
     }
 
     @PutMapping(ClientRestConstants.REL_URI_REGISTER)

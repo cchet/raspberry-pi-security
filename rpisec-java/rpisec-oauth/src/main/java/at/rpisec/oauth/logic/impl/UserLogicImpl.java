@@ -1,11 +1,11 @@
 package at.rpisec.oauth.logic.impl;
 
-import at.rpisec.oauth.config.other.SecurityProperties;
 import at.rpisec.oauth.exception.DbEntryNotFoundException;
 import at.rpisec.oauth.jpa.model.User;
 import at.rpisec.oauth.jpa.repositories.UserRepository;
 import at.rpisec.oauth.logic.api.UserLogic;
 import at.rpisec.oauth.logic.event.UserCreatedEvent;
+import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import at.rpisec.server.shared.rest.model.UserDto;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional(isolation = Isolation.READ_COMMITTED)
-@Secured(SecurityProperties.ROLE_ADMIN)
+@Secured(SecurityConstants.ROLE_ADMIN)
 public class UserLogicImpl implements UserLogic {
 
     @Autowired
@@ -136,11 +136,11 @@ public class UserLogicImpl implements UserLogic {
         User user = mapper.map(model, User.class);
         user.setPassword(UUID.randomUUID().toString());
         user.setVerifyUUID(UUID.randomUUID().toString());
-        user.setPasswordValidityDate(LocalDateTime.now().plusMonths(SecurityProperties.PASSWWORD_VALIDITY_DURATION_MONTHS));
+        user.setPasswordValidityDate(LocalDateTime.now().plusMonths(SecurityConstants.PASSWORD_VALIDITY_DURATION_MONTHS));
         if (user.getAdmin()) {
-            user.getRoles().add(SecurityProperties.ROLE_ADMIN);
+            user.getRoles().add(SecurityConstants.ROLE_ADMIN);
         }
-        user.getRoles().add(SecurityProperties.ROLE_CLIENT);
+        user.getRoles().add(SecurityConstants.ROLE_CLIENT);
 
         user = userRepo.save(user);
 
@@ -166,7 +166,7 @@ public class UserLogicImpl implements UserLogic {
         return user.getId();
     }
 
-    @Secured(SecurityProperties.ROLE_CLIENT)
+    @Secured(SecurityConstants.ROLE_CLIENT)
     @Override
     public void update(final UserDto model,
                        final String username) {

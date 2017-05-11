@@ -14,50 +14,39 @@ import java.time.LocalDateTime;
  * @since 04/19/17
  */
 @Entity
-@Table(name = "CLIENT", uniqueConstraints = {
-        @UniqueConstraint(name = "uq_client_uuid_user_id", columnNames = {"UUID", "USER_ID"})
-})
+@Table(name = "client")
+@Getter
+@Setter
 @NoArgsConstructor
-public class Client extends BaseEntity<Long> {
-
-    @Id
-    @Column(name = "ID")
-    @SequenceGenerator(name = "client_id_seq_generator", sequenceName = "client_id_sequence", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(generator = "client_id_seq_generator", strategy = GenerationType.SEQUENCE)
-    @Getter
-    @Setter
-    private Long id;
+public class Client extends BaseEntity<String> {
 
     @NotNull
-    @Column(name = "UUID")
-    @Getter
-    @Setter
-    private String uuid;
+    @Id
+    @Column(name = "id")
+    private String id;
 
-    @Column(name = "FIREBASE_TOKEN", length = 1024)
-    @Getter
-    @Setter
+    @NotNull
+    @Column(name = "user_id", length = 1024)
+    private Long userId;
+
+    @Column(name = "fcm_token", length = 1024)
     private String fcmToken;
 
     @NotNull
-    @Column(name = "CREATED", updatable = false)
-    @Getter
-    @Setter
-    private LocalDateTime createdDate;
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
     @NotNull
-    @Column(name = "UPDATED")
-    @Getter
-    @Setter
-    private LocalDateTime updatedDate;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @PrePersist
     public void prePersist() {
-        createdDate = updatedDate = LocalDateTime.now();
+        createdAt = updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        updatedDate = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 }

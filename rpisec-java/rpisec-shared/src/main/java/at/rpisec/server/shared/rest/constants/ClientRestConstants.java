@@ -44,7 +44,7 @@ public class ClientRestConstants {
     /**
      * URI for the 'POST' request to update the client user related profile.<br>
      * The request body must contain a valid instance of the model {@link at.rpisec.server.shared.rest.model.UserDto}<br>
-     * The path must have the client uuid as a suffix '/update/{uuid}'
+     * The path must have the client uuid as a suffix '/update/{clientId}'
      */
     public static final String URI_PROFILE = BASE_URI + REL_URI_PROFILE;
 
@@ -52,7 +52,7 @@ public class ClientRestConstants {
      * URI for the 'POST' request to update the client user password.<br>
      * Requires the request param {@link ClientRestConstants#PARAM_UUID}
      * Requires the request param {@link ClientRestConstants#PARAM_PASSWORD}<br>
-     * The path must have the client uuid as a suffix '/update/{uuid}'
+     * The path must have the client uuid as a suffix '/update/{clientId}'
      */
     public static final String URI_PASSWORD = BASE_URI + REL_URI_PASSWORD;
 

@@ -16,7 +16,9 @@ import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -35,6 +37,8 @@ import java.util.Locale;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableSwagger2
 @EntityScan(basePackageClasses = Client.class)
+@EnableScheduling
+@EnableResourceServer
 @Import({
         BeanValidatorPluginsConfiguration.class
 })

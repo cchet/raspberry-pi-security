@@ -12,9 +12,7 @@ import java.util.List;
  * @since 04/20/17
  */
 @Repository
-public interface ClientRepository extends JpaRepository<Client, Long> {
-
-    Client findByUuid(String uuid);
+public interface ClientRepository extends JpaRepository<Client, String> {
 
     List<ClientFirebaseToken> findDistinctByFcmTokenIsNotNull();
 }
