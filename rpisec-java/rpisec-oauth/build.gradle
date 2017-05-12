@@ -49,6 +49,8 @@ dependencies {
     compile('org.webjars:bootstrap')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('org.junit.platform:junit-platform-engine')
+    testCompile('com.spotify:docker-client')
 
     compile project(':rpisec-shared')
 }

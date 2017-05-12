@@ -4,24 +4,29 @@ import at.rpisec.oauth.config.SecurityConfiguration;
 import at.rpisec.oauth.exception.DbEntryNotFoundException;
 import at.rpisec.oauth.jpa.model.User;
 import at.rpisec.oauth.jpa.repositories.UserRepository;
+import at.rpisec.oauth.logic.api.ClientDetailsFactory;
 import at.rpisec.oauth.logic.api.UserLogic;
-import at.rpisec.oauth.logic.event.UserVerifiedEvent;
 import at.rpisec.oauth.logic.event.UserCreatedEvent;
+import at.rpisec.oauth.logic.event.UserVerifiedEvent;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import at.rpisec.server.shared.rest.model.UserDto;
 import ma.glasnost.orika.MapperFacade;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientRegistrationService;
-import org.springframework.security.oauth2.provider.client.BaseClientDetails;
+import org.springframework.security.oauth2.provider.NoSuchClientException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -48,7 +53,12 @@ public class UserLogicImpl implements UserLogic {
     @Autowired
     private ApplicationEventPublisher publisher;
     @Autowired
-    public MapperFacade mapper;
+    private MapperFacade mapper;
+    @Autowired
+    private ApplicationContext appCtx;
+
+    @Autowired
+    private Logger log;
 
     @Override
     public Long verifyAccount(String uuid,
@@ -60,21 +70,21 @@ public class UserLogicImpl implements UserLogic {
             throw new DbEntryNotFoundException(String.format("User not found by uuid: '%s' during verify", uuid), User.class);
         }
 
+        final String clientId = UUID.randomUUID().toString();
+        final String secret = UUID.randomUUID().toString();
+
         user.setVerifyUUID(null);
         user.setVerifiedAt(LocalDateTime.now());
         user.setPassword(pwdEncoder.encode(password));
+        user.getClientIds().add(clientId);
+        userRepo.save(user);
 
-        userRepo.saveAndFlush(user);
-
-        final String secret = UUID.randomUUID().toString();
-        final BaseClientDetails client = new BaseClientDetails(UUID.randomUUID().toString(),
-                                                               resourceId,
-                                                               "read,write",
-                                                               "password,authorization_code",
-                                                               SecurityConstants.CLIENT);
-        client.setAccessTokenValiditySeconds(SecurityConstants.TOKEN_VALIDITY_DURATION_SECONDS);
-        client.setRefreshTokenValiditySeconds(SecurityConstants.REFRESH_TOKEN_VALIDITY_DURATION_SECONDS);
-        client.setClientSecret(pwdEncoder.encode(secret));
+        final ClientDetails client = ClientDetailsFactory.createMobileClientDetails(clientId,
+                                                                                    pwdEncoder.encode(secret),
+                                                                                    appCtx.getApplicationName(),
+                                                                                    user.getUsername(),
+                                                                                    "Default Device",
+                                                                                    Collections.singletonList(resourceId));
 
         clientRegistrationService.addClientDetails(client);
 
@@ -215,7 +225,14 @@ public class UserLogicImpl implements UserLogic {
             throw new DbEntryNotFoundException(String.format("USer not found for username %s", username), User.class);
         }
 
-        user.getClientIds().forEach(clientRegistrationService::removeClientDetails);
+        for (final String clientId : user.getClientIds()) {
+            try {
+                clientRegistrationService.removeClientDetails(clientId);
+            } catch (NoSuchClientException e) {
+                log.warn("Client with client_id={} of user={} has alredy been deleted", clientId, user.getUsername());
+                // DO not fail on already deleted client
+            }
+        }
 
         userRepo.delete(user);
     }
