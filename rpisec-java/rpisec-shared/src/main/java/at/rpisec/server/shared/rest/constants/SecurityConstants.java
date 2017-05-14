@@ -21,6 +21,6 @@ public class SecurityConstants {
     public static final String SCOPE_TRUST = "trust";
 
     public static long PASSWORD_VALIDITY_DURATION_MONTHS = 3;
-    public static int TOKEN_VALIDITY_DURATION_SECONDS = 10;
+    public static int TOKEN_VALIDITY_DURATION_SECONDS = 60;
     public static int REFRESH_TOKEN_VALIDITY_DURATION_SECONDS = 60 * 60 * 24;
 }

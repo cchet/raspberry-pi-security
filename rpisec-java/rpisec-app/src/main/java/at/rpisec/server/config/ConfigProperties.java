@@ -54,6 +54,7 @@ public class ConfigProperties {
         private String clientId;
         private String clientSecret;
         private String checkTokenEndpoint;
+        private String systemUser;
         private String systemPassword;
     }
 }

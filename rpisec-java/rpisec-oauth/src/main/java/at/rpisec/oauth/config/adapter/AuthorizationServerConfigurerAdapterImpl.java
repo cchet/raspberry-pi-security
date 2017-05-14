@@ -11,8 +11,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.TokenGranter;
-import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
 import javax.sql.DataSource;
@@ -42,7 +42,7 @@ public class AuthorizationServerConfigurerAdapterImpl extends AuthorizationServe
     @Autowired
     private DataSource dataSource;
     @Autowired
-    private ConfigProperties.RpisecProperties rpisecProperties;
+    private JdbcClientDetailsService clientDetailsService;
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -63,6 +63,6 @@ public class AuthorizationServerConfigurerAdapterImpl extends AuthorizationServe
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.withClientDetails(new JdbcClientDetailsService(dataSource));
+        clients.withClientDetails(clientDetailsService);
     }
 }

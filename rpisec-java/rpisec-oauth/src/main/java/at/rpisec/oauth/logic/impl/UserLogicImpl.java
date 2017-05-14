@@ -80,7 +80,7 @@ public class UserLogicImpl implements UserLogic {
         userRepo.save(user);
 
         final ClientDetails client = ClientDetailsFactory.createMobileClientDetails(clientId,
-                                                                                    pwdEncoder.encode(secret),
+                                                                                    secret,
                                                                                     appCtx.getApplicationName(),
                                                                                     user.getUsername(),
                                                                                     "Default Device",

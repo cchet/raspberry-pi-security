@@ -55,7 +55,7 @@ public class ClientRestController {
 
         } catch (NoSuchClientException e) {
             log.warn("Client with client_id={} for user={} not found", clientId, auth.getPrincipal().toString());
-            asyncResult.setResult(new TokenResponse(DateTimeFormatter.ofPattern(ClientRestConstants.PATTERN_DATE_TIME).format(LocalDateTime.now()), null, "Client not found"));
+            asyncResult.setResult(new TokenResponse(DateTimeFormatter.ofPattern(ClientRestConstants.PATTERN_DATE_TIME).format(LocalDateTime.now()), "invalid", "Client not found"));
         }
 
         return asyncResult;
