@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
+import org.springframework.security.oauth2.provider.ClientRegistrationService;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices;
@@ -88,11 +89,6 @@ public class SecurityConfiguration {
     @Bean
     TokenStore createTokenStore() {
         return new JdbcTokenStore(dataSource);
-    }
-
-    @Bean
-    JdbcClientDetailsService produceClientRegistrationService() {
-        return new JdbcClientDetailsService(dataSource);
     }
 
     @Bean

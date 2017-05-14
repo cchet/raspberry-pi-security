@@ -46,7 +46,6 @@ public interface UserLogic {
     boolean isPasswordValid(String username,
                             String password);
 
-
     UserDto byId(Long id);
 
     UserDto byUsername(String username);

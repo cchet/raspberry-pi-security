@@ -4,20 +4,15 @@ import at.rpisec.server.Application;
 import at.rpisec.server.logic.api.ClientLogic;
 import at.rpisec.server.logic.api.IncidentLogic;
 import at.rpisec.server.shared.rest.constants.ClientRestConstants;
-import at.rpisec.server.shared.rest.model.TokenResponse;
-import com.google.firebase.auth.FirebaseAuth;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -27,8 +22,6 @@ import java.util.UUID;
 @RequestMapping(ClientRestConstants.BASE_URI)
 public class ClientRestController {
 
-    @Autowired
-    private FirebaseAuth firebaseAuth;
     @Autowired
     private ClientLogic clientLogic;
     @Autowired
@@ -44,40 +37,10 @@ public class ClientRestController {
     }
     //endregion
 
-    @GetMapping(ClientRestConstants.REL_URI_TOKEN)
-    public DeferredResult<TokenResponse> token(final @RequestParam(ClientRestConstants.PARAM_UUID) String uuid,
-                                               final Authentication auth) {
-        final DeferredResult<TokenResponse> asyncResult = new DeferredResult<>();
-        clientLogic.checkIfClientExists(uuid);
-
-        firebaseAuth.createCustomToken(UUID.randomUUID().toString())
-                    .addOnFailureListener((exception) -> {
-                        log.error("Token creation failed for client with clientId '{}'", uuid, exception);
-                        asyncResult.setResult(new TokenResponse(LocalDateTime.now().format(DateTimeFormatter.ofPattern(ClientRestConstants.PATTERN_DATE_TIME)), "?", exception.getClass().getName()));
-                    })
-                    .addOnSuccessListener((token) -> {
-                        log.info("Token successfully created. token: {} / username: {} / client: {}", token, auth.getPrincipal().toString(), uuid);
-                        asyncResult.setResult(new TokenResponse(LocalDateTime.now().format(DateTimeFormatter.ofPattern(ClientRestConstants.PATTERN_DATE_TIME)), token, null));
-                    });
-
-        return asyncResult;
-    }
-
     @PutMapping(ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
-    public void registerFCMToken(final @RequestParam(ClientRestConstants.PARAM_UUID) String uuid,
+    public void registerFCMToken(final @RequestParam(ClientRestConstants.PARAM_CLIENT_ID) String uuid,
                                  final @RequestParam(ClientRestConstants.PARAM_FCM_TOKEN) String fcmToken) {
         clientLogic.registerFcmToken(fcmToken, uuid);
         log.info("FCM token successfully registered for client. client-clientId:{} / token:{}", uuid, fcmToken);
-    }
-
-    @PostMapping(value = ClientRestConstants.REL_URI_REGISTER, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void registerClient(final @RequestParam(ClientRestConstants.PARAM_UUID) String uuid,
-                               final @RequestParam(ClientRestConstants.PARAM_USER_ID) Long userId) {
-        clientLogic.register(uuid, userId);
-    }
-
-    @PostMapping(value = ClientRestConstants.REL_URI_UNREGISTER, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void unregisterClient(final @RequestParam(ClientRestConstants.PARAM_UUID) String uuid) {
-        clientLogic.unregister(uuid);
     }
 }

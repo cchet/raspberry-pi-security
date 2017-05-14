@@ -47,7 +47,7 @@ public class ClientEventObserver {
     void observerAfterCommitClientRemovedEvent(final ClientRemovedEvent event) {
 
         final Map<String, List<Object>> data = new LinkedMultiValueMap<>();
-        data.put(ClientRestConstants.PARAM_UUID, Collections.singletonList(event.getClientId()));
+        data.put(ClientRestConstants.PARAM_CLIENT_ID, Collections.singletonList(event.getClientId()));
         final HttpEntity<Map<String, List<Object>>> entity = new HttpEntity<>(data, new HttpHeaders() {{
             put(HttpHeaders.CONTENT_TYPE, Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
         }});

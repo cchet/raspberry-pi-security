@@ -5,8 +5,8 @@ import at.rpisec.oauth.exception.DbEntryNotFoundException;
 import at.rpisec.oauth.jpa.model.User;
 import at.rpisec.oauth.jpa.repositories.UserRepository;
 import at.rpisec.oauth.logic.api.UserLogic;
-import at.rpisec.oauth.logic.event.UserVerifiedEvent;
 import at.rpisec.oauth.logic.event.UserCreatedEvent;
+import at.rpisec.oauth.logic.event.UserVerifiedEvent;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import at.rpisec.server.shared.rest.model.UserDto;
 import ma.glasnost.orika.MapperFacade;
@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;

@@ -47,6 +47,7 @@ dependencies {
     compile("ma.glasnost.orika:orika-core")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     compile('org.webjars:bootstrap')
+    compile("com.google.firebase:firebase-admin")
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
 

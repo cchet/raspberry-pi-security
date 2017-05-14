@@ -84,7 +84,7 @@ public class UserEventObserver {
     void observerBeforeCommitUserVerifiedEvent(final UserVerifiedEvent event) {
 
         final Map<String, List<Object>> data = new LinkedMultiValueMap<>();
-        data.put(ClientRestConstants.PARAM_UUID, Collections.singletonList(event.getClientId()));
+        data.put(ClientRestConstants.PARAM_CLIENT_ID, Collections.singletonList(event.getClientId()));
         data.put(ClientRestConstants.PARAM_USER_ID, Collections.singletonList(event.getUserId().toString()));
         final HttpEntity<Map<String, List<Object>>> entity = new HttpEntity<>(data, new HttpHeaders() {{
             put(HttpHeaders.CONTENT_TYPE, Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED_VALUE));

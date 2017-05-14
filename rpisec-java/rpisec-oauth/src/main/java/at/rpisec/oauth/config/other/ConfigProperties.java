@@ -18,6 +18,19 @@ public class ConfigProperties {
     }
 
     @Component
+    @ConfigurationProperties("firebase")
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static final class FirebaseProperties {
+
+        private String databaseUrl;
+        private String configFile;
+        private String cloudMsgApiKey;
+        private String cloudMessagingUrl;
+    }
+
+    @Component
     @ConfigurationProperties("webjar")
     @Getter
     @Setter

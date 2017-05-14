@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
 import javax.sql.DataSource;
@@ -52,13 +53,6 @@ public class AuthorizationServerConfigurerAdapterImpl extends AuthorizationServe
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.jdbc(dataSource)
-               .passwordEncoder(pwdEncoder)
-               .withClient(rpisecProperties.getClientId())
-               .resourceIds(rpisecProperties.getResourceId())
-               .secret(rpisecProperties.getClientSecret())
-               .scopes("trust")
-               .authorizedGrantTypes("client_credentials")
-               .autoApprove(true);
+        clients.withClientDetails(new JdbcClientDetailsService(dataSource));
     }
 }

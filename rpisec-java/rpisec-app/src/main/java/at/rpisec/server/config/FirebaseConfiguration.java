@@ -2,7 +2,6 @@ package at.rpisec.server.config;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.database.FirebaseDatabase;
 import org.apache.commons.io.FileUtils;
@@ -47,11 +46,6 @@ public class FirebaseConfiguration {
                 .build();
 
         return FirebaseApp.initializeApp(options);
-    }
-
-    @Bean
-    FirebaseAuth produceFirebaseAuth(final FirebaseApp firebaseApp) {
-        return FirebaseAuth.getInstance(firebaseApp);
     }
 
     @Bean
