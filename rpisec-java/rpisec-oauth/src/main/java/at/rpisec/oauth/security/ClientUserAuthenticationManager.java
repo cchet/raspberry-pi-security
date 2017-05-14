@@ -1,4 +1,4 @@
-package at.rpisec.oauth.logic.impl;
+package at.rpisec.oauth.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/15/17
  */
-public class DomainAuthenticationManager implements AuthenticationManager {
+public class ClientUserAuthenticationManager implements AuthenticationManager {
 
     @Autowired
     private UserDetailsService userDetailsService;

@@ -17,5 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByUsernameAndVerifiedAtNotNull(String username);
 
+    User findByUsernameAndClientIdsIn(String username, List<String> clientIds);
+
     User findByVerifyUUID(String uuid);
 }

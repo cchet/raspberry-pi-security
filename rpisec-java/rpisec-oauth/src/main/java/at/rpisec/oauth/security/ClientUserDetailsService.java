@@ -1,4 +1,4 @@
-package at.rpisec.oauth.logic.impl;
+package at.rpisec.oauth.security;
 
 import at.rpisec.oauth.jpa.model.User;
 import at.rpisec.oauth.jpa.repositories.UserRepository;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * @since 05/10/17
  */
 @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class ClientUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepo;
@@ -29,7 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         if (username != null) {
-            final User user = userRepo.findByUsername(username);
+            final User user = userRepo.findByUsernameAndVerifiedAtNotNull(username);
             if (user != null) {
                 return new UserDetails() {
 
@@ -73,6 +73,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             }
         }
 
-        return null;
+        throw new UsernameNotFoundException(String.format("User with username '%s' not found", username));
     }
 }

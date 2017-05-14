@@ -20,11 +20,15 @@ buildscript {
 		postgresDatabaseVersion='42.0.0'
 		lombokVersion='1.16.16'
 		webjarsBootstrapVersion='3.3.7-1'
+		newJunit5Version='1.0.0-M4'
+		sbrannenSpringJunit5='1.0.0.M4'
+		spotifyDockerClientVersion='8.4.0'
 	}
 
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 		classpath "io.spring.gradle:dependency-management-plugin:${springDependencyManagementPluginVersion}"
+		classpath "org.junit.platform:junit-platform-gradle-plugin:${newJunit5Version}"
 	}
 }
 
@@ -33,6 +37,7 @@ subprojects {
 	apply plugin: 'idea'
 	apply plugin: 'io.spring.dependency-management'
 	apply plugin: 'maven-publish'
+	apply plugin: 'org.junit.platform.gradle.plugin'
 
 	version = '0.0.1-SNAPSHOT'
 	sourceCompatibility = 1.8
@@ -42,6 +47,8 @@ subprojects {
 		mavenLocal()
 		jcenter()
 		mavenCentral()
+		// For dependency spring-test-junit5
+		maven { url 'https://jitpack.io' }
 	}
 
 	idea {
@@ -80,6 +87,9 @@ subprojects {
 			dependency "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
 			dependency "com.pi4j:pi4j-core:${pi4jVersion}"
 			dependency "org.webjars:bootstrap:${webjarsBootstrapVersion}"
+			dependency "com.spotify:docker-client:${spotifyDockerClientVersion}"
+			dependency "org.junit.platform:junit-platform-engine:${newJunit5Version}"
+			dependency "com.github.sbrannen:spring-test-junit5:${sbrannenSpringJunit5}"
 		}
 	}
 }
