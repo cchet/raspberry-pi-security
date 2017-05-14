@@ -227,17 +227,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private class RegisterUUIDTask extends AsyncTask<Void, Void, String> {
-        private final String UrlRegToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_REGISTER + "?uuid=" + getGeneratedUUID();
-        private final String UrlToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_GET_TOKEN + "?uuid=" + getGeneratedUUID();
+        private final String UriRegToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_REGISTER + "?uuid=" + getGeneratedUUID();
+        private final String UriToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_GET_TOKEN + "?uuid=" + getGeneratedUUID();
 
         @Override
         protected String doInBackground(Void... params) {
 
             try {
-                ResponseEntity<String> registerResponse = getRpiSecRestTemplate().exchange(UrlRegToken, HttpMethod.PUT, getHttpEntity(), String.class);
+                ResponseEntity<String> registerResponse = getRpiSecRestTemplate().exchange(UriRegToken, HttpMethod.PUT, getHttpEntity(), String.class);
 
                 if (registerResponse.getStatusCode() == HttpStatus.OK) {
-                    ResponseEntity<TokenResponse> response = getRpiSecRestTemplate().exchange(UrlToken, HttpMethod.GET, getHttpEntity(), TokenResponse.class);
+                    ResponseEntity<TokenResponse> response = getRpiSecRestTemplate().exchange(UriToken, HttpMethod.GET, getHttpEntity(), TokenResponse.class);
 
                     if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null && !response.getBody().getToken().isEmpty()) {
                         return response.getBody().getToken().trim();
@@ -253,12 +253,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private class RegisterFCMTask extends AsyncTask<String, Void, Boolean> {
         private final String fcmToken = FirebaseInstanceId.getInstance().getToken();
-        private final String UrlFCMToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_REGISTER_FCM_TOKEN + "?uuid=%s&fcmToken=" + fcmToken;
+        private final String UriFCMToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_REGISTER_FCM_TOKEN + "?uuid=%s&fcmToken=" + fcmToken;
 
         @Override
         protected Boolean doInBackground(String... params) {
 
-            String fcmUri = String.format(UrlFCMToken, params[0].trim());
+            String fcmUri = String.format(UriFCMToken, params[0].trim());
 
             System.out.println("[DEBUG] FCM_Token: " + fcmUri);
 
