@@ -17,10 +17,7 @@ public class WebSecurityConfigurerAdapterImpl extends WebSecurityConfigurerAdapt
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers(String.format("%s%s**", ClientRestConstants.BASE_URI, ClientRestConstants.REL_URI_REGISTER)).hasAnyRole(SecurityConstants.ROLE_SYSTEM)
-            .and()
-            .authorizeRequests()
-            .antMatchers(String.format("%s%s**", ClientRestConstants.BASE_URI, ClientRestConstants.REL_URI_UNREGISTER)).hasAnyRole(SecurityConstants.ROLE_SYSTEM)
+            .antMatchers(String.format("%s/**", ClientRestConstants.BASE_URI)).hasAnyRole(SecurityConstants.ROLE_SYSTEM)
             .and()
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
