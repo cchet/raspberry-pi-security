@@ -10,7 +10,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -94,9 +96,10 @@ public class User extends BaseEntity<Long> {
 
     @NotNull
     @ElementCollection(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_client", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
+    @JoinTable(name = "user_client")
+    @MapKeyJoinColumn(name = "user_id")
     @Column(name = "client_id", length = 1024)
-    private Set<String> clientIds = new HashSet<>(0);
+    private Map<String, String> clientIds = new HashMap<>(0);
 
     @PrePersist
     public void prePersist() {

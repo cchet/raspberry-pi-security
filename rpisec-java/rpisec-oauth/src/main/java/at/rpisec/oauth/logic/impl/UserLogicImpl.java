@@ -4,10 +4,8 @@ import at.rpisec.oauth.config.SecurityConfiguration;
 import at.rpisec.oauth.exception.DbEntryNotFoundException;
 import at.rpisec.oauth.jpa.model.User;
 import at.rpisec.oauth.jpa.repositories.UserRepository;
-import at.rpisec.oauth.logic.api.ClientDetailsFactory;
 import at.rpisec.oauth.logic.api.UserLogic;
 import at.rpisec.oauth.logic.event.UserCreatedEvent;
-import at.rpisec.oauth.logic.event.UserVerifiedEvent;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import at.rpisec.server.shared.rest.model.UserDto;
 import ma.glasnost.orika.MapperFacade;
@@ -18,7 +16,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientRegistrationService;
 import org.springframework.security.oauth2.provider.NoSuchClientException;
 import org.springframework.stereotype.Service;
@@ -26,8 +23,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -70,25 +67,10 @@ public class UserLogicImpl implements UserLogic {
             throw new DbEntryNotFoundException(String.format("User not found by uuid: '%s' during verify", uuid), User.class);
         }
 
-        final String clientId = UUID.randomUUID().toString();
-        final String secret = UUID.randomUUID().toString();
-
         user.setVerifyUUID(null);
         user.setVerifiedAt(LocalDateTime.now());
         user.setPassword(pwdEncoder.encode(password));
-        user.getClientIds().add(clientId);
         userRepo.save(user);
-
-        final ClientDetails client = ClientDetailsFactory.createMobileClientDetails(clientId,
-                                                                                    secret,
-                                                                                    appCtx.getApplicationName(),
-                                                                                    user.getUsername(),
-                                                                                    "Default Device",
-                                                                                    Collections.singletonList(resourceId));
-
-        clientRegistrationService.addClientDetails(client);
-
-        publisher.publishEvent(new UserVerifiedEvent(client.getClientId(), secret, user.getId(), user.getUsername(), user.getEmail()));
 
         return user.getId();
     }
@@ -118,7 +100,7 @@ public class UserLogicImpl implements UserLogic {
 
         final User user = userRepo.findByUsername(username);
         if (user == null) {
-            throw new DbEntryNotFoundException(String.format("USer not found for username: %s", username), User.class);
+            throw new DbEntryNotFoundException(String.format("User not found for username: %s", username), User.class);
         }
 
         return pwdEncoder.matches(password, user.getPassword());
@@ -130,7 +112,7 @@ public class UserLogicImpl implements UserLogic {
 
         final User user = userRepo.findOne(id);
         if (user == null) {
-            throw new DbEntryNotFoundException(String.format("USer not found for id: %d", id), User.class);
+            throw new DbEntryNotFoundException(String.format("User not found for id: %d", id), User.class);
         }
 
         return mapper.map(user, UserDto.class);
@@ -151,7 +133,7 @@ public class UserLogicImpl implements UserLogic {
 
         final User user = userRepo.findByVerifyUUID(uuid);
         if (user == null) {
-            throw new DbEntryNotFoundException(String.format("USer not found for uuid: %s", uuid), User.class);
+            throw new DbEntryNotFoundException(String.format("User not found for uuid: %s", uuid), User.class);
         }
 
         return mapper.map(user, UserDto.class);
@@ -191,7 +173,7 @@ public class UserLogicImpl implements UserLogic {
 
         final User user = userRepo.findByUsername(model.getUsername());
         if (user == null) {
-            throw new DbEntryNotFoundException(String.format("USer not found for username %s", model.getUsername()), User.class);
+            throw new DbEntryNotFoundException(String.format("User not found for username %s", model.getUsername()), User.class);
         }
 
         mapper.map(model, user);
@@ -209,7 +191,7 @@ public class UserLogicImpl implements UserLogic {
 
         final User user = userRepo.findByUsername(username);
         if (user == null) {
-            throw new DbEntryNotFoundException(String.format("USer not found for username %s", username), User.class);
+            throw new DbEntryNotFoundException(String.format("User not found for username %s", username), User.class);
         }
 
         mapper.map(model, user);
@@ -222,14 +204,14 @@ public class UserLogicImpl implements UserLogic {
 
         final User user = userRepo.findByUsername(username);
         if (user == null) {
-            throw new DbEntryNotFoundException(String.format("USer not found for username %s", username), User.class);
+            throw new DbEntryNotFoundException(String.format("User not found for username %s", username), User.class);
         }
 
-        for (final String clientId : user.getClientIds()) {
+        for (final Map.Entry<String, String> entry : user.getClientIds().entrySet()) {
             try {
-                clientRegistrationService.removeClientDetails(clientId);
+                clientRegistrationService.removeClientDetails(entry.getValue());
             } catch (NoSuchClientException e) {
-                log.warn("Client with client_id={} of user={} has alredy been deleted", clientId, user.getUsername());
+                log.warn("Client with client_id={} of user={} has already been deleted", entry.getValue(), user.getUsername());
                 // DO not fail on already deleted client
             }
         }

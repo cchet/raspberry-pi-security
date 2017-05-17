@@ -16,7 +16,7 @@ public class ClientRestConstants {
     public static final String BASE_URI = "/api/client";
     public static final String REL_URI_REGISTER = "/register";
     public static final String REL_URI_UNREGISTER = "/unregister";
-    public static final String REL_URI_TOKEN = "/getToken";
+    public static final String REL_CLIENT_LOGIN = "/clientLogin";
     public static final String REL_URI_REGISTER_FCM_TOKEN = "/registerFcmToken";
 
 
@@ -46,10 +46,14 @@ public class ClientRestConstants {
     public static final String URI_UNREGISTER = BASE_URI + REL_URI_UNREGISTER;
 
     /**
-     * The uri for the 'GET' request to retrieve a firebase token.
-     * Requires the request param {@link ClientRestConstants#PARAM_CLIENT_ID}
+     * The uri for the 'GET' request to retrieve the authentication data (firebase_token, client_id and client_secret).<br>
+     * <p>
+     * Requires the request params:<ul>
+     * <li>{@link ClientRestConstants#PARAM_DEVICE_ID}</li>
+     * </ul>
+     * This api requires the a registered user authentication.<br>
      */
-    public static final String URI_GET_TOKEN = BASE_URI + REL_URI_TOKEN;
+    public static final String URI_CLIENT_LOGIN = BASE_URI + REL_CLIENT_LOGIN;
 
     /**
      * The uri for the 'PUT' request to register the client firebase cloud messaging token.
@@ -61,6 +65,12 @@ public class ClientRestConstants {
      * The request parameter for the client uuid.
      */
     public static final String PARAM_CLIENT_ID = "uuid";
+
+    /**
+     * The request parameter for the device id.
+     */
+    public static final String PARAM_DEVICE_ID = "deviceId";
+
     /**
      * The request parameter for the user id.
      */

@@ -52,7 +52,11 @@ public class IncidentLogicImpl implements IncidentLogic {
     public void logIncidentWithImage(final byte[] image,
                                      final String extension) {
         final Task<Void> task = logIncidentWithImageAsync(image, extension);
-        Tasks.whenAll(task);
+        try {
+            Tasks.await(task);
+        } catch (Exception e) {
+            log.error("Waiting for firebase task failed with an error", e);
+        }
     }
 
     @Override

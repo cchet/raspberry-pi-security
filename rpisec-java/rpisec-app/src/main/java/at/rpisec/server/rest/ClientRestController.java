@@ -43,13 +43,15 @@ public class ClientRestController {
     }
 
     @PostMapping(value = ClientRestConstants.REL_URI_REGISTER, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void registerClient(final @RequestParam(ClientRestConstants.PARAM_CLIENT_ID) String uuid,
+    public void registerClient(final @RequestParam(ClientRestConstants.PARAM_CLIENT_ID) String clientId,
                                final @RequestParam(ClientRestConstants.PARAM_USER_ID) Long userId) {
-        clientLogic.register(uuid, userId);
+        clientLogic.register(clientId, userId);
+        log.info("User client device registered. client_id={} / userId={}", clientId, userId);
     }
 
     @PostMapping(value = ClientRestConstants.REL_URI_UNREGISTER, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void unregisterClient(final @RequestParam(ClientRestConstants.PARAM_CLIENT_ID) String uuid) {
-        clientLogic.unregister(uuid);
+    public void unregisterClient(final @RequestParam(ClientRestConstants.PARAM_CLIENT_ID) String clientId) {
+        clientLogic.unregister(clientId);
+        log.info("User client device unregistered. client_id={}", clientId);
     }
 }
