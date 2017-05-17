@@ -2,15 +2,14 @@ package at.rpisec.oauth.logic.event;
 
 import lombok.Value;
 
-import java.util.List;
-
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/21/17
  */
 @Value
-public final class ClientRemovedEvent {
+public final class ClientFcmTokenRegisteredEvent {
 
-    private List<String> deviceIds;
+    private String deviceId;
+    private String fcmToken;
     private Long userId;
 }

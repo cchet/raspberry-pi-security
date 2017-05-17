@@ -99,7 +99,7 @@ public class User extends BaseEntity<Long> {
     @JoinTable(name = "user_client")
     @MapKeyJoinColumn(name = "user_id")
     @Column(name = "client_id", length = 1024)
-    private Map<String, String> clientIds = new HashMap<>(0);
+    private Map<String, ClientDevice> clientDevices = new HashMap<>(0);
 
     @PrePersist
     public void prePersist() {

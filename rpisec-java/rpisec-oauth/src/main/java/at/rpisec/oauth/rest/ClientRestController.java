@@ -7,10 +7,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -29,8 +26,18 @@ public class ClientRestController {
     public TokenResponse login(@RequestParam(ClientRestConstants.PARAM_DEVICE_ID) final String deviceId,
                                final Authentication auth) {
         final TokenResponse response = clientLogic.loginClient(auth.getPrincipal().toString(), deviceId);
+
         log.info("User client registered. client_id={} / username={}", response.getClientId(), auth.getPrincipal().toString());
 
         return response;
+    }
+
+    @PutMapping(ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
+    public void registerFCMToken(final @RequestParam(ClientRestConstants.PARAM_DEVICE_ID) String deviceId,
+                                 final @RequestParam(ClientRestConstants.PARAM_FCM_TOKEN) String fcmToken,
+                                 final Authentication auth) {
+        clientLogic.registerFcmToken(auth.getPrincipal().toString(), deviceId, fcmToken);
+
+        log.info("FCM token successfully registered for client device. username={} / device={} / fcmToken={}", auth.getPrincipal().toString(), deviceId, fcmToken);
     }
 }

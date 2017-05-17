@@ -9,6 +9,6 @@ import lombok.Value;
 @Value
 public final class ClientCreatedEvent {
 
-    private String clientId;
+    private String deviceId;
     private Long userId;
 }

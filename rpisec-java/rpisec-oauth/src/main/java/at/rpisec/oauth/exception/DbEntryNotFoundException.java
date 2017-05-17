@@ -9,10 +9,10 @@ import org.springframework.dao.DataAccessException;
  */
 public class DbEntryNotFoundException extends DataAccessException {
 
-    private final Class<? extends Entity> entityClass;
+    private final Class<?> entityClass;
 
     public DbEntryNotFoundException(String message,
-                                    Class<? extends Entity> entityClass) {
+                                    Class<?> entityClass) {
         super(message);
         this.entityClass = entityClass;
     }
@@ -24,7 +24,7 @@ public class DbEntryNotFoundException extends DataAccessException {
         this.entityClass = entityClass;
     }
 
-    public Class<? extends Entity> getEntityClass() {
+    public Class<?> getEntityClass() {
         return entityClass;
     }
 }

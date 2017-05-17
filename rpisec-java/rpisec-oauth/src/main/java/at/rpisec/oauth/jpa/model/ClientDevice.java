@@ -1,29 +1,29 @@
-package at.rpisec.server.jpa.model;
+package at.rpisec.oauth.jpa.model;
 
-import at.rpisec.server.jpa.api.BaseEntity;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 /**
- * @author Thomas Herzog <herzog.thomas81@gmail.com>
- * @since 04/19/17
+ * @author Thomas Herzog <t.herzog@curecomp.com>
+ * @since 05/17/17
  */
-@Entity
-@Table(name = "client")
-@Getter
-@Setter
+@Embeddable
+@Data
 @NoArgsConstructor
-public class Client extends BaseEntity<ClientId> {
+public class ClientDevice {
 
     @NotNull
-    @EmbeddedId
-    private ClientId id;
+    @Size(max = 1024)
+    @Column(name = "client_id")
+    private String clientId;
 
     @Size(max = 1024)
     @Column(name = "fcm_token")
@@ -45,5 +45,9 @@ public class Client extends BaseEntity<ClientId> {
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public ClientDevice(String clientId) {
+        this.clientId = clientId;
     }
 }

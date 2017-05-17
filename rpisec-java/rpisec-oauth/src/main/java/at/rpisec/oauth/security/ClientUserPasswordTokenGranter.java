@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.token.AbstractTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -55,7 +54,7 @@ public class ClientUserPasswordTokenGranter extends AbstractTokenGranter {
         parameters.remove("password");
 
         // Check if user is assigned to given client
-        if (userRepo.findByUsernameAndClientIdsIn(username, Collections.singletonList(client.getClientId())) == null) {
+        if (userRepo.findByUsernameAndClientDeviceId(username, client.getClientId()) == null) {
             throw new InvalidGrantException("User is not assigned to given client");
         }
 

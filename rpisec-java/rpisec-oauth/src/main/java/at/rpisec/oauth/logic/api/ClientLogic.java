@@ -10,4 +10,8 @@ public interface ClientLogic {
 
     TokenResponse loginClient(String username,
                               String deviceId);
+
+    void registerFcmToken(String username,
+                          String deviceId,
+                          String fcmToken);
 }

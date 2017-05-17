@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -35,23 +36,28 @@ public class ClientRestController {
     }
     //endregion
 
-    @PutMapping(ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
-    public void registerFCMToken(final @RequestParam(ClientRestConstants.PARAM_CLIENT_ID) String uuid,
-                                 final @RequestParam(ClientRestConstants.PARAM_FCM_TOKEN) String fcmToken) {
-        clientLogic.registerFcmToken(fcmToken, uuid);
-        log.info("FCM token successfully registered for client. client-clientId:{} / token:{}", uuid, fcmToken);
+    @PostMapping(value = ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public void registerFCMToken(final @RequestParam(ClientRestConstants.PARAM_DEVICE_ID) String deviceId,
+                                 final @RequestParam(ClientRestConstants.PARAM_FCM_TOKEN) String fcmToken,
+                                 final @RequestParam(ClientRestConstants.PARAM_USER_ID) Long userId) {
+        clientLogic.registerFcmToken(fcmToken, deviceId, userId);
+
+        log.info("FCM token successfully registered for client. deviceId:{} / token:{}", deviceId, fcmToken);
     }
 
     @PostMapping(value = ClientRestConstants.REL_URI_REGISTER, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void registerClient(final @RequestParam(ClientRestConstants.PARAM_CLIENT_ID) String clientId,
+    public void registerClient(final @RequestParam(ClientRestConstants.PARAM_DEVICE_ID) String deviceId,
                                final @RequestParam(ClientRestConstants.PARAM_USER_ID) Long userId) {
-        clientLogic.register(clientId, userId);
-        log.info("User client device registered. client_id={} / userId={}", clientId, userId);
+        clientLogic.register(deviceId, userId);
+
+        log.info("User client device registered. deviceId={} / userId={}", deviceId, userId);
     }
 
     @PostMapping(value = ClientRestConstants.REL_URI_UNREGISTER, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void unregisterClient(final @RequestParam(ClientRestConstants.PARAM_CLIENT_ID) String clientId) {
-        clientLogic.unregister(clientId);
-        log.info("User client device unregistered. client_id={}", clientId);
+    public void unregisterClientS(final @RequestParam(ClientRestConstants.PARAM_DEVICE_ID) List<String> deviceIds,
+                                  final @RequestParam(ClientRestConstants.PARAM_USER_ID) Long userId) {
+        clientLogic.unregister(deviceIds, userId);
+
+        log.info("User client devices unregistered. deviceIds={}", String.join(",", deviceIds));
     }
 }

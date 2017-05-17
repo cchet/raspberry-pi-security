@@ -57,6 +57,7 @@ public class SecurityConfiguration {
     public static final String QUALIFIER_APP_SERVER_RESOURCE_ID = "QUALIFIER_APP_SERVER_RESOURCE_ID";
     public static final String QUALIFIER_OAUTH_URL_REGISTER_CLIENT = "QUALIFIER_OAUTH_URL_CREATE_CLIENT";
     public static final String QUALIFIER_OAUTH_URL_UNREGISTER_CLIENT = "QUALIFIER_OAUTH_URL_UNREGISTER_CLIENT";
+    public static final String QUALIFIER_OAUTH_URL_REGISTER_CLIENT_FCM_TOKEN = "QUALIFIER_OAUTH_URL_REGISTER_CLIENT_FCM_TOKEN";
     public static final String QUALIFIER_OAUTH_REST_TEMPLATE = "QUALIFIER_OAUTH_REST_TEMPLATE";
 
     @Autowired
@@ -166,6 +167,13 @@ public class SecurityConfiguration {
     @Qualifier(QUALIFIER_OAUTH_URL_UNREGISTER_CLIENT)
     String produceOAuthUnregsiterClientUrl() {
         return rpisecProperties.getBaseUrl() + ClientRestConstants.URI_UNREGISTER;
+    }
+
+    @Bean
+    @Scope("prototype")
+    @Qualifier(QUALIFIER_OAUTH_URL_REGISTER_CLIENT_FCM_TOKEN)
+    String produceOAuthRegsiterClientFcmTokenUrl() {
+        return rpisecProperties.getBaseUrl() + ClientRestConstants.URI_REGISTER_FCM_TOKEN;
     }
 
     @Bean

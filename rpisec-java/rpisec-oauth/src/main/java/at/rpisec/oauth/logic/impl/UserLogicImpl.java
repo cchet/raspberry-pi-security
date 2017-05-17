@@ -2,9 +2,11 @@ package at.rpisec.oauth.logic.impl;
 
 import at.rpisec.oauth.config.SecurityConfiguration;
 import at.rpisec.oauth.exception.DbEntryNotFoundException;
+import at.rpisec.oauth.jpa.model.ClientDevice;
 import at.rpisec.oauth.jpa.model.User;
 import at.rpisec.oauth.jpa.repositories.UserRepository;
 import at.rpisec.oauth.logic.api.UserLogic;
+import at.rpisec.oauth.logic.event.ClientRemovedEvent;
 import at.rpisec.oauth.logic.event.UserCreatedEvent;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import at.rpisec.server.shared.rest.model.UserDto;
@@ -207,14 +209,17 @@ public class UserLogicImpl implements UserLogic {
             throw new DbEntryNotFoundException(String.format("User not found for username %s", username), User.class);
         }
 
-        for (final Map.Entry<String, String> entry : user.getClientIds().entrySet()) {
+        for (final Map.Entry<String, ClientDevice> entry : user.getClientDevices().entrySet()) {
             try {
-                clientRegistrationService.removeClientDetails(entry.getValue());
+                clientRegistrationService.removeClientDetails(entry.getValue().getClientId());
             } catch (NoSuchClientException e) {
                 log.warn("Client with client_id={} of user={} has already been deleted", entry.getValue(), user.getUsername());
                 // DO not fail on already deleted client
             }
         }
+
+        // Unregister client device on app server
+        publisher.publishEvent(new ClientRemovedEvent(user.getClientDevices().entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()), user.getId()));
 
         userRepo.delete(user);
     }

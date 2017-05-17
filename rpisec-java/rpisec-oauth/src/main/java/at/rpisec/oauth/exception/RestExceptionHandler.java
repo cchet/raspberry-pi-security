@@ -32,7 +32,7 @@ public class RestExceptionHandler {
     public @ResponseBody
     ErrorResponse handleDbEntryNotFoundError(final DbEntryNotFoundException t) {
         logger.info(String.format("Could not find db entry of type %s", (t.getEntityClass() != null) ? t.getEntityClass().getName() : "unknown"));
-        final Class<? extends Entity> entityClass = t.getEntityClass();
+        final Class<?> entityClass = t.getEntityClass();
         if (entityClass != null) {
             if (User.class.equals(entityClass)) {
                 return new ErrorResponse(ResponseErrorCode.USER_NOT_FOUND);
