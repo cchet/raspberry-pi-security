@@ -1,86 +1,23 @@
-Spring Boot application
-=======================
+Raspberry PI 3 security application
+===================================
 Thomas Herzog <herzog.thomas81@gmail.com>
 v0.1, 2017/04/28, Initial intention description.
 
-The spring boot application is used to host host the rest api and provides main logic
-for the application.
+# App server
+The app server is a spring boot application which manages the sensor application and
+reports incidents to the registered clients and pushes the taken images to the firebase
+database. +
 
-# Setup
-This section deals with the setup of the spring boot application. +
-The application supports two profiles __dev__ and __prod__ where the __productive__
-environment is hosted with a docker infrastructure and the __development__ environment
-works as a standalone application with no special setup necessary.
+link:rpisec-app/README.adoc[App server documentation] +
 
-## Externalized configuration
-The configuration has been split to a static part which is packaged into the application
-and a dynamic part which is provided via the configuration file  __external-application.properties__. +
-An template for the configuration file __external-application.properties__
-can be found link:../host/config/external-application.properties[here]. +
+# Authentication server
+The authentication server manages the domain users provides the oauth authentication mechanism
+for the clients for accessing the app server. The registered client devices and firebase cloud messaging tokens
+are pushed to the apps server, so that the app server is able to notify the clients about security incidents.
 
-Firebase needs a configuration file which must be kep private.
+link:rpisec-oauth/README.adoc[Authentication server documentation] +
 
-## Development Environment __(profile dev)__
-This section deals with the necessary setup for the development environment.
+# Sensor application
+The sensor application is a plain java implementation which manages and is hosted by the app server. +
 
-### VM Options
-[options="header"]
-|======================
-|Option      |Usage
-|-Dspring.profiles.active=dev        | Activates the dev profile
-|-Dspring.config.location=file:<path_to_file>/<config_file_name>.properties        |Includes the externalized configuration
-|======================
-
-### Externalized Configuration
-The externalized configuration file can be named and located as intended and will be
-defined via an VM option as mentioned in the former section.
-
-### Firebase
-The __external-application.properties__ file must contain the parameter __firebase.configFile__ which defines
-the location and name of the firebase configuration file. +
-
-## Productive Environment
-This section deals with the necessary setup for the productive environment. +
-The productive environment is hosted in a docker infrastructure which is defined
-via a docker-compose.yml which can be found link:../host/docker/docker-compose.yml[here]. +
-
-The docker infrastructure needs the following environment variables set.
-[options="header"]
-|======================
-|Variable      |Usage
-|POSTGRES_DATA_VOLUME        | The mapped volume for the persistent database data
-|APP_VOLUME            |The mapped volume holding the deployed applications
-|APP_CONF_VOLUME   |The volume holding the externalized configuration and firebase json file
-|APP_LOG_VOLUME    |The mapped volume where the application logs will be stored
-|NGINX_LOG_VOLUME  |The mapped volume where the reverse proxy logs will be stored
-|NGINX_CERT_VOLUME |The mapped volume where the certificate is located the reverse proxy uses
-|======================
-
-### Externalized Configuration
-The externalized configuration file must be named __external-application.properties__
-and must be located at the root of the mapped conf volume defined by the environment variable __APP_CONF_VOLUME__.
-
-### Firebase
-The firebase configuration file must be named __firebase-account.json__ and must be located
-at the root of the mapped conf volume defined by the environment variable __APP_CONF_VOLUME__.
-
-### SSL
-The productive envirnment only allows SSL connections via the reverse proxy and therefore
-the private and public certificate must located at the root of the mapped volume defined by the environment
-variable __NGINX_CERT_VOLUME__. The files must be named __privatekey.pem__ and __cert.pem__
-and must be encoded in the __PEM__ format. +
-
-It is recommended to use a valid certificate which can be easily created with __letsencrypt__ but
-an private certificate will work as well.
-
-# REST-API
-TODO
-
-## Admin
-TODO
-
-## Client
-TODO
-
-# Views
-TODO
+link:rpisec-sensor/README.adoc[Sensor application documentation] +

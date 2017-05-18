@@ -26,6 +26,22 @@ services:
         cpu_shares: 4
         depends_on:
             - rpisec-db
+    rpisec-oauth:
+        container_name: rpisec-oauth
+        build:
+            context: ./oauth
+        volumes:
+            - ${APP_VOLUME}:/home/oauth/app:rw
+            - ${APP_CONF_VOLUME}:/home/oauth/conf:ro
+            - ${APP_LOG_VOLUME}:/home/oauth/log:rw
+        environment:
+            - APP_JAVA_OPTS=-Xms64m -Xmx256m -XX:MaxPermSize=128M
+            - OAUTH_VERSION=${APP_VERSION}
+        mem_limit: 256m
+        cpu_shares: 4
+        depends_on:
+            - rpisec-db
+            - rpisec-app
     rpisec-nginx:
         container_name: rpisec-nginx
         image: rpisec-nginx
