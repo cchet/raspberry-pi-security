@@ -9,8 +9,7 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
 
 public final class RPISecFirebaseService extends FirebaseInstanceIdService {
 
-    public RPISecFirebaseService()
-    {
+    public RPISecFirebaseService() {
         System.out.println("[DEBUG] RPISecFirebaseService constructor");
     }
 
