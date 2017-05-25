@@ -8,4 +8,4 @@ fi
 
 cp -f ~/app/rpisec-app-${RPISEC_VERSION}.jar ~/app/app-${RPISEC_VERSION}-running.jar
 
-java -jar ${HOME}/app/app-${RPISEC_VERSION}-running.jar --spring.profiles.active=prod --spring.config.location=file:${HOME}/conf/app-external-application.properties ${APP_JAVA_OPTS}
+java ${APP_JAVA_OPTS} -jar ${HOME}/app/app-${RPISEC_VERSION}-running.jar --spring.profiles.active=prod --spring.config.location=file:${HOME}/conf/app-external-application.properties
