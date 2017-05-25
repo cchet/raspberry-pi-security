@@ -284,23 +284,14 @@ public class Camera_RPICam implements CameraDevice {
                 process = new ProcessBuilder(commandLineArgs.toArray(new String[0])).start();
 
                 if (DEBUG_MODE) {
-                    try (InputStream is = process.getInputStream()) {
-                        try (InputStreamReader isr = new InputStreamReader(is)) {
-                            try (BufferedReader br = new BufferedReader(isr)) {
-                                String line;
-
-                                while ((line = br.readLine()) != null) {
-                                    System.out.println(line);
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                        try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                            String line;
+                            while ((line = br.readLine()) != null) {
+                                System.out.println(line);
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        }catch (Exception e) {
+
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 }
 
                 ImageData imageData = new ImageData();

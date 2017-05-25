@@ -4,7 +4,7 @@ import at.rpisec.server.exception.DbEntryNotFoundException;
 import at.rpisec.server.jpa.model.Client;
 import at.rpisec.server.jpa.model.ClientId;
 import at.rpisec.server.jpa.repositories.ClientRepository;
-import at.rpisec.server.logic.api.ClientLogic;
+import at.rpisec.server.logic.api.IClientLogic;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.Objects;
 @Service
 @Transactional(isolation = Isolation.READ_COMMITTED)
 @Secured(SecurityConstants.ROLE_SYSTEM)
-public class ClientLogicImpl implements ClientLogic {
+public class ClientLogic implements IClientLogic {
 
     @Autowired
     private ClientRepository clientRepo;

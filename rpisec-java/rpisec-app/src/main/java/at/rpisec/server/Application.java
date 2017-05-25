@@ -1,6 +1,7 @@
 package at.rpisec.server;
 
 import at.rpisec.server.config.ConfigurableMapperImpl;
+import at.rpisec.server.config.RpisecStartupRunner;
 import at.rpisec.server.jpa.model.Client;
 import at.rpisec.server.jpa.repositories.ClientRepository;
 import ma.glasnost.orika.MapperFacade;
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -16,7 +18,9 @@ import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -49,13 +53,23 @@ public class Application {
     }
 
     @Bean
+    CommandLineRunner produceRpisecStartupRunner() {
+        return new RpisecStartupRunner();
+    }
+
+    @Bean
+    TaskScheduler produceTaskScheduler() {
+        return new ThreadPoolTaskScheduler();
+    }
+
+    @Bean
     @Scope("prototype")
     Logger logger(InjectionPoint injectionPoint) {
         return LoggerFactory.getLogger(injectionPoint.getMember().getDeclaringClass());
     }
 
     @Bean
-    public MapperFacade produceConfigurableMapper() {
+    MapperFacade produceConfigurableMapper() {
         return new ConfigurableMapperImpl();
     }
 

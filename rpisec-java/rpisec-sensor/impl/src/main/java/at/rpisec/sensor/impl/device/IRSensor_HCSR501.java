@@ -83,7 +83,7 @@ public class IRSensor_HCSR501 implements IRSensorDevice {
         try {
             gpioThread.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Device thread interrupted", e);
         }
     }
 

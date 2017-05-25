@@ -33,6 +33,9 @@ public class FirebaseConfiguration {
     @Autowired
     private ConfigProperties.FirebaseProperties firebaseConfig;
 
+    public static final String REST_TEMPLATE_FCM = "REST_TEMPLATE_FCM";
+    public static final String FCM_URL = "FCM_URL";
+
     @Bean
     FirebaseApp produceFirebaseApp() throws IOException {
         final File file = Paths.get(firebaseConfig.getConfigFile()).toFile();
@@ -56,7 +59,7 @@ public class FirebaseConfiguration {
 
     @Bean
     @Scope("prototype")
-    @Qualifier("fcmRestTemplate")
+    @Qualifier(REST_TEMPLATE_FCM)
     RestTemplate produceFcmRestTemplate(final Logger log) {
         final RestTemplate fcmRestTemplate = new RestTemplate();
         fcmRestTemplate.getInterceptors().add((request, body, execution) -> {
@@ -81,7 +84,7 @@ public class FirebaseConfiguration {
 
     @Bean
     @Scope("prototype")
-    @Qualifier("fcmSendUrl")
+    @Qualifier(FCM_URL)
     String produceFcmSendUrl() {
         return firebaseConfig.getCloudMessagingUrl();
     }

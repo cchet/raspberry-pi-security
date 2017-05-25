@@ -11,7 +11,7 @@ import java.util.Objects;
  * @since 04/14/17
  */
 @MappedSuperclass
-public abstract class BaseEntity<I extends Serializable> implements Serializable, Entity<I> {
+public abstract class AbstractEntity<I extends Serializable> implements Serializable, IEntity<I> {
 
     @Override
     public int hashCode() {
@@ -29,7 +29,7 @@ public abstract class BaseEntity<I extends Serializable> implements Serializable
         if (!this.getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
-        final BaseEntity other = (BaseEntity) obj;
+        final AbstractEntity other = (AbstractEntity) obj;
         if ((other.getId() == null) && (getId() == null)) {
             return false;
         }

@@ -23,6 +23,7 @@ buildscript {
 		newJunit5Version='1.0.0-M4'
 		sbrannenSpringJunit5='1.0.0.M4'
 		spotifyDockerClientVersion='8.4.0'
+		log4jApiVersion='1.7.24'
 	}
 
 	dependencies {
@@ -90,6 +91,7 @@ subprojects {
 			dependency "com.spotify:docker-client:${spotifyDockerClientVersion}"
 			dependency "org.junit.platform:junit-platform-engine:${newJunit5Version}"
 			dependency "com.github.sbrannen:spring-test-junit5:${sbrannenSpringJunit5}"
+			dependency "org.slf4j:slf4j-api:${log4jApiVersion}"
 		}
 	}
 }

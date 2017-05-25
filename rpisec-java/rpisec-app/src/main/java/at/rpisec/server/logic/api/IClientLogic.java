@@ -6,7 +6,7 @@ import java.util.List;
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/20/17
  */
-public interface ClientLogic {
+public interface IClientLogic {
 
     void register(String deviceId,
                   Long userId);

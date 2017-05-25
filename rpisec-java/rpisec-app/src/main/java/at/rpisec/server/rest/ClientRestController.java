@@ -1,8 +1,8 @@
 package at.rpisec.server.rest;
 
 import at.rpisec.server.Application;
-import at.rpisec.server.logic.api.ClientLogic;
-import at.rpisec.server.logic.api.IncidentLogic;
+import at.rpisec.server.logic.api.IClientLogic;
+import at.rpisec.server.logic.api.IIncidentLogic;
 import at.rpisec.server.shared.rest.constants.ClientRestConstants;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -22,9 +22,9 @@ import java.util.List;
 public class ClientRestController {
 
     @Autowired
-    private ClientLogic clientLogic;
+    private IClientLogic clientLogic;
     @Autowired
-    private IncidentLogic incidentLogic;
+    private IIncidentLogic incidentLogic;
     @Autowired
     private Logger log;
 

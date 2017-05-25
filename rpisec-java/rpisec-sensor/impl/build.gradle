@@ -4,4 +4,5 @@ targetCompatibility = 1.8
 dependencies {
     compile project (':rpisec-sensor/api')
     compile 'com.pi4j:pi4j-core:1.1'
+    compileOnly 'org.slf4j:slf4j-api'
 }

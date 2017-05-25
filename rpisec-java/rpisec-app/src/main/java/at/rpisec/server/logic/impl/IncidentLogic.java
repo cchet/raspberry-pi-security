@@ -1,8 +1,10 @@
 package at.rpisec.server.logic.impl;
 
-import at.rpisec.server.jpa.projection.ClientFirebaseToken;
+import at.rpisec.server.config.FirebaseConfiguration;
+import at.rpisec.server.config.SecurityConfiguration;
+import at.rpisec.server.jpa.projection.IClientFirebaseToken;
 import at.rpisec.server.jpa.repositories.ClientRepository;
-import at.rpisec.server.logic.api.IncidentLogic;
+import at.rpisec.server.logic.api.IIncidentLogic;
 import at.rpisec.server.shared.rest.constants.FirebaseConstants;
 import at.rpisec.server.shared.rest.model.FirebaseDatabaseItem;
 import at.rpisec.server.shared.rest.model.FirebaseMessage;
@@ -30,7 +32,7 @@ import java.util.Locale;
  * @since 04/21/17
  */
 @Service
-public class IncidentLogicImpl implements IncidentLogic {
+public class IncidentLogic implements IIncidentLogic {
 
     @Autowired
     private ClientRepository clientRepo;
@@ -38,11 +40,14 @@ public class IncidentLogicImpl implements IncidentLogic {
     @Autowired
     private FirebaseDatabase database;
     @Autowired
-    @Qualifier("fcmRestTemplate")
+    @Qualifier(FirebaseConfiguration.REST_TEMPLATE_FCM)
     private RestTemplate fcmRestTemplate;
     @Autowired
-    @Qualifier("fcmSendUrl")
+    @Qualifier(FirebaseConfiguration.FCM_URL)
     private String fcmSendUrl;
+    @Autowired
+    @Qualifier(SecurityConfiguration.INCIDENT_IMAGE_LOCATION)
+    private String imageLocation;
     @Autowired
     private MessageSource messages;
     @Autowired
@@ -74,9 +79,9 @@ public class IncidentLogicImpl implements IncidentLogic {
                              .addOnSuccessListener((var) -> log.info("Successfully reported incident to firebase database '{}'", occurringDate));
 
         // Send notifications to all known client apps
-        final List<ClientFirebaseToken> tokens = clientRepo.findDistinctByFcmTokenIsNotNull();
+        final List<IClientFirebaseToken> tokens = clientRepo.findDistinctByFcmTokenIsNotNull();
         if (!tokens.isEmpty()) {
-            for (final ClientFirebaseToken token : tokens) {
+            for (final IClientFirebaseToken token : tokens) {
                 final FirebaseMessage.FirebaseMessageBody notificationBody = new FirebaseMessage.FirebaseMessageBody(messages.getMessage("incident.fcm.title", null, locale),
                                                                                                                      messages.getMessage("incident.fcm.message", null, locale),
                                                                                                                      occurringDate);

@@ -1,6 +1,6 @@
 package at.rpisec.server.jpa.model;
 
-import at.rpisec.server.jpa.api.BaseEntity;
+import at.rpisec.server.jpa.api.AbstractEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Client extends BaseEntity<ClientId> {
+public class Client extends AbstractEntity<ClientId> {
 
     @NotNull
     @EmbeddedId

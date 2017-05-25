@@ -7,7 +7,7 @@ package at.rpisec.sensor.api;
  * @since 05/17/17
  */
 @FunctionalInterface
-public interface IncidentImageReportListener {
+public interface IncidentImageObserver {
 
     void handle(byte[] image);
 }

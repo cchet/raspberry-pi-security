@@ -1,6 +1,6 @@
 package at.rpisec.server.exception;
 
-import at.rpisec.server.jpa.api.Entity;
+import at.rpisec.server.jpa.api.IEntity;
 import org.springframework.dao.DataAccessException;
 
 /**
@@ -9,22 +9,22 @@ import org.springframework.dao.DataAccessException;
  */
 public class DbEntryAlreadyExistsException extends DataAccessException {
 
-    private final Class<? extends Entity> entityClass;
+    private final Class<? extends IEntity> entityClass;
 
     public DbEntryAlreadyExistsException(String message,
-                                         Class<? extends Entity> entityClass) {
+                                         Class<? extends IEntity> entityClass) {
         super(message);
         this.entityClass = entityClass;
     }
 
     public DbEntryAlreadyExistsException(String message,
                                          Throwable cause,
-                                         Class<? extends Entity> entityClass) {
+                                         Class<? extends IEntity> entityClass) {
         super(message, cause);
         this.entityClass = entityClass;
     }
 
-    public Class<? extends Entity> getEntityClass() {
+    public Class<? extends IEntity> getEntityClass() {
         return entityClass;
     }
 }

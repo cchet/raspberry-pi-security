@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/14/17
  */
-public interface Entity<T extends Serializable> {
+public interface IEntity<T extends Serializable> {
 
     T getId();
 

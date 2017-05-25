@@ -1,6 +1,6 @@
 package at.rpisec.server.exception;
 
-import at.rpisec.server.jpa.api.Entity;
+import at.rpisec.server.jpa.api.IEntity;
 import at.rpisec.server.jpa.model.Client;
 import at.rpisec.server.jpa.repositories.ClientRepository;
 import at.rpisec.server.shared.rest.constants.ResponseErrorCode;
@@ -32,7 +32,7 @@ public class RestExceptionHandler {
     public @ResponseBody
     ErrorResponse handleDbEntryNotFoundError(final DbEntryNotFoundException t) {
         logger.info(String.format("Could not find db entry of type %s", (t.getEntityClass() != null) ? t.getEntityClass().getName() : "unknown"));
-        final Class<? extends Entity> entityClass = t.getEntityClass();
+        final Class<? extends IEntity> entityClass = t.getEntityClass();
         if (entityClass != null) {
             if (Client.class.equals(entityClass)) {
                 return new ErrorResponse(ResponseErrorCode.CLIENT_NOT_FOUND);
@@ -47,7 +47,7 @@ public class RestExceptionHandler {
     public @ResponseBody
     ErrorResponse handleDbEntryAlreadyExistsFoundError(final DbEntryAlreadyExistsException t) {
         logger.info(String.format("Db entry already exists of type %s", (t.getEntityClass() != null) ? t.getEntityClass().getName() : "unknown"));
-        final Class<? extends Entity> entityClass = t.getEntityClass();
+        final Class<? extends IEntity> entityClass = t.getEntityClass();
         if (entityClass != null) {
             if (Client.class.equals(entityClass)) {
                 return new ErrorResponse(ResponseErrorCode.CLIENT_ALREADY_REGISTERED);
