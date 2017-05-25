@@ -29,6 +29,20 @@ idea {
     }
 }
 
+sourceSets {
+    main {
+        resources {
+            if(isProd) {
+                exclude 'schema-H2.sql'
+                exclude 'application-dev.properties'
+            } else{
+                exclude 'schema-POSTGRES.sql'
+                exclude 'application-prod.properties'
+            }
+        }
+    }
+}
+
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-jdbc')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
