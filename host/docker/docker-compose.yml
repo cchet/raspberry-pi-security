@@ -19,9 +19,10 @@ services:
             - ${APP_VOLUME}:/home/rpisec/app:rw
             - ${APP_CONF_VOLUME}:/home/rpisec/conf:ro
             - ${APP_LOG_VOLUME}:/home/rpisec/log:rw
+            - ${APP_IMAGE_VOLUME}:/home/rpisec/image:rw
         environment:
             - APP_JAVA_OPTS=-Xms64m -Xmx256m -XX:MaxPermSize=128M
-            - APP_VERSION=${APP_VERSION}
+            - RPISEC_VERSION=${RPISEC_VERSION}
         mem_limit: 256m
         cpu_shares: 4
         depends_on:
@@ -35,9 +36,9 @@ services:
             - ${APP_CONF_VOLUME}:/home/oauth/conf:ro
             - ${APP_LOG_VOLUME}:/home/oauth/log:rw
         environment:
-            - APP_JAVA_OPTS=-Xms64m -Xmx256m -XX:MaxPermSize=128M
-            - OAUTH_VERSION=${APP_VERSION}
-        mem_limit: 256m
+            - APP_JAVA_OPTS=-Xms64m -Xmx128m -XX:MaxPermSize=128M
+            - RPISEC_VERSION=${RPISEC_VERSION}
+        mem_limit: 128m
         cpu_shares: 4
         depends_on:
             - rpisec-db
