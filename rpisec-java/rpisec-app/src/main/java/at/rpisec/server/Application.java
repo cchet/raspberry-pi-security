@@ -55,7 +55,7 @@ public class Application {
     }
 
     @Bean
-    public MapperFacade produceConfigurableMapper() {
+    MapperFacade produceConfigurableMapper() {
         return new ConfigurableMapperImpl();
     }
 

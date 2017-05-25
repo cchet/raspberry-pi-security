@@ -17,6 +17,14 @@ public class ConfigProperties {
     private ConfigProperties() {
     }
 
+    public static final class VMOptions{
+
+        public static final String ADMIN_EMAIL = "admin.email";
+
+        private VMOptions() {
+        }
+    }
+
     @Component
     @ConfigurationProperties("firebase")
     @Getter

@@ -20,6 +20,7 @@ bootRun {
     // Must always be provided
     systemProperties['spring.profiles.active'] = System.getProperty('spring.profiles.active')
     systemProperties['spring.config.location'] = System.getProperty("spring.config.location")
+    systemProperties['admin.email'] = System.getProperty("admin.email")
 }
 
 idea {
