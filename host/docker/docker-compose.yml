@@ -7,8 +7,8 @@ services:
             - POSTGRES_USER=rpisec-app
             - POSTGRES_PASSWORD=rpisec-app
             - POSTGRES_DATABASE=rpisec-app
-        mem_limit: 256m
-        cpu_shares: 4
+        mem_limit: 64m
+        cpu_shares: 2
         volumes:
             - ${APP_DB_VOLUME}:/var/lib/postgresql/data:rw
     rpisec-oauth-db:
@@ -18,8 +18,8 @@ services:
             - POSTGRES_USER=rpisec-oauth
             - POSTGRES_PASSWORD=rpisec-oauth
             - POSTGRES_DATABASE=rpisec-oauth
-        mem_limit: 256m
-        cpu_shares: 4
+        mem_limit: 64m
+        cpu_shares: 2
         volumes:
             - ${OAUTH_DB_VOLUME}:/var/lib/postgresql/data:rw
     rpisec-app:
@@ -32,9 +32,9 @@ services:
             - ${APP_LOG_VOLUME}:/home/rpisec/log:rw
             - ${APP_IMAGE_VOLUME}:/home/rpisec/image:rw
         environment:
-            - APP_JAVA_OPTS=-Xms64m -Xmx256m -XX:MaxPermSize=128M
+            - APP_JAVA_OPTS=-Xms128m -Xmx200m
             - RPISEC_VERSION=${RPISEC_VERSION}
-        mem_limit: 256m
+        mem_limit: 200m
         cpu_shares: 4
         depends_on:
             - rpisec-app-db
@@ -47,9 +47,9 @@ services:
             - ${OAUTH_CONF_VOLUME}:/home/oauth/conf:ro
             - ${OAUTH_LOG_VOLUME}:/home/oauth/log:rw
         environment:
-            - APP_JAVA_OPTS=-Xms64m -Xmx128m -XX:MaxPermSize=128M
+            - OAUTH_JAVA_OPTS=-Dadmin.email=fh.ooe.mus.rpisec@gmail.com -Xms128m -Xmx200m
             - RPISEC_VERSION=${RPISEC_VERSION}
-        mem_limit: 128m
+        mem_limit: 200m
         cpu_shares: 4
         depends_on:
             - rpisec-oauth-db
@@ -62,7 +62,7 @@ services:
         volumes:
             - ${NGINX_LOG_VOLUME}:/var/log/nginx:rw
             - ${NGINX_CERT_VOLUME}:/cert:ro
-        mem_limit: 128m
+        mem_limit: 64m
         cpu_shares: 4
         ports:
             - 443:443
