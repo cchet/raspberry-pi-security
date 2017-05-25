@@ -1,31 +1,59 @@
 version: "2.1"
 services:
-    rpisec-db:
-        container_name: rpisec-db
+    rpisec-app-db:
+        container_name: rpisec-app-db
         image: tobi312/rpi-postgresql:9.6
         environment:
-            - POSTGRES_USER=rpisec
-            - POSTGRES_PASSWORD=rpisec
-            - POSTGRES_DATABASE=rpisec
-        mem_limit: 256m
-        cpu_shares: 4
+            - POSTGRES_USER=rpisec-app
+            - POSTGRES_PASSWORD=rpisec-app
+            - POSTGRES_DATABASE=rpisec-app
+        mem_limit: 64m
+        cpu_shares: 2
         volumes:
-            - ${POSTGRES_DATA_VOLUME}:/var/lib/postgresql/data:rw
+            - ${APP_DB_VOLUME}:/var/lib/postgresql/data:rw
+    rpisec-oauth-db:
+        container_name: rpisec-oauth-db
+        image: tobi312/rpi-postgresql:9.6
+        environment:
+            - POSTGRES_USER=rpisec-oauth
+            - POSTGRES_PASSWORD=rpisec-oauth
+            - POSTGRES_DATABASE=rpisec-oauth
+        mem_limit: 64m
+        cpu_shares: 2
+        volumes:
+            - ${OAUTH_DB_VOLUME}:/var/lib/postgresql/data:rw
     rpisec-app:
         container_name: rpisec-app
         build:
             context: ./app
         volumes:
-            - ${APP_VOLUME}:/home/rpisec/app:rw
+            - ${APP_APP_VOLUME}:/home/rpisec/app:rw
             - ${APP_CONF_VOLUME}:/home/rpisec/conf:ro
             - ${APP_LOG_VOLUME}:/home/rpisec/log:rw
+            - ${APP_IMAGE_VOLUME}:/home/rpisec/image:rw
         environment:
-            - APP_JAVA_OPTS=-Xms64m -Xmx256m -XX:MaxPermSize=128M
-            - APP_VERSION=${APP_VERSION}
-        mem_limit: 256m
+            - APP_JAVA_OPTS=-Xms128m -Xmx200m
+            - RPISEC_VERSION=${RPISEC_VERSION}
+        mem_limit: 200m
         cpu_shares: 4
         depends_on:
-            - rpisec-db
+            - rpisec-app-db
+    rpisec-oauth:
+        container_name: rpisec-oauth
+        build:
+            context: ./oauth
+        volumes:
+            - ${OAUTH_APP_VOLUME}:/home/oauth/app:rw
+            - ${OAUTH_CONF_VOLUME}:/home/oauth/conf:ro
+            - ${OAUTH_LOG_VOLUME}:/home/oauth/log:rw
+        environment:
+            - OAUTH_JAVA_OPTS=-Dadmin.email=fh.ooe.mus.rpisec@gmail.com -Xms128m -Xmx200m
+            - RPISEC_VERSION=${RPISEC_VERSION}
+        mem_limit: 200m
+        cpu_shares: 4
+        depends_on:
+            - rpisec-oauth-db
+            - rpisec-app
     rpisec-nginx:
         container_name: rpisec-nginx
         image: rpisec-nginx
@@ -34,11 +62,13 @@ services:
         volumes:
             - ${NGINX_LOG_VOLUME}:/var/log/nginx:rw
             - ${NGINX_CERT_VOLUME}:/cert:ro
-        mem_limit: 128m
+        mem_limit: 64m
         cpu_shares: 4
         ports:
             - 443:443
             - 80:80
         depends_on:
-            - rpisec-db
+            - rpisec-app-db
+            - rpisec-oauth-db
             - rpisec-app
+            - rpisec-oauth

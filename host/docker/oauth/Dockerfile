@@ -9,17 +9,16 @@ RUN apt-get update -y && \
     apt-get autoclean && \
     apt-get clean
 
-RUN adduser --disabled-password --gecos "" rpisec
+RUN adduser --disabled-password --gecos "" oauth
 
-ADD docker-entrypoint.sh ./home/rpisec/docker-entrypoint.sh
-RUN chmod +x /home/rpisec/docker-entrypoint.sh && \
-    chown rpisec:rpisec /home/rpisec/docker-entrypoint.sh
+ADD docker-entrypoint.sh ./home/oauth/docker-entrypoint.sh
+RUN chmod +x /home/oauth/docker-entrypoint.sh && \
+    chown oauth:oauth /home/oauth/docker-entrypoint.sh
 
-USER rpisec
+USER oauth
 
 RUN mkdir ~/app && \
     mkdir ~/conf && \
-    mkdir ~/log && \
-    mkdir ~/image
+    mkdir ~/log
 
 ENTRYPOINT ~/docker-entrypoint.sh
