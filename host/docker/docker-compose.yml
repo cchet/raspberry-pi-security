@@ -26,6 +26,9 @@ services:
         container_name: rpisec-app
         build:
             context: ./app
+            args:
+               - VIDEO_GUID=44
+               - UID=1000
         volumes:
             - ${APP_APP_VOLUME}:/home/rpisec/app:rw
             - ${APP_CONF_VOLUME}:/home/rpisec/conf:ro
@@ -36,6 +39,7 @@ services:
             - RPISEC_VERSION=${RPISEC_VERSION}
         mem_limit: 200m
         cpu_shares: 4
+        privileged: true
         depends_on:
             - rpisec-app-db
     rpisec-oauth:
