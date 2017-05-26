@@ -10,6 +10,8 @@ import at.rpisec.sensor.impl.device.Camera_RPICam;
 import at.rpisec.sensor.impl.device.IRSensor_HCSR501;
 import at.rpisec.sensor.impl.listener.ImageData;
 import at.rpisec.sensor.impl.listener.ImageEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -32,25 +34,31 @@ public class SensorApplication implements ISensorApplication {
     private boolean running = false;
 
     private static final String IMAGE_EXTENSION = "jpeg";
+    private static final Logger log = LoggerFactory.getLogger(SensorApplication.class);
 
     @Override
-    public void register(IncidentImageObserver listener) {
+    public void register(IncidentImageObserver observer) {
+        Objects.requireNonNull(observer, "Observer must not be null");
         synchronized (syncLock) {
-            if (!observers.contains(listener)) {
-                observers.add(listener);
+            if (!observers.contains(observer)) {
+                observers.add(observer);
+                log.info("Added incident image observer instance: {}", observer.toString());
             }
         }
     }
 
     @Override
-    public void remove(IncidentImageObserver listener) {
+    public void remove(IncidentImageObserver observer) {
+        Objects.requireNonNull(observer, "Null observer cannot be null");
         synchronized (syncLock) {
-            observers.remove(listener);
+            observers.remove(observer);
+            log.info("Removed incident image observer instance: {}", observer.toString());
         }
     }
 
     @Override
     public void start() throws SensorAppStartupException {
+        log.info("Starting sensor application");
         try {
             CameraDevice camera = new Camera_RPICam();
 
@@ -93,19 +101,24 @@ public class SensorApplication implements ISensorApplication {
 
             sensor.runDevice();
             running = true;
+            log.info("Sensor application successfully started");
         } catch (Exception e) {
+            log.info("Sensor application failed to start");
             throw new SensorAppStartupException("Startup of sensor application failed", e);
         }
     }
 
     @Override
     public void shutdown() throws SensorAppShutdownException {
+        log.info("Shtudown sensor application");
         try {
             observers.clear();
             if (sensor != null) {
                 sensor.stopDevice();
             }
+            log.info("Shtudown sensor application successfully");
         } catch (Exception e) {
+            log.info("Shtudown sensor application failed to shutdown gracefully");
             throw new SensorAppShutdownException("Sensor application failed to shutdown", e);
         } finally {
             running = false;

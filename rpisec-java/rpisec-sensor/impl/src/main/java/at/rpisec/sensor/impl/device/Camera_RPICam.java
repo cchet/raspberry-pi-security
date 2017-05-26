@@ -6,8 +6,13 @@ import at.rpisec.sensor.api.listener.CameraDeviceListener;
 import at.rpisec.sensor.impl.listener.ImageData;
 import at.rpisec.sensor.impl.listener.ImageEvent;
 import at.rpisec.sensor.impl.util.DeviceSettingsUitl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -41,17 +46,25 @@ public class Camera_RPICam implements CameraDevice {
     private List<CameraDeviceListener> listeners = new ArrayList<>();
     private boolean cameraReady = false;
 
-    public Camera_RPICam() {
+    private static final Logger log = LoggerFactory.getLogger(Camera_RPICam.class);
 
+    public Camera_RPICam() {
         init();
 
         cameraReady = checkDeviceCamera();
     }
 
     private void init() {
+        log.debug("Initializing rpi camera device");
+
         DeviceSettings settings = new DeviceSettingsUitl();
         Map<String, String> device_settings = settings.readSettings(DEVICE_PROPERTY_FILE);
+        log.debug("Loaded device settings:");
+        log.debug("Settings: {}", device_settings.toString());
+
         Map<String, String> app_settings = settings.readSettings(APP_PROPERTY_FILE);
+        log.debug("Loaded app settings:");
+        log.debug("Settings: {}", app_settings.toString());
 
         for (String key : device_settings.keySet()) {
 
@@ -133,31 +146,34 @@ public class Camera_RPICam implements CameraDevice {
                 }
             }
         }
+
+        log.debug("Initialized rpi camera device");
     }
 
     private boolean checkDeviceCamera() {
+        log.debug("Checking rpi camera device");
         Process process;
         try {
 
             if (cameraTestApp.isEmpty() || cameraTestAppParam.isEmpty()) {
-                System.out.println(CAMERA_TEST_APP_NOT_DEFINED_MESSAGE);
+                log.error(CAMERA_TEST_APP_NOT_DEFINED_MESSAGE);
                 return false;
             }
 
             Path testAppPath = Paths.get(cameraTestApp);
             if (!Files.exists(testAppPath, LinkOption.NOFOLLOW_LINKS)) {
-                System.out.println(String.format(APP_NOT_FOUND_MESSAGE, cameraTestApp));
+                log.error(String.format(APP_NOT_FOUND_MESSAGE, cameraTestApp));
                 return false;
             }
 
             if (cameraApp.isEmpty()) {
-                System.out.println(CAMERA_APP_NOT_DEFINED_MESSAGE);
+                log.error(CAMERA_APP_NOT_DEFINED_MESSAGE);
                 return false;
             }
 
             Path cameraAppPath = Paths.get(cameraApp);
             if (!Files.exists(cameraAppPath, LinkOption.NOFOLLOW_LINKS)) {
-                System.out.println(String.format(APP_NOT_FOUND_MESSAGE, cameraAppPath));
+                log.error(String.format(APP_NOT_FOUND_MESSAGE, cameraAppPath));
                 return false;
             }
 
@@ -166,30 +182,26 @@ public class Camera_RPICam implements CameraDevice {
 
             process = new ProcessBuilder(testCmdArgs).start();
 
-            try (InputStream is = process.getInputStream()) {
-                try (InputStreamReader isr = new InputStreamReader(is)) {
-                    try (BufferedReader br = new BufferedReader(isr)) {
-                        String line;
+            log.debug("Testing camera via process");
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
 
-                        while ((line = br.readLine()) != null) {
-                            List<String> parsedLineArgs = Arrays.asList(line.split(" "));
-                            for (String arg : parsedLineArgs) {
-                                if (arg.contains("=")) {
-                                    String[] split_arg = arg.split("=");
-                                    if (split_arg.length > 1) {
-                                        args.put(split_arg[0], split_arg[1]);
-                                    }
-                                }
+                while ((line = br.readLine()) != null) {
+                    log.debug("Reading process arguments:");
+                    List<String> parsedLineArgs = Arrays.asList(line.split(" "));
+                    for (String arg : parsedLineArgs) {
+                        if (arg.contains("=")) {
+                            String[] split_arg = arg.split("=");
+                            if (split_arg.length > 1) {
+                                log.debug("{}={}", split_arg[0], split_arg[1]);
+                                args.put(split_arg[0], split_arg[1]);
                             }
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+                log.debug("Process arguments read");
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Process failed to read from input stream", e);
             }
 
             if (args.containsKey("supported")) {
@@ -201,46 +213,55 @@ public class Camera_RPICam implements CameraDevice {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Checking rpi camera device failed", e);
             return false;
         }
 
+        if (supported) {
+            log.debug("Camera device check passed successfully");
+        } else {
+            log.error("Camera device check failed");
+        }
         return true;
     }
 
 
     @Override
     public void addCameraDeviceListener(CameraDeviceListener listener) {
-        if (listener == null)
-            throw new NullPointerException("[Camera_RPICam] CameraDeviceListener is null.");
+        Objects.requireNonNull(listener, "[Camera_RPICam] CameraDeviceListener must not be null.");
 
         synchronized (syncLock) {
-            if (!listeners.contains(listener))
+            if (!listeners.contains(listener)) {
                 listeners.add(listener);
+                log.debug("Added camera device listener. {}", listener.toString());
+            }
         }
     }
 
     @Override
     public void removeCameraDeviceListener(CameraDeviceListener listener) {
-        if (listener == null)
-            throw new NullPointerException("[Camera_RPICam] CameraDeviceListener is null.");
+        Objects.requireNonNull(listener, "[Camera_RPICam] CameraDeviceListener must not be null.");
 
         synchronized (syncLock) {
             listeners.remove(listener);
+            log.debug("Removed camera device listener. {}", listener.toString());
         }
     }
 
     private void fireNewImageEvent(ImageData imageData) {
-        if (imageData == null)
-            throw new NullPointerException("[fireNewImageEvent] imageData object is null.");
+        Objects.requireNonNull(imageData, "[fireNewImageEvent] imageData object is null.");
 
         synchronized (syncLock) {
+            log.debug("Creating new image event");
             ImageEvent imageEvent = new ImageEvent(this, imageData);
 
             List<CameraDeviceListener> tmpListeners = (List<CameraDeviceListener>) ((ArrayList<CameraDeviceListener>) this.listeners).clone();
 
-            for (CameraDeviceListener listener : tmpListeners)
+            for (CameraDeviceListener listener : tmpListeners) {
+                log.debug("Notifying observer {}", listener.toString());
                 listener.onImageReceived(imageEvent);
+                log.debug("Notified observer {}", listener.toString());
+            }
         }
     }
 
@@ -267,6 +288,7 @@ public class Camera_RPICam implements CameraDevice {
     @Override
     public void runDevice() {
         if (cameraReady) {
+            log.debug("Start camera device");
             Process process;
             try {
                 LocalDateTime today = LocalDateTime.now();
@@ -279,19 +301,19 @@ public class Camera_RPICam implements CameraDevice {
                 commandLineArgs.add(fileNameWithPath);
 
                 if (DEBUG_MODE)
-                    System.out.println("Params: [" + String.join(", ", commandLineArgs) + "]");
+                    log.debug("Params: [" + String.join(", ", commandLineArgs) + "]");
 
                 process = new ProcessBuilder(commandLineArgs.toArray(new String[0])).start();
 
                 if (DEBUG_MODE) {
-                        try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                            String line;
-                            while ((line = br.readLine()) != null) {
-                                System.out.println(line);
-                            }
-                        }catch (Exception e) {
-
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            log.debug(line);
                         }
+                    } catch (Exception e) {
+
+                    }
                 }
 
                 ImageData imageData = new ImageData();
@@ -302,10 +324,12 @@ public class Camera_RPICam implements CameraDevice {
                 fireNewImageEvent(imageData);
 
                 if (DEBUG_MODE)
-                    System.out.println("Image saved to '" + fileNameWithPath + "'.");
+                    log.debug("Image saved to '" + fileNameWithPath + "'.");
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Could not run camera device", e);
             }
+        } else {
+            log.error("Camera device not ready");
         }
     }
 

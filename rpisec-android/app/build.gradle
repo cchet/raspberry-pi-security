@@ -12,6 +12,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         jackOptions {
+            additionalParameters("jack.incremental": true)
             enabled true
         }
     }
