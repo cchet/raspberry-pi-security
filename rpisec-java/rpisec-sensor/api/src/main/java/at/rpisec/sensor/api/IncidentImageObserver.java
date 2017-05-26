@@ -9,5 +9,5 @@ package at.rpisec.sensor.api;
 @FunctionalInterface
 public interface IncidentImageObserver {
 
-    void handle(byte[] image);
+    void handle(byte[] image, String type);
 }

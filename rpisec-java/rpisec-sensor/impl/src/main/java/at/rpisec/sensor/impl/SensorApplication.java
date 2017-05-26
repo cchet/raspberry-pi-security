@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,9 +27,11 @@ import java.util.Objects;
 public class SensorApplication implements ISensorApplication {
 
     private IRSensorDevice sensor = null;
-    private List<IncidentImageObserver> observers = new ArrayList<>();
+    private List<IncidentImageObserver> observers = new LinkedList<>();
     private final Object syncLock = new Object();
     private boolean running = false;
+
+    private static final String IMAGE_EXTENSION = "jpeg";
 
     @Override
     public void register(IncidentImageObserver listener) {
@@ -72,7 +75,7 @@ public class SensorApplication implements ISensorApplication {
                     final File imageFile = new File(imageData.getImageFilePath().concat(imageData.getFileName()));
                     if (imageFile.exists()) {
                         BufferedImage bufferedImage = ImageIO.read(imageFile);
-                        ImageIO.write(bufferedImage, "jpeg", baos);
+                        ImageIO.write(bufferedImage, IMAGE_EXTENSION, baos);
                         imageBytes = baos.toByteArray();
                     }
                 } catch (IOException e) {
@@ -82,7 +85,7 @@ public class SensorApplication implements ISensorApplication {
                 synchronized (syncLock) {
                     if (imageBytes != null) {
                         for (IncidentImageObserver listener : observers) {
-                            listener.handle(imageBytes);
+                            listener.handle(imageBytes, IMAGE_EXTENSION);
                         }
                     }
                 }
@@ -98,6 +101,7 @@ public class SensorApplication implements ISensorApplication {
     @Override
     public void shutdown() throws SensorAppShutdownException {
         try {
+            observers.clear();
             if (sensor != null) {
                 sensor.stopDevice();
             }

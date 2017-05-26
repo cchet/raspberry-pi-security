@@ -21,6 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -93,6 +96,13 @@ public class IncidentLogic implements IIncidentLogic {
                     log.info("Notification successfully send: fcmToken: {}", token.getToken());
                 }
             }
+        }
+
+        // Save file to filesystem
+        try {
+            Files.createFile(Paths.get(new URI(imageLocation + occurringDate + "." + extension)));
+        } catch (Exception e) {
+            log.error("Could not save file to filesystem", e);
         }
 
         return task;

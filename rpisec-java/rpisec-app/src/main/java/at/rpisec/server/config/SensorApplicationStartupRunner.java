@@ -2,6 +2,7 @@ package at.rpisec.server.config;
 
 import at.rpisec.sensor.api.ISensorApplication;
 import at.rpisec.sensor.api.exception.SensorAppStartupException;
+import at.rpisec.server.logic.api.IIncidentLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,24 +10,32 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.TaskScheduler;
 
 import java.util.Objects;
+import java.util.concurrent.ScheduledFuture;
 
 /**
+ * The sartup runner for setting up the sensor application which interacts with the hardware device.
+ *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 05/25/17
  */
-public class RpisecStartupRunner implements CommandLineRunner {
+public class SensorApplicationStartupRunner implements CommandLineRunner {
 
     @Autowired
     private TaskScheduler taskScheduler;
     @Autowired
     private ISensorApplication sensorApp;
     @Autowired
+    private IIncidentLogic incidentLogic;
+    @Autowired
     private Logger log;
 
+    private static final int MAX_RESTART_COUNT = 10;
     private static final long SENSOR_APP_RESTART_MILLIS = 10000;
 
     public static final class SensorAppKeepAliveTask implements Runnable {
 
+        private int count = 0;
+        private ScheduledFuture future;
         private final ISensorApplication sensorApp;
         private static final Logger log = LoggerFactory.getLogger(SensorAppKeepAliveTask.class);
 
@@ -39,11 +48,22 @@ public class RpisecStartupRunner implements CommandLineRunner {
             if (!sensorApp.isRunning()) {
                 try {
                     sensorApp.start();
+                    count = 0;
                     log.info("Sensor application successfully started");
                 } catch (Throwable e) {
-                    log.error("Sensor application failed to start", e);
+                    count++;
+                    if (MAX_RESTART_COUNT == count) {
+                        future.cancel(false);
+                        log.error("Could not restart the sensor application for {} times, therefore giving up", MAX_RESTART_COUNT);
+                    } else {
+                        log.error("Sensor application failed to start", e);
+                    }
                 }
             }
+        }
+
+        public void setFuture(ScheduledFuture future) {
+            this.future = future;
         }
     }
 
@@ -51,11 +71,14 @@ public class RpisecStartupRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         try {
             sensorApp.start();
+            sensorApp.register(incidentLogic::logIncidentWithImageAsync);
             log.info("Sensor application successfully started");
         } catch (SensorAppStartupException e) {
             log.error("Sensor application failed to start");
         }
 
-        taskScheduler.scheduleAtFixedRate(new SensorAppKeepAliveTask(sensorApp), SENSOR_APP_RESTART_MILLIS);
+        final SensorAppKeepAliveTask task = new SensorAppKeepAliveTask(sensorApp);
+        final ScheduledFuture future = taskScheduler.scheduleAtFixedRate(task, SENSOR_APP_RESTART_MILLIS);
+        task.setFuture(future);
     }
 }

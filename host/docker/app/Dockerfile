@@ -4,6 +4,8 @@ MAINTAINER Thomas Herzog <herzog.thomas81@gmail.com>
 RUN apt-get update -y && \
     apt-get install -y oracle-java8-jdk && \
     apt-get install -y wget && \
+    apt-get install -y rpi-update && \
+    apt-get install -y wiringpi && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get autoremove && \
     apt-get autoclean && \
