@@ -10,6 +10,7 @@ import at.rpisec.sensor.impl.device.Camera_RPICam;
 import at.rpisec.sensor.impl.device.IRSensor_HCSR501;
 import at.rpisec.sensor.impl.listener.ImageData;
 import at.rpisec.sensor.impl.listener.ImageEvent;
+import com.pi4j.wiringpi.GpioUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

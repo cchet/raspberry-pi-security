@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class IRSensor_HCSR501 implements IRSensorDevice {
 
-    private static final String APP_PROPERTY_FILE = "app";
+    private static final String APP_PROPERTY_FILE = "sensor-app";
     private static boolean DEBUG_MODE = false;
     private final Object syncLock = new Object();
     private Thread gpioThread = null;
