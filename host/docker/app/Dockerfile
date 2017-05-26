@@ -1,4 +1,4 @@
-FROM hypriot/rpi-gpio
+FROM resin/rpi-raspbian:jessie
 MAINTAINER Thomas Herzog <herzog.thomas81@gmail.com>
 
 RUN apt-get update -y && \
@@ -13,6 +13,7 @@ RUN adduser --disabled-password --gecos "" rpisec
 
 ADD docker-entrypoint.sh ./home/rpisec/docker-entrypoint.sh
 ADD raspistill /usr/bin/raspistill
+ADD vcgencmd /usr/bin/vcgencmd
 RUN chmod +x /home/rpisec/docker-entrypoint.sh && \
     chown rpisec:rpisec /home/rpisec/docker-entrypoint.sh
 
