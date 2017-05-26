@@ -24,6 +24,7 @@ buildscript {
 		sbrannenSpringJunit5='1.0.0.M4'
 		spotifyDockerClientVersion='8.4.0'
 		log4jApiVersion='1.7.24'
+		buildParamPlatform='platform'
 	}
 
 	dependencies {
@@ -57,6 +58,10 @@ subprojects {
 			downloadJavadoc = true
 			downloadSources = true
 		}
+	}
+
+	jar {
+		archiveName=project.name.replace('/', '-') + '.jar'
 	}
 
 	publishing {
