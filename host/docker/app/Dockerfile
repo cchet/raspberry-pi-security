@@ -4,8 +4,6 @@ MAINTAINER Thomas Herzog <herzog.thomas81@gmail.com>
 RUN apt-get update -y && \
     apt-get install -y oracle-java8-jdk && \
     apt-get install -y wget && \
-    apt-get install -y rpi-update && \
-    apt-get install -y wiringpi && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get autoremove && \
     apt-get autoclean && \
@@ -14,6 +12,8 @@ RUN apt-get update -y && \
 RUN adduser --disabled-password --gecos "" rpisec
 
 ADD docker-entrypoint.sh ./home/rpisec/docker-entrypoint.sh
+ADD raspistill /usr/bin/raspistill
+ADD vcgencmd /usr/bin/vcgencmd
 RUN chmod +x /home/rpisec/docker-entrypoint.sh && \
     chown rpisec:rpisec /home/rpisec/docker-entrypoint.sh
 
