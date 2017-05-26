@@ -29,8 +29,8 @@ public class Camera_RPICam implements CameraDevice {
 
     private static final String IMAGE_FILE_PATTERN = "yyyyMMddHHmmssSSS";
     private static final String IMAGE_FILE_SUFFIX = ".jpeg";
-    private static final String DEVICE_PROPERTY_FILE = "device_camera";
-    private static final String APP_PROPERTY_FILE = "app";
+    private static final String DEVICE_PROPERTY_FILE = "sensor-app-device-camera.properties";
+    private static final String APP_PROPERTY_FILE = "sensor-app.properties";
     private static final String APP_NOT_FOUND_MESSAGE = "Application %s not found.";
     private static final String CAMERA_TEST_APP_NOT_DEFINED_MESSAGE = "Path to camera test application not set.";
     private static final String CAMERA_APP_NOT_DEFINED_MESSAGE = "Path to camera application not set.";
