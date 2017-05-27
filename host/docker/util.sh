@@ -44,8 +44,8 @@ function kill-recreate-start {
 }
 
 function cleanAll {
-  cleanDanglingImages
   cleanContainers
+  cleanDanglingImages
 }
 
 function cleanDanglingImages {
@@ -58,12 +58,13 @@ function cleanContainers {
 
 function rebuildRpiBase() {
 	docker rmi rpisec-rpi-base
-	docker build --file ${DOCKER_INFRASTRUCTURE_HOME}/base/Dockerfile --label rpisec-rpi-base
+	docker build -t rpisec-rpi-base:latest ${DOCKER_INFRASTRUCTURE_HOME}/base/
 }
 
 case $1 in
   start|stop|kill|restart|kill-restart|recreate|recreate-start|kill-recreate|kill-recreate-start|rebuildRpiBase)
-  if [ -n "${DOCKER_INFRASTRUCTURE_HOME}" ];
+  echo "DOCKER_INFRASTRUCTURE_HOME=${DOCKER_INFRASTRUCTURE_HOME}"
+  if [ -z "${DOCKER_INFRASTRUCTURE_HOME}" ];
   then
     echo "'DOCKER_INFRASTRUCTURE_HOME' env variable must be set !!!"
     exit -1
