@@ -125,7 +125,7 @@ public class SensorApplication implements ISensorApplication {
     }
 
     @Override
-    public void shutdown() throws SensorAppShutdownException {
+    public void stop() throws SensorAppShutdownException {
         log.info("Stopping sensor application");
         applicationConfig = null;
         try {
@@ -136,7 +136,7 @@ public class SensorApplication implements ISensorApplication {
             log.info("Stopped sensor application");
         } catch (Exception e) {
             log.info("Stopping of sensor application failed");
-            throw new SensorAppShutdownException("Sensor application failed to shutdown", e);
+            throw new SensorAppShutdownException("Sensor application failed to stop", e);
         } finally {
             running = false;
         }
