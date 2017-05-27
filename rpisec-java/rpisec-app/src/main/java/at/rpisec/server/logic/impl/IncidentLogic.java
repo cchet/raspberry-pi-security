@@ -59,17 +59,20 @@ public class IncidentLogic implements IIncidentLogic {
     @Override
     public void logIncidentWithImage(final byte[] image,
                                      final String extension) {
+        log.debug("Logging reported incident with image");
         final Task<Void> task = logIncidentWithImageAsync(image, extension);
         try {
             Tasks.await(task);
         } catch (Exception e) {
             log.error("Waiting for firebase task failed with an error", e);
         }
+        log.debug("Logged reported incident with image");
     }
 
     @Override
     public Task<Void> logIncidentWithImageAsync(byte[] image,
                                                 String extension) {
+        log.debug("Logging async reported incident with image");
         final Locale locale = Locale.ENGLISH;
         final String base64Data = Base64.getEncoder().encodeToString(image);
         final String occurringDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern(FirebaseConstants.DATE_TIME_FORMAT_PATTERN));
@@ -100,10 +103,11 @@ public class IncidentLogic implements IIncidentLogic {
 
         // Save file to filesystem
         try {
-            Files.createFile(Paths.get(new URI(imageLocation + occurringDate + "." + extension)));
+            Files.createFile(Paths.get(imageLocation + occurringDate + "." + extension));
         } catch (Exception e) {
             log.error("Could not save file to filesystem", e);
         }
+        log.debug("Logged async reported incident with image");
 
         return task;
     }

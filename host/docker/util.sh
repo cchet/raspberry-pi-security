@@ -56,8 +56,13 @@ function cleanContainers {
   docker rm $(docker ps -qa --no-trunc --filter "status=exited")
 }
 
+function rebuildRpiBase() {
+	docker rmi rpisec-rpi-base
+	docker build --file ${DOCKER_INFRASTRUCTURE_HOME}/base/Dockerfile --label rpisec-rpi-base
+}
+
 case $1 in
-  start|stop|kill|restart|kill-restart|recreate|recreate-start|kill-recreate|kill-recreate-start)
+  start|stop|kill|restart|kill-restart|recreate|recreate-start|kill-recreate|kill-recreate-start|rebuildRpiBase)
   if [ -n "${DOCKER_INFRASTRUCTURE_HOME}" ];
   then
     echo "'DOCKER_INFRASTRUCTURE_HOME' env variable must be set !!!"

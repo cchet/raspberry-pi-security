@@ -1,7 +1,7 @@
 package at.rpisec.server.config;
 
 import at.rpisec.sensor.api.ISensorApplication;
-import at.rpisec.sensor.api.exception.SensorAppStartupException;
+import at.rpisec.sensor.impl.config.PropertiesfileSensorApplicationConfiguration;
 import at.rpisec.server.logic.api.IIncidentLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +34,9 @@ public class SensorApplicationStartupRunner implements CommandLineRunner {
 
     public static final class SensorAppKeepAliveTask implements Runnable {
 
+        private final ISensorApplication sensorApp;
         private int count = 0;
         private ScheduledFuture future;
-        private final ISensorApplication sensorApp;
         private static final Logger log = LoggerFactory.getLogger(SensorAppKeepAliveTask.class);
 
         public SensorAppKeepAliveTask(ISensorApplication sensorApp) {
@@ -47,7 +47,7 @@ public class SensorApplicationStartupRunner implements CommandLineRunner {
         public void run() {
             if (!sensorApp.isRunning()) {
                 try {
-                    sensorApp.start();
+                    sensorApp.start(sensorApp.getCurrentConfiguration());
                     count = 0;
                     log.info("Sensor application successfully started");
                 } catch (Throwable e) {
@@ -70,15 +70,16 @@ public class SensorApplicationStartupRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         try {
-            sensorApp.start();
+            log.debug("Started command line runner");
+            sensorApp.start(new PropertiesfileSensorApplicationConfiguration());
             sensorApp.register(incidentLogic::logIncidentWithImageAsync);
-            log.info("Sensor application successfully started");
-        } catch (SensorAppStartupException e) {
-            log.error("Sensor application failed to start");
-        }
 
-        final SensorAppKeepAliveTask task = new SensorAppKeepAliveTask(sensorApp);
-        final ScheduledFuture future = taskScheduler.scheduleAtFixedRate(task, SENSOR_APP_RESTART_MILLIS);
-        task.setFuture(future);
+            final SensorAppKeepAliveTask task = new SensorAppKeepAliveTask(sensorApp);
+            final ScheduledFuture future = taskScheduler.scheduleAtFixedRate(task, SENSOR_APP_RESTART_MILLIS);
+            task.setFuture(future);
+            log.debug("Ended command line runner");
+        } catch (Throwable e) {
+            log.debug("Command line runner failed", e);
+        }
     }
 }

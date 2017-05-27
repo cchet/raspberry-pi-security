@@ -2,6 +2,7 @@ package at.rpisec.sensor.impl;
 
 import at.rpisec.sensor.api.ISensorApplication;
 import at.rpisec.sensor.api.IncidentImageObserver;
+import at.rpisec.sensor.api.config.ISensorApplicationConfiguration;
 import at.rpisec.sensor.api.device.camera.CameraDevice;
 import at.rpisec.sensor.api.device.irsensor.IRSensorDevice;
 import at.rpisec.sensor.api.exception.SensorAppShutdownException;
@@ -10,7 +11,6 @@ import at.rpisec.sensor.impl.device.Camera_RPICam;
 import at.rpisec.sensor.impl.device.IRSensor_HCSR501;
 import at.rpisec.sensor.impl.listener.ImageData;
 import at.rpisec.sensor.impl.listener.ImageEvent;
-import com.pi4j.wiringpi.GpioUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +28,7 @@ import java.util.Objects;
  */
 public class SensorApplication implements ISensorApplication {
 
+    private ISensorApplicationConfiguration applicationConfig;
     private IRSensorDevice sensor = null;
     private List<IncidentImageObserver> observers = new LinkedList<>();
     private final Object syncLock = new Object();
@@ -41,9 +41,12 @@ public class SensorApplication implements ISensorApplication {
     public void register(IncidentImageObserver observer) {
         Objects.requireNonNull(observer, "Observer must not be null");
         synchronized (syncLock) {
+            log.debug("Registering incident image observer instance: {}", observer.toString());
             if (!observers.contains(observer)) {
                 observers.add(observer);
-                log.info("Added incident image observer instance: {}", observer.toString());
+                log.debug("Registered incident image observer instance");
+            } else {
+                log.debug("Registering of incident image observer instance not possible. Already registered");
             }
         }
     }
@@ -52,16 +55,19 @@ public class SensorApplication implements ISensorApplication {
     public void remove(IncidentImageObserver observer) {
         Objects.requireNonNull(observer, "Null observer cannot be null");
         synchronized (syncLock) {
-            observers.remove(observer);
-            log.info("Removed incident image observer instance: {}", observer.toString());
+            log.debug("Unregistering incident image observer instance: {}", observer.toString());
+            final boolean removed = observers.remove(observer);
+            log.debug("Unregistered incident image observer instance: removed={}", removed);
         }
     }
 
     @Override
-    public void start() throws SensorAppStartupException {
+    public void start(final ISensorApplicationConfiguration applicationConfig) throws SensorAppStartupException {
+        this.applicationConfig = Objects.requireNonNull(applicationConfig, "Application configuration must not be null");
+
         log.info("Starting sensor application");
         try {
-            CameraDevice camera = new Camera_RPICam();
+            CameraDevice camera = new Camera_RPICam(applicationConfig.getCameraDeviceConfiguration());
 
             if (!camera.isSupported()) {
                 throw new IllegalStateException("CameraDevice not supported");
@@ -73,9 +79,12 @@ public class SensorApplication implements ISensorApplication {
 
             sensor = new IRSensor_HCSR501();
             sensor.attachDevice(camera);
+            log.debug("Attached camera device to HCSR501 sensor");
 
             // CameraDeviceListener
+            log.debug("Registering camera device listener");
             camera.addCameraDeviceListener(event -> {
+                log.debug("Calling camera device listener");
                 Objects.requireNonNull(event, "[CameraDeviceListener] event object is null");
                 ImageData imageData = Objects.requireNonNull(((ImageEvent) event).getImageData(), "[CameraDeviceListener] event object is null");
 
@@ -88,38 +97,45 @@ public class SensorApplication implements ISensorApplication {
                         imageBytes = baos.toByteArray();
                     }
                 } catch (IOException e) {
-                    throw new IllegalStateException("Could not read sensor image data", e);
+                    log.error("Calling camera device listener failed", e);
                 }
 
-                synchronized (syncLock) {
-                    if (imageBytes != null) {
+                if (imageBytes != null) {
+                    synchronized (syncLock) {
                         for (IncidentImageObserver listener : observers) {
+                            log.debug("Notifying camera attached observer. {}", listener);
                             listener.handle(imageBytes, IMAGE_EXTENSION);
+                            log.debug("Notified camera attached observer. {}", listener);
                         }
                     }
+                } else {
+                    log.debug("No image data provided by new image event");
                 }
+                log.debug("Called camera device listener");
             });
+            log.debug("Registered camera device listener");
 
             sensor.runDevice();
             running = true;
-            log.info("Sensor application successfully started");
+            log.info("Started sensor application");
         } catch (Exception e) {
-            log.info("Sensor application failed to start");
+            log.info("Starting of sensor application failed");
             throw new SensorAppStartupException("Startup of sensor application failed", e);
         }
     }
 
     @Override
     public void shutdown() throws SensorAppShutdownException {
-        log.info("Shtudown sensor application");
+        log.info("Stopping sensor application");
+        applicationConfig = null;
         try {
             observers.clear();
             if (sensor != null) {
                 sensor.stopDevice();
             }
-            log.info("Shtudown sensor application successfully");
+            log.info("Stopped sensor application");
         } catch (Exception e) {
-            log.info("Shtudown sensor application failed to shutdown gracefully");
+            log.info("Stopping of sensor application failed");
             throw new SensorAppShutdownException("Sensor application failed to shutdown", e);
         } finally {
             running = false;
@@ -129,5 +145,9 @@ public class SensorApplication implements ISensorApplication {
     @Override
     public boolean isRunning() {
         return running;
+    }
+
+    @Override public ISensorApplicationConfiguration getCurrentConfiguration() {
+        return applicationConfig;
     }
 }

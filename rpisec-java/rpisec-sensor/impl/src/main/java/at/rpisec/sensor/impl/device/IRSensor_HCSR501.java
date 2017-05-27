@@ -1,15 +1,14 @@
 package at.rpisec.sensor.impl.device;
 
 import at.rpisec.sensor.api.device.Device;
-import at.rpisec.sensor.api.device.DeviceSettings;
 import at.rpisec.sensor.api.device.irsensor.IRSensorDevice;
-import at.rpisec.sensor.impl.util.DeviceSettingsUitl;
 import com.pi4j.io.gpio.*;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Philipp Wurm <philipp.wurm@gmail.com>.
@@ -17,36 +16,24 @@ import java.util.Map;
 
 public class IRSensor_HCSR501 implements IRSensorDevice {
 
-    private static final String APP_PROPERTY_FILE = "sensor-app";
-    private static boolean DEBUG_MODE = false;
     private final Object syncLock = new Object();
-    private Thread gpioThread = null;
-    private GpioEventLoop gpioEventLoop = null;
-
+    private GpioController gpioController;
     // don't know if there is a way to check if hardware is connected to gpio pins
     private boolean supported = true;
     private boolean detected = true;
 
     private List<Device> devices;
 
+    private static final Logger log = LoggerFactory.getLogger(IRSensor_HCSR501.class);
+
     public IRSensor_HCSR501() {
         init();
     }
 
     private void init() {
+        log.debug("Initializing HCSR501 sensor");
         devices = new ArrayList<>();
-
-        DeviceSettings settings = new DeviceSettingsUitl();
-        Map<String, String> app_settings = settings.readSettings(APP_PROPERTY_FILE);
-
-        for (String key : app_settings.keySet()) {
-            String value = app_settings.get(key).trim();
-            switch (key) {
-                case "debug": {
-                    DEBUG_MODE = value.equals("1");
-                }
-            }
-        }
+        log.debug("Initialized HCSR501 sensor");
     }
 
     @Override
@@ -71,39 +58,56 @@ public class IRSensor_HCSR501 implements IRSensorDevice {
 
     @Override
     public void runDevice() {
-        if (gpioThread != null) {
-            if (gpioThread.isAlive())
-                return;
+        log.debug("Starting HCSR501 sensor");
+
+        // Already running
+        if (gpioController != null) {
+            log.debug("Starting HCSR501 sensor failed. Already started");
+            return;
         }
 
-        gpioEventLoop = new GpioEventLoop();
-        gpioThread = new Thread(gpioEventLoop);
-        gpioThread.start();
+        gpioController = GpioFactory.getInstance();
+        final GpioPinDigitalInput sensor = gpioController.provisionDigitalInputPin(RaspiPin.GPIO_15, "hcsr501");
+        sensor.setShutdownOptions(true);
 
-        try {
-            gpioThread.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Device thread interrupted", e);
-        }
+        // create and register gpio pin listener
+        log.debug("Registering sensor listener");
+        sensor.addListener((GpioPinListenerDigital) event -> {
+            log.debug("HCSR501 sensor at pin '{}' changed state to '{}'", event.getPin(), event.getState());
+
+            if (PinState.HIGH.equals(event.getState())) {
+                synchronized (syncLock) {
+                    for (Device device : devices) {
+                        log.debug("Running attached device. {}", device);
+                        device.runDevice();
+                        log.debug("Ran attached device");
+                    }
+                }
+            }
+        });
+        log.debug("Registered sensor listener");
+        log.debug("Started HCSR501 sensor");
     }
 
     @Override
     public void stopDevice() {
-        if (gpioThread != null && gpioThread.isAlive()) {
-            if (gpioEventLoop != null) {
-                gpioEventLoop.stopEventLoop();
-
-                gpioEventLoop = null;
-                gpioThread = null;
-            }
+        log.debug("Stopping HCSR501 sensor");
+        if (gpioController != null) {
+            gpioController.shutdown();
+            gpioController = null;
+            log.debug("Stopped HCSR501 sensor");
+        } else {
+            log.debug("Stopping HCSR501 sensor failed. already stopped");
         }
     }
 
     @Override
     public void attachDevice(Device device) {
         synchronized (syncLock) {
-            if (!devices.contains(device))
+            if (!devices.contains(device)) {
                 devices.add(device);
+                log.debug("Added device. {}", device);
+            }
         }
     }
 
@@ -111,74 +115,7 @@ public class IRSensor_HCSR501 implements IRSensorDevice {
     public void detachDevice(Device device) {
         synchronized (syncLock) {
             devices.remove(device);
-        }
-    }
-
-    private final class GpioEventLoop implements Runnable {
-
-        private final Object syncLock = new Object();
-        private GpioController gpio = null;
-        private GpioPinDigitalInput sensore = null;
-        private boolean secureWait = true;
-
-        private void stopEventLoop() {
-
-            getSensore().removeAllListeners();
-            getGpio().shutdown();
-
-            synchronized (syncLock) {
-                syncLock.notify();
-                setSecureWait(false);
-            }
-        }
-
-        @Override
-        public void run() {
-            gpio = GpioFactory.getInstance();
-            sensore = gpio.provisionDigitalInputPin(RaspiPin.GPIO_15, "hcsr501");
-            getSensore().setShutdownOptions(true);
-
-            // create and register gpio pin listener
-            getSensore().addListener((GpioPinListenerDigital) event -> {
-                // display pin state on console
-
-                if (DEBUG_MODE)
-                    System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
-
-                if (event.getState() == PinState.HIGH) {
-                    synchronized (syncLock) {
-                        List<Device> tmpDevices = (List<Device>) ((ArrayList<Device>) devices).clone();
-
-                        for (Device device : tmpDevices)
-                            device.runDevice();
-                    }
-                }
-            });
-
-            synchronized (syncLock) {
-                try {
-                    if (isSecureWait())
-                        syncLock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        private GpioController getGpio() {
-            return gpio;
-        }
-
-        private GpioPinDigitalInput getSensore() {
-            return sensore;
-        }
-
-        public boolean isSecureWait() {
-            return secureWait;
-        }
-
-        public void setSecureWait(boolean secureWait) {
-            this.secureWait = secureWait;
+            log.debug("Removed device. {}", device);
         }
     }
 }
