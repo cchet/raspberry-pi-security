@@ -8,4 +8,4 @@ fi
 
 cp -f ~/app/rpisec-oauth-${RPISEC_VERSION}.jar ~/app/oauth-${RPISEC_VERSION}-running.jar
 
-java ${OAUTH_JAVA_OPTS} -jar ${HOME}/app/oauth-${RPISEC_VERSION}-running.jar --spring.profiles.active=prod --spring.config.location=file:${HOME}/conf/oauth-external-application.properties
+exec java ${OAUTH_JAVA_OPTS} -jar ${HOME}/app/oauth-${RPISEC_VERSION}-running.jar --spring.profiles.active=prod --spring.config.location=file:${HOME}/conf/oauth-external-application.properties
