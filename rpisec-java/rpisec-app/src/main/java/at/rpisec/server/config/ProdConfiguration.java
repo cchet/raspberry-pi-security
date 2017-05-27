@@ -13,15 +13,14 @@ import org.springframework.context.annotation.Profile;
  */
 @Configuration
 @Profile("prod")
-public class SensorApplicationConfiguration {
+public class ProdConfiguration {
 
     @Bean
     ISensorApplication produceSensorApplication() {
         return new SensorApplication();
     }
-
     @Bean
-    CommandLineRunner produceSensorApplicationStartupRunner() {
-        return new SensorApplicationStartupRunner();
+    CommandLineRunner produceStartupRunner() {
+        return new StartupRunner();
     }
 }

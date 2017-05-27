@@ -18,7 +18,7 @@ public interface ISensorApplication {
 
     void start(ISensorApplicationConfiguration config) throws SensorAppStartupException;
 
-    void shutdown() throws SensorAppShutdownException;
+    void stop() throws SensorAppShutdownException;
 
     boolean isRunning();
 
