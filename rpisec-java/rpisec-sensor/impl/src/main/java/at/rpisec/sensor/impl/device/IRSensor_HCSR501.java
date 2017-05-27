@@ -92,6 +92,8 @@ public class IRSensor_HCSR501 implements IRSensorDevice {
     @Override
     public void stopDevice() {
         log.debug("Stopping HCSR501 sensor");
+        devices.forEach(Device::stopDevice);
+        devices.clear();
         if (gpioController != null) {
             gpioController.shutdown();
             gpioController = null;

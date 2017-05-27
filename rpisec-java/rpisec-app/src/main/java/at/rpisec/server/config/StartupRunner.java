@@ -1,7 +1,6 @@
 package at.rpisec.server.config;
 
 import at.rpisec.sensor.api.ISensorApplication;
-import at.rpisec.sensor.api.exception.SensorAppShutdownException;
 import at.rpisec.sensor.impl.config.PropertiesfileSensorApplicationConfiguration;
 import at.rpisec.server.logic.api.IIncidentLogic;
 import org.slf4j.Logger;
@@ -82,19 +81,5 @@ public class StartupRunner implements CommandLineRunner {
         } catch (Throwable e) {
             log.debug("Command line runner failed", e);
         }
-
-        // Register shutdown hook for sensor application shutdown
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            final Logger log = LoggerFactory.getLogger("rpisec-app shutdwon hook");
-            log.info("Started shutdown");
-            if ((sensorApp != null) && (sensorApp.isRunning())) {
-                try {
-                    sensorApp.stop();
-                } catch (SensorAppShutdownException e) {
-                    log.error("Shutdown gracefully failed", e);
-                }
-            }
-            log.info("Finished shutdown");
-        }));
     }
 }

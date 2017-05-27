@@ -225,6 +225,6 @@ public class Camera_RPICam implements CameraDevice {
 
     @Override
     public void stopDevice() {
-        throw new UnsupportedOperationException("The camera does not need to be stopped");
+        listeners.clear();
     }
 }
