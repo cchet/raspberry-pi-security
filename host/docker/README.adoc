@@ -44,5 +44,42 @@ The following tables shows the necessary environment variables, their usage and 
 | OAUTH_CONF_VOLUME    | ~/docker-volumes/oauth/conf | mapped volume for the rpisec-oauth configuration        | .env
 | OAUTH_LOG_VOLUME     | ~/docker-volumes/oauth/log  | mapped volume for the rpisec-oauth logs                 | .env
 | OAUTH_DB_VOLUME      | ~/docker-volumes/oauth/db   | mapped volume for the rpisec-oauth database             | .env
+| NGINX_LOG_VOLUME     | ~/docker-volumes/nginx/logs | mapped volume for the nginx logs                        | .env
+| NGINX_CERT_VOLUME    | ~/docker-volumes/nginx/cert | mapped volume for the nginx used certs                  | .env
 | RPISEC_VERSION       | 0.0.1-SNAPSHOT              | the current version of the microservice infrastructure  | ~/.bashrc
+| DOCKER_INFRASTRUCTURE_HOME       | <fully_qualified_path_to_docker-compose_direcotry>     | points to the directory where the __docker-ccompose.yml__ is located   | ~/.bashrc
+|==============================
+
+# Preparations
+This sections deals with the preparations for the docker infrastructure. +
+
+- Set environment variable __DOCKER_INFRASTRUCTURE_HOME__ in __.bashrc__ to point to __docker-compose.yml__ direcotry
+- Set environment variable __RPISEC_VERSION__ in __.bashrc__ to define application version
+- Create volume directories defined by the __.env__ contained environment variables in the docker executing user's home
+- Define the configuration file __app-external-application.properties__ and place it in the directory defined by the environment variable __APP_CONF_VOLUME__
+- Define the configuration file __oauth-external-application.properties__ and place it in the directory defined by the environment variable __OAUTH_CONF_VOLUME__
+- Get firebase configuration file __firebase-account.json__ from firebase console and place it in the directory defined by the environment variable __APP_CONF_VOLUME__
+- Get firebase configuration file __firebase-account.json__ from firebase console and place it in the directory defined by the environment variable __OAUTH_CONF_VOLUME__
+- Place a private and public certificate __(privatekey.pem, cert.pem)__ in the directory defined by the environment variable __NGINX_CERT_VOLUME__
+- Deploy __rpisec-app.jar__ to directory defined by the environment variable __APP_APP_VOLUME__
+- Deploy __rpisec-oauth.jar__ to directory defined by the environment variable __OAUTH_APP_VOLUME__
+- Create the __rpisec-base__ image via `./util.sh rebuildRpisecBase` in the directory __*/host/docker__
+
+# First start
+This section deals with the first start of the docker infrastructure. +
+Therefore that the databases are created the first time and the __postgres__ images return ok state in the meaning of docker, but do create
+the database afterwards, it could be that the __rpisec-app__ and __rpisec-oauth__ service fail because the databases are not ready. +
+This could only occur when the database are getting initialized the first time, so restart the infrastructure and everything will work.
+
+# Start stop infrastructure
+This section deals with the starting and stopping of the dpcker infrastructure. All of the docker commands should be executed in the directory where the _docker-compose.yml__ resides, or
+you need to specifiy the __-f__ flag on each execution of an __docker-compose__ command. +
+[options="header"]
+|==============================
+| Command                  | Performed action
+| `docker-compose up`      | Creates the containers if necesarry and starts the services
+| `docker-compose down`    | Stops the service and removes the related containers
+| `docker-compose start`   | Starts the services with the existing containers
+| `docker-compose stop`    | Stops the running services and keeps the containers
+| `docker-compose restart` | Stops the running services if necesarry and starts them
 |==============================

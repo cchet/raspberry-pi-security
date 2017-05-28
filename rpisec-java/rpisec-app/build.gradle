@@ -6,7 +6,7 @@ buildscript {
 
     ext {
         springloadedVersion='1.2.7.RELEASE'
-        isProd=System.getProperty('spring.profiles.active')?.contains("prod") ?: false
+        isProd=System.getProperty('platform')?.contains("prod") ?: false
     }
 
     dependencies {

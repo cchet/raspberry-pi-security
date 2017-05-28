@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 
 import javax.validation.Valid;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
@@ -56,7 +58,6 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Scope("prototype")
     @Qualifier(INCIDENT_IMAGE_LOCATION)
     String produceImageLocationString(final @Value("${imageDir}") String imageDir) {
         return imageDir;

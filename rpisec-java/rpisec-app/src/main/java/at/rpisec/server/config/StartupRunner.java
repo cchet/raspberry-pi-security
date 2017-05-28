@@ -6,9 +6,12 @@ import at.rpisec.server.logic.api.IIncidentLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.TaskScheduler;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.concurrent.ScheduledFuture;
 
@@ -28,6 +31,9 @@ public class StartupRunner implements CommandLineRunner {
     private IIncidentLogic incidentLogic;
     @Autowired
     private Logger log;
+    @Autowired
+    @Qualifier(SecurityConfiguration.INCIDENT_IMAGE_LOCATION)
+    private String imageDir;
 
     private static final int MAX_RESTART_COUNT = 10;
     private static final long SENSOR_APP_RESTART_MILLIS = 10000;
@@ -71,12 +77,21 @@ public class StartupRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         try {
             log.debug("Started command line runner");
+
+            // validate image dir
+            if(!Files.isDirectory(Paths.get(imageDir))) {
+                throw new IllegalStateException(String.format("Defined parameter 'imageDir' does not exist or is not a directory. imageDir=%s",imageDir));
+            }
+
+            // start sensor application
             sensorApp.start(new PropertiesfileSensorApplicationConfiguration());
             sensorApp.register(incidentLogic::logIncidentWithImageAsync);
 
+            // create restart task
             final SensorAppKeepAliveTask task = new SensorAppKeepAliveTask(sensorApp);
             final ScheduledFuture future = taskScheduler.scheduleAtFixedRate(task, SENSOR_APP_RESTART_MILLIS);
             task.setFuture(future);
+
             log.debug("Ended command line runner");
         } catch (Throwable e) {
             log.debug("Command line runner failed", e);
