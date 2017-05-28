@@ -56,13 +56,13 @@ function cleanContainers {
   docker rm $(docker ps -qa --no-trunc --filter "status=exited")
 }
 
-function rebuildRpiBase() {
+function rebuildRpisecBase() {
 	docker rmi rpisec-rpi-base
-	docker build -t rpisec-rpi-base:latest ${DOCKER_INFRASTRUCTURE_HOME}/base/
+	docker build -t rpisec-base:latest ${DOCKER_INFRASTRUCTURE_HOME}/base/
 }
 
 case $1 in
-  start|stop|kill|restart|kill-restart|recreate|recreate-start|kill-recreate|kill-recreate-start|rebuildRpiBase)
+  start|stop|kill|restart|kill-restart|recreate|recreate-start|kill-recreate|kill-recreate-start|rebuildRpisecBase)
   echo "DOCKER_INFRASTRUCTURE_HOME=${DOCKER_INFRASTRUCTURE_HOME}"
   if [ -z "${DOCKER_INFRASTRUCTURE_HOME}" ];
   then

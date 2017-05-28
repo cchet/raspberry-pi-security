@@ -1,10 +1,13 @@
 Spring Boot application
 =======================
 Thomas Herzog <herzog.thomas81@gmail.com>
-v0.1, 2017/04/28, Initial intention description.
 
-The spring boot application is used to host host the rest api and provides main logic
-for the application.
+This document describes the usage of this application and how to set it up in an development and productive environment.
+
+# Description
+The spring boot application provides the user management for the __rpisec__ applications. It handles the
+firebase logins, stores the client devices __(client_id, client_secret)__ and registers the user client devices
+on the __rpisec-app__ application.
 
 # Setup
 This section deals with the setup of the spring boot application. +
@@ -14,9 +17,9 @@ works as a standalone application with no special setup necessary.
 
 ## Externalized configuration
 The configuration has been split to a static part which is packaged into the application
-and a dynamic part which is provided via the configuration file  __external-application.properties__. +
-An template for the configuration file __external-application.properties__
-can be found link:../host/config/external-application.properties[here]. +
+and a dynamic part which is provided via the configuration file  __oauth-external-application.properties__. +
+An template for the configuration file __oauth-external-application.properties__
+can be found link:../host/config/oauth-external-application.properties[here]. +
 
 Firebase needs a configuration file which must be kep private.
 
@@ -26,9 +29,9 @@ This section deals with the necessary setup for the development environment.
 ### VM Options
 [options="header"]
 |======================
-|Option      |Usage
-|-Dspring.profiles.active=dev        | Activates the dev profile
-|-Dspring.config.location=file:<path_to_file>/<config_file_name>.properties        |Includes the externalized configuration
+|Option                    | Values      | Usage
+|-Dplatform                |  dev, prod  | Activates either dev or prod configurations
+|-Dspring.config.location  | file:<path_to_file>/<config_file_name>.properties | Includes the externalized configuration
 |======================
 
 ### Externalized Configuration
@@ -36,7 +39,7 @@ The externalized configuration file can be named and located as intended and wil
 defined via an VM option as mentioned in the former section.
 
 ### Firebase
-The __external-application.properties__ file must contain the parameter __firebase.configFile__ which defines
+The __oauth-external-application.properties__ file must contain the parameter __firebase.configFile__ which defines
 the location and name of the firebase configuration file. +
 
 ## Productive Environment
@@ -44,43 +47,27 @@ This section deals with the necessary setup for the productive environment. +
 The productive environment is hosted in a docker infrastructure which is defined
 via a docker-compose.yml which can be found link:../host/docker/docker-compose.yml[here]. +
 
-The docker infrastructure needs the following environment variables set.
+The docker infrastructure requires the following environment variables which must be visible
+to docker-compose and most of the variables are defined in the __.env__ file which can be found  link:../host/docker/.env[here]. +
+
+Mostly the volumes are defined int he __.env__ file which shall be located in the docker executing user's home.
 [options="header"]
-|======================
-|Variable      |Usage
-|POSTGRES_DATA_VOLUME        | The mapped volume for the persistent database data
-|APP_VOLUME            |The mapped volume holding the deployed applications
-|APP_CONF_VOLUME   |The volume holding the externalized configuration and firebase json file
-|APP_LOG_VOLUME    |The mapped volume where the application logs will be stored
-|NGINX_LOG_VOLUME  |The mapped volume where the reverse proxy logs will be stored
-|NGINX_CERT_VOLUME |The mapped volume where the certificate is located the reverse proxy uses
-|======================
+|==============================
+| Variable             | Value                       | Usage                                                   | Location
+| OAUTH_APP_VOLUME     | ~/docker-volumes/oauth/app  | mapped volume for the rpisec-oauth jars                 | .env
+| OAUTH_CONF_VOLUME    | ~/docker-volumes/oauth/conf | mapped volume for the rpisec-oauth configuration        | .env
+| OAUTH_LOG_VOLUME     | ~/docker-volumes/oauth/log  | mapped volume for the rpisec-oauth logs                 | .env
+| OAUTH_DB_VOLUME      | ~/docker-volumes/oauth/db   | mapped volume for the rpisec-oauth database             | .env
+| RPISEC_VERSION       | 0.0.1-SNAPSHOT              | the current version of the microservice infrastructure  | ~/.bashrc
+|==============================
 
 ### Externalized Configuration
-The externalized configuration file must be named __external-application.properties__
-and must be located at the root of the mapped conf volume defined by the environment variable __APP_CONF_VOLUME__.
+The externalized configuration file must be named __oauth-external-application.properties__
+and must be located at the root of the mapped conf volume defined by the environment variable __OAUTH_CONF_VOLUME__.
 
 ### Firebase
 The firebase configuration file must be named __firebase-account.json__ and must be located
-at the root of the mapped conf volume defined by the environment variable __APP_CONF_VOLUME__.
-
-### SSL
-The productive envirnment only allows SSL connections via the reverse proxy and therefore
-the private and public certificate must located at the root of the mapped volume defined by the environment
-variable __NGINX_CERT_VOLUME__. The files must be named __privatekey.pem__ and __cert.pem__
-and must be encoded in the __PEM__ format. +
-
-It is recommended to use a valid certificate which can be easily created with __letsencrypt__ but
-an private certificate will work as well.
+at the root of the mapped conf volume defined by the environment variable __OAUTH_CONF_VOLUME__.
 
 # REST-API
-TODO
-
-## Admin
-TODO
-
-## Client
-TODO
-
-# Views
 TODO

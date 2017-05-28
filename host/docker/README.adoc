@@ -1,0 +1,48 @@
+Docker infrastructure
+=====================
+Thomas Herzog <herzog.thomas81@gmail.com>
+
+This document describes the docker infrastructure which hosts the __rpisec__ related applications.
+
+# Description
+The docker images can only used on an ARM-architecture and are based on the base image
+__ resin/rpi-raspbian:jessie__ where we provide an custom base image named __rpisec-rpisec-base__
+which can be replaced to get the infrastructure running on an other architecture. +
+
+The base image __rpisec-base__ defined in this link:./base/Dockerfile[Dockerfile] builds installs
+the raspberry pi necessary binaries for interacting with the raspberry hardware and additionally the
+arm based oracle jdk in version 8. +
+
+The docker infrastructure is defined in the file link:./docker-compose.yml[docker-compose.yml].
+
+# Services
+This section deals with the docker-infrastructure hosted service.
+[options="header"]
+|======================
+| Service name             | Usage
+| rpisec-app               | The service hosting the __rpisec-app__ which hosts the sesnor application and pushes the notifications to the client devices interacts with the firebase database
+| rpisec-app-db            | The service hosting the postgres database used by the __rpisec-app__ service
+| rpisec-oauth             | The service hosting the spring boot authentication server for authentication and user management
+| rpisec-oauth-db          | The service hosting the postgres database used by the __rpisec-oauth__ service
+| rpisec-nginx             | The service hosting the reverse proxy for accessing the __rpisec-app__ and __rpisec-oauth__ services
+|======================
+
+# Configuration
+This section deals with the configuration of the docker infrastructure. +
+The __docker-compose.yml__ uses environment variables where most of them are provided via the link:./.env[.env] file.
+The following tables shows the necessary environment variables, their usage and recommended location.
+
+[options="header"]
+|==============================
+| Variable             | Value                       | Usage                                                   | Location
+| APP_APP_VOLUME       | ~/docker-volumes/app/app    | mapped volume for the rpisec-app jars                   | .env
+| APP_CONF_VOLUME      | ~/docker-volumes/app/conf   | mapped volume for the rpisec-app configurations         | .env
+| APP_LOG_VOLUME       | ~/docker-volumes/app/log    | mapped volume for the rpisec-app logs                   | .env
+| APP_IMAGE_VOLUME     | ~/docker-volumes/app/image  | mapped volume for the rpisec-app incident images        | .env
+| APP_DB_VOLUME        | ~/docker-volumes/app/db     | mapped volume for the rpisec-app database               | .env
+| OAUTH_APP_VOLUME     | ~/docker-volumes/oauth/app  | mapped volume for the rpisec-oauth jars                 | .env
+| OAUTH_CONF_VOLUME    | ~/docker-volumes/oauth/conf | mapped volume for the rpisec-oauth configuration        | .env
+| OAUTH_LOG_VOLUME     | ~/docker-volumes/oauth/log  | mapped volume for the rpisec-oauth logs                 | .env
+| OAUTH_DB_VOLUME      | ~/docker-volumes/oauth/db   | mapped volume for the rpisec-oauth database             | .env
+| RPISEC_VERSION       | 0.0.1-SNAPSHOT              | the current version of the microservice infrastructure  | ~/.bashrc
+|==============================

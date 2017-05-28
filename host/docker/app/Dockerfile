@@ -1,4 +1,4 @@
-FROM rpisec-rpi-base:latest
+FROM rpisec-base:latest
 MAINTAINER Thomas Herzog <herzog.thomas81@gmail.com>
 
 # arguments

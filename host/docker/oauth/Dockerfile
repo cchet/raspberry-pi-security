@@ -1,13 +1,5 @@
-FROM resin/rpi-raspbian:jessie
+FROM rpisec-base:latest
 MAINTAINER Thomas Herzog <herzog.thomas81@gmail.com>
-
-RUN apt-get update -y && \
-    apt-get install -y oracle-java8-jdk && \
-    apt-get install -y wget && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get autoremove && \
-    apt-get autoclean && \
-    apt-get clean
 
 RUN adduser --disabled-password --gecos "" oauth
 
