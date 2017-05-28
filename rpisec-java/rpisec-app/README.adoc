@@ -21,7 +21,7 @@ works as a standalone application, where in the __development__ environment no s
 The configuration has been split to a static part which is packaged into the application
 and a dynamic part which is provided via the configuration file  __app-external-application.properties__. +
 An template for the configuration file __app-external-application.properties__
-can be found link:../host/config/app-external-application.properties[here]. +
+can be found link:../../host/config/app-external-application.properties[here]. +
 
 Firebase needs a configuration file named __firebase-account.json__ which can be downloaded
 from the firebase console and must be keep private.
@@ -49,7 +49,7 @@ the location and name of the firebase configuration file. +
 ## Productive Environment
 This section deals with the necessary setup for the productive environment. +
 The productive environment is hosted in a docker infrastructure which is defined
-via a docker-compose.yml which can be found link:../host/docker/docker-compose.yml[here]. +
+via a docker-compose.yml which can be found link:../../host/docker/docker-compose.yml[here]. +
 
 This application requires the following environment variables which are used in the __docker-compose.yml__ file and
 most of them are already defined in the __.env__ file which can be found  link:../host/docker/.env[here].
