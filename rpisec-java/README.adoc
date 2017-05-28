@@ -21,3 +21,8 @@ link:rpisec-oauth/README.adoc[Authentication server documentation] +
 The sensor application is a plain java implementation which manages and is hosted by the app server. +
 
 link:rpisec-sensor/README.adoc[Sensor application documentation] +
+
+# Docker infrastructure
+The docker infrastructure documentation which hosts defines the services which host the applications and related services such as the reverse proxy and databases . +
+
+link:host/docker/README.adoc[Docker infrastructure documentation] +
