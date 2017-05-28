@@ -63,7 +63,8 @@ This sections deals with the preparations for the docker infrastructure. +
 - Place a private and public certificate __(privatekey.pem, cert.pem)__ in the directory defined by the environment variable __NGINX_CERT_VOLUME__
 - Deploy __rpisec-app.jar__ to directory defined by the environment variable __APP_APP_VOLUME__
 - Deploy __rpisec-oauth.jar__ to directory defined by the environment variable __OAUTH_APP_VOLUME__
-- Create the __rpisec-base__ image via `./util.sh rebuildRpisecBase` in the directory __*/host/docker__
+- Create the __rpisec-base__ image via `./util.sh rebuildRpisecBase` in the directory __*/host/docker__ +
+  __This could take a while because the raspberry pi binary sources are cloned from git and build for the specific environment__
 
 # First start
 This section deals with the first start of the docker infrastructure. +
@@ -73,7 +74,7 @@ This could only occur when the database are getting initialized the first time, 
 
 # Start stop infrastructure
 This section deals with the starting and stopping of the dpcker infrastructure. All of the docker commands should be executed in the directory where the _docker-compose.yml__ resides, or
-you need to specifiy the __-f__ flag on each execution of an __docker-compose__ command. +
+you need to specifiy the `-f path/docker-compose.yml` flag on each execution of an _docker-compose_ command. +
 [options="header"]
 |==============================
 | Command                  | Performed action
