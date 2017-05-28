@@ -48,7 +48,7 @@ The productive environment is hosted in a docker infrastructure which is defined
 via a docker-compose.yml which can be found link:../../host/docker/docker-compose.yml[here]. +
 
 The docker infrastructure requires the following environment variables which must be visible
-to docker-compose and most of the variables are defined in the __.env__ file which can be found  link:../host/docker/.env[here]. +
+to docker-compose and most of the variables are defined in the __.env__ file which can be found  link:../../host/docker/.env[here]. +
 
 Mostly the volumes are defined int he __.env__ file which shall be located in the docker executing user's home.
 [options="header"]

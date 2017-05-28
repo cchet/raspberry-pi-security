@@ -52,7 +52,7 @@ The productive environment is hosted in a docker infrastructure which is defined
 via a docker-compose.yml which can be found link:../../host/docker/docker-compose.yml[here]. +
 
 This application requires the following environment variables which are used in the __docker-compose.yml__ file and
-most of them are already defined in the __.env__ file which can be found  link:../host/docker/.env[here].
+most of them are already defined in the __.env__ file which can be found  link:../../host/docker/.env[here].
 
 [options="header"]
 |==============================
