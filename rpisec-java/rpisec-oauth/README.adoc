@@ -32,6 +32,7 @@ This section deals with the necessary setup for the development environment.
 |Option                    | Values      | Usage
 |-Dplatform                |  dev, prod  | Activates either dev or prod configurations
 |-Dspring.config.location  | file:<path_to_file>/<config_file_name>.properties | Includes the externalized configuration
+|-Dadmin.email             | <ADMIN_EMAIL> | The email address of the default created administrator. If not present when the administrator is tried to be created during startup then the startup will fail 
 |======================
 
 ### Externalized Configuration
