@@ -12,7 +12,6 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         jackOptions {
-            additionalParameters("jack.incremental": true)
             enabled true
         }
     }
@@ -47,6 +46,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
 
     compile 'at.rpisec:rpisec-shared:0.0.1-SNAPSHOT'
     compile 'com.android.support:appcompat-v7:25.3.1'
