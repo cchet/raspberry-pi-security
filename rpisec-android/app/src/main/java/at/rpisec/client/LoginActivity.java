@@ -234,9 +234,6 @@ public class LoginActivity extends AppCompatActivity {
         protected String doInBackground(Void... params) {
 
             try {
-                OAuth2Parameters
-
-
                 ResponseEntity<String> registerResponse = getRpiSecRestTemplate().exchange(UriRegToken, HttpMethod.PUT, getHttpEntity(), String.class);
 
                 if (registerResponse.getStatusCode() == HttpStatus.OK) {
