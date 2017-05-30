@@ -64,6 +64,12 @@ subprojects {
 		archiveName=project.name.replace('/', '-') + '.jar'
 	}
 
+	task sourceJar ( type: Jar, dependsOn: classes ) {
+		classifier 'sources'
+		from sourceSets.main.allJava
+	}
+
+
 	publishing {
 		publications {
 			maven(MavenPublication) {
@@ -71,6 +77,10 @@ subprojects {
 				artifactId project.name.replace('/', '-')
 				version project.version
 				from components.java
+
+				artifact sourceJar {
+					sourceJar
+				}
 			}
 		}
 	}
