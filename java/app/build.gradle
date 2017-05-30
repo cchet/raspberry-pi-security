@@ -50,8 +50,8 @@ dependencies {
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     compile('org.webjars:bootstrap')
 
-    compile project(':rpisec-shared')
-    compile project(':rpisec-sensor/impl')
+    compile project(':shared')
+    compile project(':sensor/impl')
 
     //runtime('org.springframework.boot:spring-boot-devtools')
 

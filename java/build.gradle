@@ -4,33 +4,9 @@ buildscript {
 		mavenCentral()
 	}
 
-	ext {
-		springDependencyManagementPluginVersion='1.0.2.RELEASE'
-		springBootVersion = '1.5.2.RELEASE'
-		pi4jVersion='1.1'
-		hibernateValidatorVersion='5.3.4.Final'
-		jacksonJsr310Version='2.8.8'
-		orikaVersion='1.5.1'
-		commonsIoVersion='1.3.2'
-		firebaseAdminVersion='4.1.6'
-		springfoxBeanValidatorsVersion='2.6.1'
-		swaggerUiVersion='2.6.1'
-		springfoxSwaggerVersion='2.6.1'
-		h2DatabaseVersion='1.4.194'
-		postgresDatabaseVersion='42.0.0'
-		lombokVersion='1.16.16'
-		webjarsBootstrapVersion='3.3.7-1'
-		newJunit5Version='1.0.0-M4'
-		sbrannenSpringJunit5='1.0.0.M4'
-		spotifyDockerClientVersion='8.4.0'
-		log4jApiVersion='1.7.24'
-		buildParamPlatform='platform'
-	}
-
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 		classpath "io.spring.gradle:dependency-management-plugin:${springDependencyManagementPluginVersion}"
-		classpath "org.junit.platform:junit-platform-gradle-plugin:${newJunit5Version}"
 	}
 }
 
@@ -39,7 +15,6 @@ subprojects {
 	apply plugin: 'idea'
 	apply plugin: 'io.spring.dependency-management'
 	apply plugin: 'maven-publish'
-	apply plugin: 'org.junit.platform.gradle.plugin'
 
 	version = '0.0.1-SNAPSHOT'
 	sourceCompatibility = 1.8
@@ -51,6 +26,10 @@ subprojects {
 		mavenCentral()
 		// For dependency spring-test-junit5
 		maven { url 'https://jitpack.io' }
+		// palantir docker-compose-rule is published on bintray
+		maven {
+			url 'https://dl.bintray.com/palantir/releases'
+		}
 	}
 
 	idea {
@@ -61,7 +40,7 @@ subprojects {
 	}
 
 	jar {
-		archiveName=project.name.replace('/', '-') + '.jar'
+		archiveName="${applicationName}-" + project.name.replace('/', '-') + '.jar'
 	}
 
 	task sourceJar ( type: Jar, dependsOn: classes ) {
@@ -73,8 +52,8 @@ subprojects {
 	publishing {
 		publications {
 			maven(MavenPublication) {
-				groupId 'at.rpisec'
-				artifactId project.name.replace('/', '-')
+				groupId "at.${applicationName}"
+				artifactId jar.archiveName.replace(".jar","")
 				version project.version
 				from components.java
 
@@ -103,10 +82,12 @@ subprojects {
 			dependency "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
 			dependency "com.pi4j:pi4j-core:${pi4jVersion}"
 			dependency "org.webjars:bootstrap:${webjarsBootstrapVersion}"
-			dependency "com.spotify:docker-client:${spotifyDockerClientVersion}"
-			dependency "org.junit.platform:junit-platform-engine:${newJunit5Version}"
 			dependency "com.github.sbrannen:spring-test-junit5:${sbrannenSpringJunit5}"
 			dependency "org.slf4j:slf4j-api:${log4jApiVersion}"
+
+			// Test dependencies
+			dependency "junit:junit:${junit4Version}"
+			dependency "com.palantir.docker.compose:docker-compose-rule-junit4:${palantirDockerComposeJunit4}"
 		}
 	}
 }

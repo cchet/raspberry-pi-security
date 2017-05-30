@@ -9,7 +9,7 @@ sourceSets {
 }
 
 dependencies {
-    compile project (':rpisec-sensor/api')
+    compile project (':sensor/api')
     compile 'com.pi4j:pi4j-core'
     compileOnly 'org.slf4j:slf4j-api'
 }

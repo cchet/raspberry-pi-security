@@ -1,0 +1,8 @@
+include ':app'
+include ':auth'
+include ':shared'
+include ':sensor/api'
+include ':sensor/impl'
+include ':testsuite/base'
+include ':testsuite/app'
+include ':testsuite/auth'

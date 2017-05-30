@@ -1,0 +1,17 @@
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+    compile project(':app')
+    compile project(':testsuite/base')
+
+    // Test dependencies
+}
+
+/*// copy task
+task copyForLocalTest(type: Copy, dependsOn: [':app:compileJava', ':app:bootRepackage', 'jar']) {
+    from project(':app').jar.archivePath
+    into project.buildDir.absolutePath + "/test"
+
+    from project.jar.archivePath
+    into project.buildDir.absolutePath + "/test"
+}*/
