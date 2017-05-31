@@ -12,6 +12,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.web.servlet.LocaleResolver;
+import sun.util.locale.provider.LocaleResources;
 
 import java.util.Locale;
 
@@ -43,7 +45,7 @@ public class UserEventObserver {
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void observeUserCreatedEvent(final UserCreatedEvent event) {
-        final Locale locale = LocaleContextHolder.getLocale();
+        final Locale locale = Locale.ENGLISH;
         final String url = serverRootUrl + "/verifyAccount?uuid=" + event.getUuid();
         final String subject = messages.getMessage("email.user.created.subject", null, locale);
         final String content = messages.getMessage("email.user.created.content", new String[]{event.getUsername(), url}, locale);
