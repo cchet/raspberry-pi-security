@@ -23,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
@@ -41,9 +43,19 @@ public class LoginActivity extends AppCompatActivity {
 
     // only for debug ...
     private static final String DEBUG_LOGIN_TAG = "FireBaseLogin";
-    private static final String CREDENTIAL_METHOD = "Authorization";
+
+    private static final String OAUTH_CREDENTIAL_HEADER_CONTENT_TYPE_NAME = "Content-Type";
+    private static final String OAUTH_CREDENTIAL_HEADER_CONTENT_TYPE_VALUE = "application/x-www-form-urlencoded";
+    private static final String OAUTH_CREDENTIAL_HEADER_AUTHORIZATION_NAME = "Authorization";
+    private static final String OAUTH_CREDENTIAL_HEADER_AUTHORIZATION_TYPE = "Basic "; //!!! trailing whitespace is important !!!
+    private static final String OAUTH_CREDENTIAL_BODY_AUTHORIZATION_KEY_USERNAME = "username";
+    private static final String OAUTH_CREDENTIAL_BODY_AUTHORIZATION_KEY_PASSWORD = "password";
+
+    private static final String MULTIVALUEMAP_FIELD_KEY = "key";
+    private static final String MULTIVALUEMAP_FIELD_VALUE = "value";
+
     private static final String CREDENTIAL_CHARSET = "US-ASCII";
-    private static final String CREDENTIAL_AUTH_TYPE = "Basic "; //!!! trailing whitespace is important !!!
+
     //for development only
     private static String DEV_BASE_ADDRESS = "";
     private static HttpEntity<Object> httpEntity;
@@ -75,9 +87,17 @@ public class LoginActivity extends AppCompatActivity {
 
             final String authStr = Base64.encodeToString((userName + ":" + password).getBytes(Charset.forName(CREDENTIAL_CHARSET)), Base64.URL_SAFE);
 
-            headers.add(CREDENTIAL_METHOD, CREDENTIAL_AUTH_TYPE + authStr);
+            headers.add(OAUTH_CREDENTIAL_HEADER_AUTHORIZATION_NAME, OAUTH_CREDENTIAL_HEADER_AUTHORIZATION_TYPE + authStr);
+            headers.add(OAUTH_CREDENTIAL_HEADER_CONTENT_TYPE_NAME, OAUTH_CREDENTIAL_HEADER_CONTENT_TYPE_VALUE);
 
-            httpEntity = new HttpEntity<>(headers);
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<String, String>();
+
+            body.add(MULTIVALUEMAP_FIELD_KEY, OAUTH_CREDENTIAL_BODY_AUTHORIZATION_KEY_USERNAME);
+            body.add(MULTIVALUEMAP_FIELD_VALUE, userName);
+            body.add(MULTIVALUEMAP_FIELD_KEY, OAUTH_CREDENTIAL_BODY_AUTHORIZATION_KEY_PASSWORD);
+            body.add(MULTIVALUEMAP_FIELD_VALUE, password);
+
+            httpEntity = new HttpEntity<>(body, headers);
         }
     }
 
