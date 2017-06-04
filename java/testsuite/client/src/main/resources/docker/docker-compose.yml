@@ -1,0 +1,41 @@
+version: "2.1"
+services:
+    rpisec-test-auth-db:
+        container_name: rpisec-test-auth-db
+        image: postgres:9.6
+        environment:
+            - POSTGRES_USER=auth
+            - POSTGRES_PASSWORD=auth
+            - POSTGRES_DATABASE=auth
+        mem_limit: 128m
+        cpu_shares: 2
+    rpisec-test-app-db:
+        container_name: rpisec-test-app-db
+        image: postgres:9.6
+        environment:
+            - POSTGRES_USER=app
+            - POSTGRES_PASSWORD=app
+            - POSTGRES_DATABASE=app
+        mem_limit: 128m
+        cpu_shares: 2
+    rpisec-test-auth:
+        container_name: rpisec-test-auth
+        build:
+            context: ./auth
+        environment:
+            - OAUTH_JAVA_OPTS=-Dadmin.email=fh.ooe.mus.rpisec@gmail.com -Xms128m -Xmx200m
+        mem_limit: 256m
+        cpu_shares: 2
+        depends_on:
+            - rpisec-test-auth-db
+            - rpisec-test-app
+    rpisec-test-app:
+        container_name: rpisec-test-app
+        build:
+            context: ./app
+        environment:
+            - APP_JAVA_OPTS=-Xms128m -Xmx200m
+        mem_limit: 256m
+        cpu_shares: 2
+        depends_on:
+            - rpisec-test-app-db

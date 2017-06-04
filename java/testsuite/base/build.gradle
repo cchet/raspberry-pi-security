@@ -2,4 +2,5 @@ dependencies {
 	compile project(":shared")
 	compile "com.palantir.docker.compose:docker-compose-rule-junit4"
 	compile "junit:junit"
+	compile "org.slf4j:slf4j-simple"
 }

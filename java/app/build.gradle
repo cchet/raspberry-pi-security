@@ -57,3 +57,9 @@ dependencies {
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+
+// creates the fat jar
+task buildFatJar(type: GradleBuild) {
+    buildFile = 'build.gradle'
+    tasks = ['clean', 'compileJava', 'processResources', 'bootRepackage']
+}

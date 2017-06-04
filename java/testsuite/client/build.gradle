@@ -1,0 +1,38 @@
+def dockerRootLocation = project.buildDir.absolutePath + "/docker"
+
+dependencies {
+    compile project(':shared')
+    compile project(':testsuite/base')
+    testCompile 'com.palantir.docker.compose:docker-compose-rule-junit4'
+}
+
+test {
+    filter {
+        includeTestsMatching '*.test.*'
+    }
+    // Set environment variables if executed on a windows system
+    if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+        environment('DOCKER_COMPOSE_LOCATION', 'C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker-compose.exe')
+        environment('DOCKER_LOCATION', 'C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe')
+    }
+    dependsOn = ['perpareDockerInfrastructure']
+}
+
+task perpareDockerInfrastructure(type: Copy, dependsOn: ['compileJava', 'compileTestJava', 'processResources', 'processTestResources', ':app:buildFatJar', ':app:buildFatJar']) {
+    copy {
+        from sourceSets.main.resources.asFileTree.matching {
+            include '**/docker/**/*'
+        }
+        into project.buildDir.absolutePath
+    }
+    copy {
+        from project(":app").jar.archivePath
+        into dockerRootLocation + "/app"
+        rename(project(":app").jar.archiveName, "app.jar")
+    }
+    copy {
+        from project(":auth").jar.archivePath
+        into dockerRootLocation + "/auth"
+        rename(project(":auth").jar.archiveName, "app.jar")
+    }
+}

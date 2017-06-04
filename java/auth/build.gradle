@@ -68,3 +68,9 @@ dependencies {
 
     compile project(':shared')
 }
+
+// creates the fat jar
+task buildFatJar(type: GradleBuild) {
+    buildFile = 'build.gradle'
+    tasks = ['clean', 'compileJava', 'processResources', 'bootRepackage']
+}
