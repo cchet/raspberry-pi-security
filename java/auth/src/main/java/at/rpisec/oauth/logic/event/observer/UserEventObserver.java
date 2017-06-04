@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Component;
@@ -43,7 +42,7 @@ public class UserEventObserver {
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void observeUserCreatedEvent(final UserCreatedEvent event) {
-        final Locale locale = LocaleContextHolder.getLocale();
+        final Locale locale = Locale.ENGLISH;
         final String url = serverRootUrl + "/verifyAccount?uuid=" + event.getUuid();
         final String subject = messages.getMessage("email.user.created.subject", null, locale);
         final String content = messages.getMessage("email.user.created.content", new String[]{event.getUsername(), url}, locale);
