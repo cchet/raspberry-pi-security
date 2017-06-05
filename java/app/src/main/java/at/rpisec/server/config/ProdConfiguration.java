@@ -16,7 +16,7 @@ import org.springframework.context.event.ContextStoppedEvent;
  * @since 05/25/17
  */
 @Configuration
-@Profile("prod")
+@Profile(ConfigProperties.SupportedProfiles.PROD)
 public class ProdConfiguration {
 
     @Bean

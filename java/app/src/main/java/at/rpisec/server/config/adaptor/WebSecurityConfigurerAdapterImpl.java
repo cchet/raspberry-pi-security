@@ -17,6 +17,7 @@ public class WebSecurityConfigurerAdapterImpl extends WebSecurityConfigurerAdapt
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+            .antMatchers("/api/system/alive").permitAll()
             .antMatchers(String.format("%s/**", ClientRestConstants.BASE_URI)).hasAnyRole(SecurityConstants.ROLE_SYSTEM)
             .and()
             .csrf().disable()

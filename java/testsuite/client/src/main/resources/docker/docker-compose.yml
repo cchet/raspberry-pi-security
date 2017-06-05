@@ -4,18 +4,18 @@ services:
         container_name: rpisec-test-auth-db
         image: postgres:9.6
         environment:
-            - POSTGRES_USER=auth
-            - POSTGRES_PASSWORD=auth
-            - POSTGRES_DATABASE=auth
+            - POSTGRES_USER=rpisec-auth
+            - POSTGRES_PASSWORD=rpisec-auth
+            - POSTGRES_DATABASE=rpisec-auth
         mem_limit: 128m
         cpu_shares: 2
     rpisec-test-app-db:
         container_name: rpisec-test-app-db
         image: postgres:9.6
         environment:
-            - POSTGRES_USER=app
-            - POSTGRES_PASSWORD=app
-            - POSTGRES_DATABASE=app
+            - POSTGRES_USER=rpisec-app
+            - POSTGRES_PASSWORD=rpisec-app
+            - POSTGRES_DATABASE=rpisec-app
         mem_limit: 128m
         cpu_shares: 2
     rpisec-test-auth:
@@ -23,8 +23,10 @@ services:
         build:
             context: ./auth
         environment:
-            - OAUTH_JAVA_OPTS=-Dadmin.email=fh.ooe.mus.rpisec@gmail.com -Xms128m -Xmx200m
-        mem_limit: 256m
+            - OAUTH_JAVA_OPTS=-Xms128m -Xmx256m
+        volumes:
+            - ./volumes/log:/home/user/log
+        mem_limit: 512m
         cpu_shares: 2
         depends_on:
             - rpisec-test-auth-db
@@ -34,8 +36,25 @@ services:
         build:
             context: ./app
         environment:
-            - APP_JAVA_OPTS=-Xms128m -Xmx200m
-        mem_limit: 256m
+            - APP_JAVA_OPTS=-Xms128m -Xmx256m
+        volumes:
+            - ./volumes/log:/home/user/log
+        mem_limit: 512m
         cpu_shares: 2
         depends_on:
             - rpisec-test-app-db
+    rpisec-test-nginx:
+        container_name: rpisec-test-nginx
+        build:
+            context: ./nginx
+        volumes:
+            - ./volumes/log:/var/log/nginx/
+        mem_limit: 256m
+        cpu_shares: 2
+        ports:
+            - 9080:8080
+        depends_on:
+            - rpisec-test-app-db
+            - rpisec-test-auth-db
+            - rpisec-test-app
+            - rpisec-test-auth

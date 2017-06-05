@@ -17,6 +17,13 @@ public class ConfigProperties {
     private ConfigProperties() {
     }
 
+    public static final class SupportedProfiles {
+        public static final String PROD = "prod";
+        public static final String DEV = "dev";
+        public static final String TEST = "test";
+        public static final String INTEGRATION_TEST = "integrationTest";
+    }
+
     @Component
     @ConfigurationProperties("firebase")
     @Getter

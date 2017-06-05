@@ -7,6 +7,7 @@ buildscript {
     ext {
         springloadedVersion='1.2.7.RELEASE'
         isProd=System.getProperty('platform')?.contains("prod") ?: false
+        isIntegrationTest=System.getProperty('platform')?.contains("integrationTest")
     }
 
     dependencies {
@@ -29,14 +30,17 @@ idea {
     }
 }
 
+clean.doFirst {
+    project.buildDir.delete()
+}
+
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.security.oauth:spring-security-oauth2')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
-    compile('org.springframework.boot:spring-boot-starter-mail')
-    if (isProd) {
+    if (isProd || isIntegrationTest) {
         compile("org.postgresql:postgresql")
     }else {
         compile("com.h2database:h2")

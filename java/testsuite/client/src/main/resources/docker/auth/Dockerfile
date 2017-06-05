@@ -12,16 +12,20 @@ RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | te
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN adduser --disabled-password --gecos "" user
+RUN adduser --disabled-password --gecos "" user && \
+    mkdir ~/conf && \
+    mkdir ~/log
 
+ADD docker-entrypoint.sh /home/user/docker-entrypoint.sh
 ADD app.jar ./home/user/app/app.jar
+ADD application-integrationTest.properties /home/user/conf/application-integrationTest.properties
+ADD auth.properties /home/user/conf/auth.properties
+ADD firebase-account.json /home/user/conf/firebase-account.json
 
-RUN chown -R user:user /home/user
+RUN chmod +x /home/user/docker-entrypoint.sh && \
+    chown -R user:user /home/user
 
 USER user
 
-RUN mkdir ~/conf && \
-    mkdir ~/log
-
-# cmd
-CMD exec java -Duser.home=${HOME} -jar ${HOME}/app/app.jar --spring.profiles.active=test
+# entrypoint
+ENTRYPOINT ~/docker-entrypoint.sh

@@ -1,4 +1,6 @@
 def dockerRootLocation = project.buildDir.absolutePath + "/docker"
+def dockerAppLocation = dockerRootLocation + "/app"
+def dockerAuthLocation = dockerRootLocation + "/auth"
 
 dependencies {
     compile project(':shared')
@@ -18,21 +20,65 @@ test {
     dependsOn = ['perpareDockerInfrastructure']
 }
 
-task perpareDockerInfrastructure(type: Copy, dependsOn: ['compileJava', 'compileTestJava', 'processResources', 'processTestResources', ':app:buildFatJar', ':app:buildFatJar']) {
+clean.doFirst {
+    project.buildDir.delete()
+}
+
+task perpareDockerInfrastructure(type: Copy, dependsOn: ['compileJava', 'compileTestJava', 'processResources', 'processTestResources', ':app:buildFatJar', ':auth:buildFatJar']) {
+
+    def appConfig = System.getProperty("app.config") ?: ""
+    def authConfig = System.getProperty("auth.config") ?: ""
+    def appFirebaseConfig = System.getProperty("app.firebaseConfig") ?: ""
+    def authFirebaseConfig = System.getProperty("auth.firebaseConfig") ?: ""
+
+    logger.info("---------------------------------------------------------------------------")
+    logger.info("Set JVM Options for configuration")
+    logger.info("---------------------------------------------------------------------------")
+    logger.info("app.config:" + appConfig)
+    logger.info("auth.config:" + authConfig)
+    logger.info("app.firebaseConfig:" + appFirebaseConfig)
+    logger.info("auth.firebaseConfig:" + authFirebaseConfig)
+    logger.info("---------------------------------------------------------------------------")
+
     copy {
         from sourceSets.main.resources.asFileTree.matching {
             include '**/docker/**/*'
+            exclude '**/docker/**/dummy*'
         }
         into project.buildDir.absolutePath
     }
+    if(!appConfig.isEmpty()) {
+        copy {
+            from new File(appConfig)
+            into dockerAppLocation
+        }
+    }
+    if(!authConfig.isEmpty()) {
+        copy {
+            from new File(authConfig)
+            into dockerAuthLocation
+        }
+    }
+    if(!appFirebaseConfig.isEmpty()) {
+        copy {
+            from new File(appFirebaseConfig)
+            into dockerAppLocation
+        }
+    }
+    if(!authFirebaseConfig.isEmpty()) {
+        copy {
+            from new File(authFirebaseConfig)
+            into dockerAuthLocation
+        }
+    }
     copy {
         from project(":app").jar.archivePath
-        into dockerRootLocation + "/app"
+        into dockerAppLocation
         rename(project(":app").jar.archiveName, "app.jar")
     }
     copy {
         from project(":auth").jar.archivePath
-        into dockerRootLocation + "/auth"
+        into dockerAuthLocation
         rename(project(":auth").jar.archiveName, "app.jar")
     }
 }

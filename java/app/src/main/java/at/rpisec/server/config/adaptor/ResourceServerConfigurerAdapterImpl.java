@@ -44,6 +44,9 @@ public class ResourceServerConfigurerAdapterImpl extends ResourceServerConfigure
             // Exclude for oauth authentication for auth server hosted api
             .antMatchers(String.format("%s%s**", ClientRestConstants.BASE_URI, ClientRestConstants.REL_URI_UNREGISTER)).permitAll()
             .and().authorizeRequests()
+            // Exclude for oauth authentication for alive api
+            .antMatchers("/api/system/alive").permitAll()
+            .and().authorizeRequests()
             // All other resources protected by oauth
             .antMatchers("/api/**")
             .access(String.format("#oauth2.hasAnyScope('%s','%s') and hasRole('%s')", SecurityConstants.SCOPE_READ, SecurityConstants.SCOPE_WRITE, SecurityConstants.CLIENT))

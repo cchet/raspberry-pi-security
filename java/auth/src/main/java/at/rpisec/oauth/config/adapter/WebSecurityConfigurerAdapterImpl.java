@@ -33,6 +33,7 @@ public class WebSecurityConfigurerAdapterImpl extends WebSecurityConfigurerAdapt
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
             .antMatchers("/oauth/**").permitAll()
+            .antMatchers("/api/system/alive").permitAll()
             .and()
             .httpBasic()
             .and()
