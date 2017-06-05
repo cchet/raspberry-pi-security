@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 25
@@ -8,15 +7,17 @@ android {
     defaultConfig {
         applicationId "at.rpisec.client"
         minSdkVersion 24
+        compileSdkVersion 25
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        /*jackOptions {
-            enabled false
-        }*/
+        jackOptions {
+            enabled true
+        }
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -40,23 +41,35 @@ android {
         exclude 'META-INF/license.txt'
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/spring.schemas'
+        exclude 'META-INF/spring.tooling'
+        exclude 'META-INF/spring.handlers'
     }
     dexOptions {
     }
 }
 
 dependencies {
+
+    ext {
+        springAndroidRestTemplateVersion='1.0.1.RELEASE'
+        googleFirebaseVersion='10.2.1'
+        rpisecSharedVersion='0.0.1-SNAPSHOT'
+        androidAppcompatV7Version='25.3.1'
+        androidDesignVersion='25.3.1'
+        junitVersion='4.12'
+    }
+
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'at.rpisec:rpisec-shared:0.0.1-SNAPSHOT'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.google.firebase:firebase-core:10.2.1'
-    compile 'com.google.firebase:firebase-auth:10.2.1'
-    compile 'com.google.firebase:firebase-messaging:10.2.1'
-    compile 'org.springframework.android:spring-android-rest-template:2.0.0.M3'
-    compile 'org.springframework.security:spring-security-web:5.0.0.M1'
-    testCompile 'junit:junit:4.12'
+    compile "at.rpisec:rpisec-shared:${rpisecSharedVersion}"
+    compile "com.android.support:appcompat-v7:${androidAppcompatV7Version}"
+    compile "com.android.support:design:${androidDesignVersion}"
+    compile "com.google.firebase:firebase-core:${googleFirebaseVersion}"
+    compile "com.google.firebase:firebase-auth:${googleFirebaseVersion}"
+    compile "com.google.firebase:firebase-messaging:${googleFirebaseVersion}"
+    compile "org.springframework.android:spring-android-rest-template:${springAndroidRestTemplateVersion}"
+    testCompile "junit:junit:${junitVersion}"
 }
