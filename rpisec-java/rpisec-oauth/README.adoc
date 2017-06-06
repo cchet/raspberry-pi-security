@@ -32,7 +32,7 @@ This section deals with the necessary setup for the development environment.
 |Option                    | Values      | Usage
 |-Dplatform                |  dev, prod  | Activates either dev or prod configurations
 |-Dspring.config.location  | file:<path_to_file>/<config_file_name>.properties | Includes the externalized configuration
-|-Dadmin.email             | <ADMIN_EMAIL> | The email address of the default created administrator. If not present when the administrator is tried to be created during startup then the startup will fail 
+|-Dadmin.email             | <ADMIN_EMAIL> | The email address of the default created administrator. If not present when the administrator is tried to be created during startup then the startup will fail
 |======================
 
 ### Externalized Configuration
@@ -71,4 +71,29 @@ The firebase configuration file must be named __firebase-account.json__ and must
 at the root of the mapped conf volume defined by the environment variable __OAUTH_CONF_VOLUME__.
 
 # REST-API
-TODO
+This section describes the rest api available to the clients. +
+
+### [GET] /api/client/clientLogin?deviceId=myDeviceId
+This api method performs a login for a client device and provides the token for the firebase login
+as well as the __clientId__ and __clientSecret__ for the oauth api access. +
+
+This api requires a Http BasicAuth with username and password of an registered user with an enabled user account.
+
+.JSON response
+[source,json]
+---------------------------------------------------------------------
+{
+  "created": "06.06.2017 07:19:21",
+  "token": "eyJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJodHRwczovL2lkZW50aXR5dG9vbGtpdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXR5VG9vbGtpdCIsImV4cCI6MTQ5Njc3MzE2MSwiaWF0IjoxNDk2NzY5NTYxLCJpc3MiOiJmaXJlYmFzZS1hZG1pbnNkay1hODdzY0BycGlzZWMtODllMTUuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1hODdzY0BycGlzZWMtODllMTUuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJ1aWQiOiIyYjU0NGYxZC02NTY2LTQ0ODMtOWQ4Ni1mNmY3NzAxMmFmYzEifQ.z5Oo1G6_zkGYZY5Z2liW_w6SRmAqCudxmbQy_8n35yePxWz6vK-9UlnRSFcd_gLlmx2EOXXA7TymeryU_0Lef4We_aLwxMJZJKApujMnzRiaIAB5wKYJtxADzRoAF-SC_Nbz2Ikf7v5LnRCENykaKnvudKONaWBdLmWhOJfdhQ8cWxRPq-OLgZZRAgcSK35ch7wXcLwXNFqZuebFIfeSLVWUokRmVlH6bi7D9cdeXs1knCQ1rq2HPxlFtT7zdVlNcy6yOQAfFIzqCyNkYvcUTkKzIqEy3vVRD8_Y9qQAIjxnYtVHpxujqBis_CPM5eenLZSQ5_AZqqNDLbtP0ZjywA",
+  "clientId": "3a97bafe-8d2e-4f2e-bd01-14715bc17435",
+  "clientSecret": "11c2216c-9d2d-4926-9892-94f8371ff5f4"
+}
+---------------------------------------------------------------------
+
+### [PUT] /api/client/registerFcmToken?deviceId=myDeviceId&fcmToken=myToken
+This api registers a firebase cloud messaging token for a client device, the app server will push notifications to. +
+
+This api requires a Http BasicAuth with username and password of an registered user with an enabled user account
+which has this client device assigned to him. +
+
+This api does only return a response code _200_ in the case of a successful registration.
