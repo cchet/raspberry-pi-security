@@ -199,7 +199,7 @@ public class SecurityConfiguration {
             @Override
             public void handleError(ClientHttpResponse response) throws IOException {
                 log.error("Could not post oauth client to app server");
-                throw new IllegalStateException(String.format("Could not invoke rest api on authorization server. HttpStatus: %s",
+                throw new IllegalStateException(String.format("Could not invoke rest api on app server. HttpStatus: %s",
                                                               response.getStatusCode()));
             }
         });
