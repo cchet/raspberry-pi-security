@@ -2,16 +2,23 @@ package at.rpisec.client;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -32,6 +39,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import at.rpisec.server.shared.rest.constants.ClientRestConstants;
+import at.rpisec.server.shared.rest.constants.OAuthConstants;
 import at.rpisec.server.shared.rest.model.FirebaseMessage;
 import at.rpisec.server.shared.rest.model.TokenResponse;
 
@@ -134,24 +142,30 @@ public class LoginActivity extends AppCompatActivity {
         //get instance of firebase authentication
         mAuth = FirebaseAuth.getInstance();
 
-        mAuthListener = firebaseAuth -> {
-            FirebaseUser user = firebaseAuth.getCurrentUser();
-            if (user != null) {
-                // User is signed in
-                Log.d(DEBUG_LOGIN_TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-            } else {
-                // User is signed out
-                Log.d(DEBUG_LOGIN_TAG, "onAuthStateChanged:signed_out");
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d(DEBUG_LOGIN_TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(DEBUG_LOGIN_TAG, "onAuthStateChanged:signed_out");
+                }
             }
         };
 
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener((textView, id, keyEvent) -> {
-            if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                attemptLogin();
-                return true;
+        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                    LoginActivity.this.attemptLogin();
+                    return true;
+                }
+                return false;
             }
-            return false;
         });
 
         Button mUsernameSignInButton = (Button) findViewById(R.id.username_sign_in_button);
@@ -219,18 +233,26 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (!authToken.isEmpty()) {
                     mAuth.signInWithCustomToken(authToken)
-                            .addOnCompleteListener(this, task -> {
-                                System.out.println("[DEBUG] signInWithCustomToken:onComplete:" + task.isSuccessful());
+                            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    System.out.println("[DEBUG] signInWithCustomToken:onComplete:" + task.isSuccessful());
 
-                                if (!task.isSuccessful()) {
-                                    System.out.println("[DEBUG] signInWithCustomToken:failed " + task.getException());
-                                } else {
+                                    if (!task.isSuccessful()) {
+                                        System.out.println("[DEBUG] signInWithCustomToken:failed " + task.getException());
+                                    } else {
 
-                                    new RegisterFCMTask().execute(getGeneratedUUID());
+                                        new RegisterFCMTask().execute(getGeneratedUUID());
 
-                                    Log.d(DEBUG_LOGIN_TAG, "signInWithCustomToken:success");
+                                        Log.d(DEBUG_LOGIN_TAG, "signInWithCustomToken:success");
+                                    }
                                 }
-                            }).addOnFailureListener(e -> System.out.println("[DEBUG] failed to sign in with custom token " + e.getLocalizedMessage()));
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            System.out.println("[DEBUG] failed to sign in with custom token " + e.getLocalizedMessage());
+                        }
+                    });
                 }
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
@@ -246,14 +268,23 @@ public class LoginActivity extends AppCompatActivity {
         return password.length() >= 8;
     }
 
+    private class RegisterOAuthTokenTask extends AsyncTask<Void, Void, String>
+    {
+        private final String UriRegToken = getDevBaseAddress() + "/rpisec" + OAuthConstants.URI_TOKEN_REQUEST;
+        @Override
+        protected String doInBackground(Void... params) {
+            return null;
+        }
+    }
+
     private class RegisterUUIDTask extends AsyncTask<Void, Void, String> {
         private final String UriRegToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_REGISTER + "?uuid=" + getGeneratedUUID();
-        private final String UriToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_GET_TOKEN + "?uuid=" + getGeneratedUUID();
+        //private final String UriToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_GET_TOKEN + "?uuid=" + getGeneratedUUID();
 
         @Override
         protected String doInBackground(Void... params) {
 
-            try {
+/*            try {
                 ResponseEntity<String> registerResponse = getRpiSecRestTemplate().exchange(UriRegToken, HttpMethod.PUT, getHttpEntity(), String.class);
 
                 if (registerResponse.getStatusCode() == HttpStatus.OK) {
@@ -265,7 +296,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-            }
+            }*/
 
             return "";
         }
