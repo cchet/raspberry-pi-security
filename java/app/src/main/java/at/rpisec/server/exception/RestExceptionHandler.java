@@ -1,17 +1,15 @@
 package at.rpisec.server.exception;
 
-import at.rpisec.server.jpa.api.IEntity;
-import at.rpisec.server.jpa.model.Client;
-import at.rpisec.server.jpa.repositories.ClientRepository;
-import at.rpisec.server.shared.rest.constants.ResponseErrorCode;
+import at.rpisec.server.rest.ClientRestController;
 import at.rpisec.server.shared.rest.model.ErrorResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.ConstraintViolationException;
 
@@ -21,55 +19,37 @@ import javax.validation.ConstraintViolationException;
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/15/17
  */
-@ControllerAdvice(basePackageClasses = ClientRepository.class)
+@ControllerAdvice(basePackageClasses = ClientRestController.class)
 public class RestExceptionHandler {
 
     @Autowired
     private Logger logger;
 
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler({DbEntryNotFoundException.class})
-    public @ResponseBody
-    ErrorResponse handleDbEntryNotFoundError(final DbEntryNotFoundException t) {
-        logger.info(String.format("Could not find db entry of type %s", (t.getEntityClass() != null) ? t.getEntityClass().getName() : "unknown"));
-        final Class<? extends IEntity> entityClass = t.getEntityClass();
-        if (entityClass != null) {
-            if (Client.class.equals(entityClass)) {
-                return new ErrorResponse(ResponseErrorCode.CLIENT_NOT_FOUND);
-            }
-        }
-
-        return new ErrorResponse(ResponseErrorCode.DB_ACCESS_ERROR, t.getClass().getName());
+    @ExceptionHandler({ConstraintViolationException.class, MissingServletRequestParameterException.class})
+    public @ResponseBody ResponseEntity<ErrorResponse> handleMissingParameterError(final Exception exception) {
+        final String message = exception.getMessage();
+        logger.info("Validation failed for rest call parameter or model. message: {}", message);
+        return new ResponseEntity<>(new ErrorResponse(String.format("Rest call failed for invalid model or request parameter. message: %s", message)), HttpStatus.BAD_REQUEST);
     }
 
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler({DbEntryAlreadyExistsException.class})
-    public @ResponseBody
-    ErrorResponse handleDbEntryAlreadyExistsFoundError(final DbEntryAlreadyExistsException t) {
-        logger.info(String.format("Db entry already exists of type %s", (t.getEntityClass() != null) ? t.getEntityClass().getName() : "unknown"));
-        final Class<? extends IEntity> entityClass = t.getEntityClass();
-        if (entityClass != null) {
-            if (Client.class.equals(entityClass)) {
-                return new ErrorResponse(ResponseErrorCode.CLIENT_ALREADY_REGISTERED);
-            }
-        }
+    @ExceptionHandler({DbEntryNotFoundException.class})
+    public @ResponseBody ResponseEntity<ErrorResponse> handleDbEntryNotFoundError(final DbEntryNotFoundException t) {
+        logger.info(String.format("Could not find db entry of type %s", t.getEntityClass().getName()));
 
-        return new ErrorResponse(ResponseErrorCode.DB_ACCESS_ERROR, t.getClass().getName());
+        return new ResponseEntity<>(new ErrorResponse("Could not find db entry"), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({DbEntryAlreadyExistsException.class})
+    public @ResponseBody ResponseEntity<ErrorResponse> handleDbEntryAlreadyExistsFoundError(final DbEntryAlreadyExistsException t) {
+        logger.info(String.format("Db entry already exists of type %s", t.getEntityClass().getName()));
+
+        return new ResponseEntity<>(new ErrorResponse(String.format("An entry of type '%s' already exists.", t.getEntityClass().getName())), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({Throwable.class})
-    public @ResponseBody
-    ErrorResponse defaultHandler(final Throwable t) {
+    public @ResponseBody ResponseEntity<ErrorResponse> defaultHandler(final Throwable t) {
         logger.error("An unknown exception occurred in a RestController ", t);
 
-        return new ErrorResponse(ResponseErrorCode.DB_ACCESS_ERROR, t.getClass().getName());
-    }
-
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ConstraintViolationException.class)
-    public @ResponseBody
-    ErrorResponse handleConstraintViolation(final ConstraintViolationException e) {
-        logger.info("Model validation failed");
-        return new ErrorResponse(ResponseErrorCode.VALIDATION_ERROR);
+        return new ResponseEntity<>(new ErrorResponse("An unhandled exception occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

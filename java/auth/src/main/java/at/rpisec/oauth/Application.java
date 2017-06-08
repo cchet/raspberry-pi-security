@@ -55,11 +55,6 @@ public class Application {
     }
 
     @Bean
-    CommandLineRunner produceStartupRunner() {
-        return new StartupRunner();
-    }
-
-    @Bean
     @Scope("prototype")
     Logger logger(InjectionPoint injectionPoint) {
         return LoggerFactory.getLogger(injectionPoint.getMember().getDeclaringClass());

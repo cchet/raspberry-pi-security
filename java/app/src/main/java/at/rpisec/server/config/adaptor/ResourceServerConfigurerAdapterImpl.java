@@ -45,7 +45,7 @@ public class ResourceServerConfigurerAdapterImpl extends ResourceServerConfigure
             .antMatchers(String.format("%s%s**", ClientRestConstants.BASE_URI, ClientRestConstants.REL_URI_UNREGISTER)).permitAll()
             .and().authorizeRequests()
             // Exclude for oauth authentication for alive api
-            .antMatchers("/api/system/alive").permitAll()
+            .antMatchers("/api/system/**").permitAll()
             .and().authorizeRequests()
             // All other resources protected by oauth
             .antMatchers("/api/**")

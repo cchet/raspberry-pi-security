@@ -34,7 +34,7 @@ import java.util.Collections;
  */
 @RestController
 @RequestMapping("/api/system")
-@ConditionalOnProperty(name = "system.api.alive.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "test.integration.rest.api.enabled", havingValue = "true")
 public class IntegrationTestRestController {
 
     @Autowired
@@ -75,16 +75,17 @@ public class IntegrationTestRestController {
         admin.setPassword(encoder.encode(SecurityConstants.USER_ADMIN));
         admin.setPasswordValidityDate(LocalDateTime.now().plusYears(100));
         admin.setVerifiedAt(LocalDateTime.now());
+        admin.setVerifyUUID(null);
         admin.setAdmin(true);
         admin.getClientDevices().put(deviceId, new ClientDevice(SecurityConstants.USER_ADMIN));
         userRepo.save(admin);
 
         // Create default client device
-        clientDetailsService.addClientDetails(ClientDetailsFactory.createMobileClientDetails(SecurityConstants.USER_ADMIN,
-                                                                                             SecurityConstants.USER_ADMIN,
+        clientDetailsService.addClientDetails(ClientDetailsFactory.createMobileClientDetails(deviceId,
+                                                                                             deviceId,
                                                                                              "rpisec-test-auth",
                                                                                              SecurityConstants.USER_ADMIN,
-                                                                                             deviceId,
+                                                                                             "Default mobile device",
                                                                                              Collections.singletonList(rpisecProperties.getResourceId())));
 
         // Create oauth client for main apps server
@@ -102,6 +103,6 @@ public class IntegrationTestRestController {
             put(HttpHeaders.CONTENT_TYPE, Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
         }});
 
-        appRestTemplate.postForEntity(rpisecProperties.getBaseUrl() + "/system/prepare", entity, Void.class);
+        appRestTemplate.postForEntity(rpisecProperties.getBaseUrl() + "/api/system/prepare", entity, Void.class);
     }
 }

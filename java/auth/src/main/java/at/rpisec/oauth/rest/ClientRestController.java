@@ -3,10 +3,12 @@ package at.rpisec.oauth.rest;
 import at.rpisec.oauth.logic.api.ClientLogic;
 import at.rpisec.server.shared.rest.constants.ClientRestConstants;
 import at.rpisec.server.shared.rest.model.TokenResponse;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping(ClientRestConstants.BASE_URI)
+@Validated
 public class ClientRestController {
 
     @Autowired
@@ -23,7 +26,7 @@ public class ClientRestController {
     private Logger log;
 
     @GetMapping(value = ClientRestConstants.REL_CLIENT_LOGIN, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TokenResponse login(@RequestParam(ClientRestConstants.PARAM_DEVICE_ID) final String deviceId,
+    public TokenResponse login(final @NotEmpty(message = "deviceId must not be null or empty") @RequestParam(ClientRestConstants.PARAM_DEVICE_ID) String deviceId,
                                final Authentication auth) {
         final TokenResponse response = clientLogic.loginClient(auth.getPrincipal().toString(), deviceId);
 
@@ -33,8 +36,8 @@ public class ClientRestController {
     }
 
     @PutMapping(ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
-    public void registerFCMToken(final @RequestParam(ClientRestConstants.PARAM_DEVICE_ID) String deviceId,
-                                 final @RequestParam(ClientRestConstants.PARAM_FCM_TOKEN) String fcmToken,
+    public void registerFCMToken(final @NotEmpty(message = "deviceId must not be null or empty") @RequestParam(ClientRestConstants.PARAM_DEVICE_ID) String deviceId,
+                                 final @NotEmpty(message = "fcmToken must not be null or empty") @RequestParam(ClientRestConstants.PARAM_FCM_TOKEN) String fcmToken,
                                  final Authentication auth) {
         clientLogic.registerFcmToken(auth.getPrincipal().toString(), deviceId, fcmToken);
 

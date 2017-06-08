@@ -30,7 +30,6 @@ public class ClientRestConstants {
      * This api requires the system user authentication of the app server.<br>
      * This api returns http status 200 or an http status != 200 in case of an error
      *
-     * @see ResponseErrorCode the enumeration holding the error codes
      */
     public static final String URI_REGISTER = BASE_URI + REL_URI_REGISTER;
 

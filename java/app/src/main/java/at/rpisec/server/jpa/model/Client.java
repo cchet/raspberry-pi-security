@@ -46,4 +46,8 @@ public class Client extends AbstractEntity<ClientId> {
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    public Client(ClientId id) {
+        this.id = id;
+    }
 }

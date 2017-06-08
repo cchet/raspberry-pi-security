@@ -20,13 +20,12 @@ import java.util.UUID;
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 06/08/17
  */
-@RunWith(JUnit4.class)
 public class RegisterFcmTokenTests extends BaseIntegrationTest {
 
     @Test
     public void invalid_username() {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate("unknown", SecurityConstants.ADMIN);
+        final RestTemplate template = prepareRestTemplate("unknown", SecurityConstants.USER_ADMIN);
         final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
                                             .queryParam(ClientRestConstants.PARAM_DEVICE_ID, SecurityConstants.USER_ADMIN)
                                             .queryParam(ClientRestConstants.PARAM_FCM_TOKEN, UUID.randomUUID().toString()).build().toUri();
@@ -42,7 +41,7 @@ public class RegisterFcmTokenTests extends BaseIntegrationTest {
     @Test
     public void invalid_password() {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.ADMIN, "unknown");
+        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, "unknown");
         final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
                                             .queryParam(ClientRestConstants.PARAM_DEVICE_ID, SecurityConstants.USER_ADMIN)
                                             .queryParam(ClientRestConstants.PARAM_FCM_TOKEN, UUID.randomUUID().toString()).build().toUri();
@@ -58,7 +57,7 @@ public class RegisterFcmTokenTests extends BaseIntegrationTest {
     @Test
     public void invalid_no_device_parameter() {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.ADMIN, SecurityConstants.ADMIN);
+        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
         final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
                                             .queryParam(ClientRestConstants.PARAM_FCM_TOKEN, UUID.randomUUID().toString()).build().toUri();
         final HttpMethod method = HttpMethod.PUT;
@@ -71,9 +70,26 @@ public class RegisterFcmTokenTests extends BaseIntegrationTest {
     }
 
     @Test
+    public void invalid_empty_device_parameter() {
+        // -- Given --
+        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
+        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
+                                            .queryParam(ClientRestConstants.PARAM_DEVICE_ID, "")
+                                            .queryParam(ClientRestConstants.PARAM_FCM_TOKEN, UUID.randomUUID().toString()).build().toUri();
+        final HttpMethod method = HttpMethod.PUT;
+
+        // -- When --
+        final ResponseEntity<Void> response = template.exchange(url, method, null, Void.class);
+
+        // -- Then --
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+
+    @Test
     public void invalid_no_token_parameter() {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.ADMIN, SecurityConstants.ADMIN);
+        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
         final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
                                             .queryParam(ClientRestConstants.PARAM_DEVICE_ID, SecurityConstants.USER_ADMIN).build().toUri();
         final HttpMethod method = HttpMethod.PUT;
@@ -85,10 +101,11 @@ public class RegisterFcmTokenTests extends BaseIntegrationTest {
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
+
     @Test
     public void invalid_empty_token_parameter() {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.ADMIN, SecurityConstants.ADMIN);
+        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
         final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
                                             .queryParam(ClientRestConstants.PARAM_DEVICE_ID, SecurityConstants.USER_ADMIN)
                                             .queryParam(ClientRestConstants.PARAM_FCM_TOKEN, "").build().toUri();
@@ -104,7 +121,7 @@ public class RegisterFcmTokenTests extends BaseIntegrationTest {
     @Test
     public void invalid_unknown_device() {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.ADMIN, SecurityConstants.ADMIN);
+        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
         final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
                                             .queryParam(ClientRestConstants.PARAM_DEVICE_ID, "unknownDeviceId")
                                             .queryParam(ClientRestConstants.PARAM_FCM_TOKEN, UUID.randomUUID().toString()).build().toUri();
@@ -120,7 +137,7 @@ public class RegisterFcmTokenTests extends BaseIntegrationTest {
     @Test
     public void valid() {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.ADMIN, SecurityConstants.ADMIN);
+        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
         final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
                                             .queryParam(ClientRestConstants.PARAM_DEVICE_ID, SecurityConstants.USER_ADMIN)
                                             .queryParam(ClientRestConstants.PARAM_FCM_TOKEN, UUID.randomUUID().toString()).build().toUri();

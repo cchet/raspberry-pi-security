@@ -1,8 +1,6 @@
 package at.rpisec.server.shared.rest.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * This class represents the token response for the clients.
@@ -10,10 +8,12 @@ import lombok.NoArgsConstructor;
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/19/17
  */
-@Data
+@ToString(callSuper = true)
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TokenResponse {
+public class TokenResponse extends ErrorResponse {
 
     private String created;
     private String token;

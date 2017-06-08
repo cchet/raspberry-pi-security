@@ -22,7 +22,6 @@ import java.net.URI;
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 06/04/17
  */
-@RunWith(JUnit4.class)
 public class ClientLoginTests extends BaseIntegrationTest {
 
     @Test
@@ -38,6 +37,8 @@ public class ClientLoginTests extends BaseIntegrationTest {
 
         // -- Then --
         Assert.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        Assert.assertNotNull(response.getBody());
+        Assert.assertNotNull(response.getBody().getError());
     }
 
     @Test
@@ -53,6 +54,41 @@ public class ClientLoginTests extends BaseIntegrationTest {
 
         // -- Then --
         Assert.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        Assert.assertNotNull(response.getBody());
+        Assert.assertNotNull(response.getBody().getError());
+    }
+
+    @Test
+    public void invalid_no_device_id() {
+        // -- Given --
+        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
+        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_CLIENT_LOGIN).build().toUri();
+        final HttpMethod method = HttpMethod.GET;
+
+        // -- When --
+        final ResponseEntity<TokenResponse> response = template.exchange(url, method, null, TokenResponse.class);
+
+        // -- Then --
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        Assert.assertNotNull(response.getBody());
+        Assert.assertNotNull(response.getBody().getError());
+    }
+
+    @Test
+    public void invalid_empty_device_id() {
+        // -- Given --
+        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
+        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_CLIENT_LOGIN)
+                                            .queryParam(ClientRestConstants.PARAM_DEVICE_ID, "").build().toUri();
+        final HttpMethod method = HttpMethod.GET;
+
+        // -- When --
+        final ResponseEntity<TokenResponse> response = template.exchange(url, method, null, TokenResponse.class);
+
+        // -- Then --
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        Assert.assertNotNull(response.getBody());
+        Assert.assertNotNull(response.getBody().getError());
     }
 
     @Test
@@ -73,5 +109,6 @@ public class ClientLoginTests extends BaseIntegrationTest {
         Assert.assertNotNull(response.getBody().getCreated());
         Assert.assertNotNull(response.getBody().getClientId());
         Assert.assertNotNull(response.getBody().getClientSecret());
+        Assert.assertNull(response.getBody().getError());
     }
 }

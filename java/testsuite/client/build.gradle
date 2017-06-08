@@ -10,7 +10,7 @@ dependencies {
 
 test {
     filter {
-        includeTestsMatching '*.test.*'
+        includeTestsMatching '*.*Suite'
     }
     // Set environment variables if executed on a windows system
     if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
@@ -24,7 +24,7 @@ clean.doFirst {
     project.buildDir.delete()
 }
 
-task perpareDockerInfrastructure(type: Copy, dependsOn: ['compileJava', 'compileTestJava', 'processResources', 'processTestResources', ':app:buildFatJar', ':auth:buildFatJar']) {
+task perpareDockerInfrastructure(type: Copy, dependsOn: ['clean', ':app:buildFatJar', ':auth:buildFatJar', 'compileJava', 'compileTestJava', 'processResources', 'processTestResources']) {
 
     def appConfig = System.getProperty("app.config") ?: ""
     def authConfig = System.getProperty("auth.config") ?: ""
@@ -71,6 +71,7 @@ task perpareDockerInfrastructure(type: Copy, dependsOn: ['compileJava', 'compile
             into dockerAuthLocation
         }
     }
+
     copy {
         from project(":app").jar.archivePath
         into dockerAppLocation
