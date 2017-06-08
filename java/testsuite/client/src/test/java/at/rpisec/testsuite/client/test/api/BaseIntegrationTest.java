@@ -3,10 +3,17 @@ package at.rpisec.testsuite.client.test.api;
 import at.rpisec.server.shared.rest.constants.ClientRestConstants;
 import com.palantir.docker.compose.DockerComposeRule;
 import com.palantir.docker.compose.configuration.ShutdownStrategy;
+import com.palantir.docker.compose.connection.Container;
 import com.palantir.docker.compose.connection.waiting.HealthChecks;
 import org.joda.time.Duration;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -16,6 +23,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
@@ -23,10 +31,12 @@ import java.util.Collections;
  */
 public class BaseIntegrationTest {
 
-    protected static final String AUTH_REST_API_BASE = "http://localhost:9080/rpisec-auth" + ClientRestConstants.BASE_URI;
+    protected static final String AUTH_BASE = "http://localhost:9080/rpisec-auth";
+    protected static final String AUTH_REST_API_BASE = AUTH_BASE + ClientRestConstants.BASE_URI;
+    protected static final String AUTH_REST_SYSTEM_API_BASE = AUTH_BASE + "/api/system";
 
     @ClassRule
-    public static final DockerComposeRule docker = DockerComposeRule.builder()
+    public static final DockerComposeRule dockerRule = DockerComposeRule.builder()
                                                                     .saveLogsTo("build/docker-logs")
                                                                     .file("build/docker/docker-compose.yml")
                                                                     .pullOnStartup(true)
@@ -43,17 +53,6 @@ public class BaseIntegrationTest {
                                                                     .nativeServiceHealthCheckTimeout(new Duration(20000))
                                                                     .build();
 
-    static {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if (docker != null) {
-                try {
-                    docker.dockerCompose().kill();
-                } catch (Exception e) {
-                }
-            }
-        }));
-    }
-
     /**
      * Prepares a plain rest template.
      *
@@ -61,6 +60,15 @@ public class BaseIntegrationTest {
      */
     protected RestTemplate prepareRestTemplate() {
         return prepareRestTemplate(null, null);
+    }
+
+    @Before
+    public void before() {
+        final RestTemplate template = prepareRestTemplate();
+        final ResponseEntity<Void> response = template.exchange(AUTH_REST_SYSTEM_API_BASE + "/prepare", HttpMethod.POST, null, Void.class);
+        if (!HttpStatus.OK.equals(response.getStatusCode())) {
+            throw new IllegalStateException("Could not clear auth server state after test");
+        }
     }
 
     /**

@@ -81,6 +81,7 @@ public class ClientLogicImpl implements ClientLogic {
                 log.warn("Client id could not be deleted. deviceId={}  / device={}", deviceId, device);
             }
         }
+
         device = new ClientDevice(clientId);
         user.getClientDevices().put(deviceId.toUpperCase(), device);
         userRepo.saveAndFlush(user);
