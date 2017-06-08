@@ -52,12 +52,12 @@ android {
 dependencies {
 
     ext {
-        springAndroidRestTemplateVersion='1.0.1.RELEASE'
-        googleFirebaseVersion='10.2.1'
-        rpisecSharedVersion='0.0.1-SNAPSHOT'
-        androidAppcompatV7Version='25.3.1'
-        androidDesignVersion='25.3.1'
-        junitVersion='4.12'
+        springAndroidRestTemplateVersion = '1.0.1.RELEASE'
+        googleFirebaseVersion = '10.2.1'
+        rpisecSharedVersion = '0.0.1-SNAPSHOT'
+        androidAppcompatV7Version = '25.3.1'
+        androidDesignVersion = '25.3.1'
+        junitVersion = '4.12'
     }
 
     compile fileTree(include: ['*.jar'], dir: 'libs')
