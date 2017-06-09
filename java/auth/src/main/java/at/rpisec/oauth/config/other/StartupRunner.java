@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.provider.NoSuchClientException;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 
 import java.util.Collections;
-import java.util.Objects;
 
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
@@ -39,7 +38,11 @@ public class StartupRunner implements CommandLineRunner {
         log.info("Start command line runner: {}", StartupRunner.class.getName());
         if (userLogic.byUsername(SecurityConstants.USER_ADMIN) == null) {
             final String adminEmail = System.getProperty(ConfigProperties.VMOptions.ADMIN_EMAIL);
-            Objects.requireNonNull(adminEmail, String.format("If no admin exists then an adminEmail vm argument must be given. Eg.: -D%s=mustermann@gmail.at", ConfigProperties.VMOptions.ADMIN_EMAIL));
+            if ((adminEmail == null) || (adminEmail.trim().isEmpty())) {
+                throw new IllegalStateException(String.format("If no admin exists then an adminEmail vm argument must be given. Eg.: -D%s=mustermann@gmail.at",
+                                                              ConfigProperties.VMOptions.ADMIN_EMAIL));
+            }
+
             final UserDto admin = new UserDto();
             admin.setFirstname(SecurityConstants.USER_ADMIN);
             admin.setLastname(SecurityConstants.USER_ADMIN);

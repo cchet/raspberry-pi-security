@@ -33,7 +33,7 @@ import java.util.Collections;
  * @since 06/05/17
  */
 @RestController
-@RequestMapping("/api/system")
+@RequestMapping("/test")
 @ConditionalOnProperty(name = "test.integration.rest.api.enabled", havingValue = "true")
 public class IntegrationTestRestController {
 
@@ -77,6 +77,8 @@ public class IntegrationTestRestController {
         admin.setVerifiedAt(LocalDateTime.now());
         admin.setVerifyUUID(null);
         admin.setAdmin(true);
+        admin.getRoles().add(SecurityConstants.ROLE_ADMIN);
+        admin.getRoles().add(SecurityConstants.ROLE_CLIENT);
         admin.getClientDevices().put(deviceId, new ClientDevice(SecurityConstants.USER_ADMIN));
         userRepo.save(admin);
 
@@ -103,6 +105,6 @@ public class IntegrationTestRestController {
             put(HttpHeaders.CONTENT_TYPE, Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
         }});
 
-        appRestTemplate.postForEntity(rpisecProperties.getBaseUrl() + "/api/system/prepare", entity, Void.class);
+        appRestTemplate.postForEntity(rpisecProperties.getBaseUrl() + "/test/prepare", entity, Void.class);
     }
 }

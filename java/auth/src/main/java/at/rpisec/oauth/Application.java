@@ -1,17 +1,13 @@
 package at.rpisec.oauth;
 
-import at.rpisec.oauth.config.other.ConfigProperties;
 import at.rpisec.oauth.config.other.ConfigurableMapperImpl;
-import at.rpisec.oauth.config.other.StartupRunner;
 import at.rpisec.oauth.jpa.model.User;
 import at.rpisec.oauth.jpa.repositories.UserRepository;
 import ma.glasnost.orika.MapperFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InjectionPoint;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -21,7 +17,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -29,6 +24,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.i18n.FixedLocaleResolver;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.Locale;
 
@@ -46,6 +42,7 @@ import java.util.Locale;
 @EnableJpaRepositories(basePackageClasses = {UserRepository.class})
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
+@EnableSwagger2
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class Application {
 

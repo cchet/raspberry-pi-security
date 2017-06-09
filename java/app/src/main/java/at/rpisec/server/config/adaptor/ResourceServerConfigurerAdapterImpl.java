@@ -32,25 +32,16 @@ public class ResourceServerConfigurerAdapterImpl extends ResourceServerConfigure
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-            // Exclude for oauth authentication for web resources
-            .antMatchers("/bootstrap/**").permitAll()
-            .antMatchers("/jquery/**").permitAll()
-            .antMatchers("/css/**").permitAll()
-            .antMatchers("/js/**").permitAll()
-            // Exclude for oauth authentication for auth server hosted api
-            .antMatchers(String.format("%s%s**", ClientRestConstants.BASE_URI, ClientRestConstants.REL_URI_REGISTER)).permitAll()
+        // Match any request on /api which are protected by oauth
+        http.requestMatchers()
+            .antMatchers(ClientRestConstants.BASE_URI + "/**")
             .and().authorizeRequests()
-            // Exclude for oauth authentication for auth server hosted api
-            .antMatchers(String.format("%s%s**", ClientRestConstants.BASE_URI, ClientRestConstants.REL_URI_UNREGISTER)).permitAll()
-            .and().authorizeRequests()
-            // Exclude for oauth authentication for alive api
-            .antMatchers("/api/system/**").permitAll()
-            .and().authorizeRequests()
-            // All other resources protected by oauth
-            .antMatchers("/api/**")
+            // All requests under /api are protected by basic auth
+            .anyRequest()
             .access(String.format("#oauth2.hasAnyScope('%s','%s') and hasRole('%s')", SecurityConstants.SCOPE_READ, SecurityConstants.SCOPE_WRITE, SecurityConstants.CLIENT))
+            // We have rest so need for cross site request forgery protection
             .and().csrf().disable()
+            // rest api has to be called stateless
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 }

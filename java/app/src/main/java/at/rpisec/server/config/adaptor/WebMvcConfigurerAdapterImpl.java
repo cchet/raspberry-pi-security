@@ -52,6 +52,12 @@ public class WebMvcConfigurerAdapterImpl extends WebMvcConfigurerAdapter {
                 .setCacheControl(CacheControl.empty().cachePublic())
                 .resourceChain(false)
                 .addResolver(createResourceResolver());
+
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
     @Bean

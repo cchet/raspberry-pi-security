@@ -15,7 +15,7 @@ buildscript {
 
 subprojects{ subproject ->
 	if (subproject.name.startsWith("testsuite/client")) {
-		//apply plugin: "com.palantir.docker-compose"
+		//apply plugin: "com.palantir.docker"
 	}
 }
 

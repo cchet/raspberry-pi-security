@@ -24,7 +24,7 @@ public class BaseIntegrationTest {
 
     protected static final String AUTH_BASE = "http://localhost:9080/rpisec-auth";
     protected static final String AUTH_REST_API_BASE = AUTH_BASE + ClientRestConstants.BASE_URI;
-    protected static final String AUTH_REST_SYSTEM_API_BASE = AUTH_BASE + "/api/system";
+    protected static final String AUTH_REST_SYSTEM_API_BASE = AUTH_BASE + "/test";
 
     /**
      * Prepares a plain rest template.

@@ -3,6 +3,7 @@ package at.rpisec.oauth.config.adapter;
 import at.rpisec.oauth.security.ClientUserAuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -30,7 +31,7 @@ public class AuthorizationServerConfigurerAdapterImpl extends AuthorizationServe
     @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
-    private ClientUserAuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
     @Autowired
     private TokenStore tokenStore;
     @Autowired

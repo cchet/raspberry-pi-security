@@ -29,12 +29,12 @@ public class RestApiTestSuite {
                                                                         .waitingForService("rpisec-test-nginx",
                                                                                            HealthChecks.toRespond2xxOverHttp(8080,
                                                                                                                              (port) -> port.inFormat(
-                                                                                                                                     "http://$HOST:$EXTERNAL_PORT/rpisec-app/api/system/alive")))
+                                                                                                                                     "http://$HOST:$EXTERNAL_PORT/rpisec-app/test/alive")))
                                                                         .waitingForService("rpisec-test-nginx",
                                                                                            HealthChecks.toRespond2xxOverHttp(8080,
                                                                                                                              (port) -> port.inFormat(
-                                                                                                                                     "http://$HOST:$EXTERNAL_PORT/rpisec-auth/api/system/alive")))
-                                                                        .nativeServiceHealthCheckTimeout(new Duration(20000))
+                                                                                                                                     "http://$HOST:$EXTERNAL_PORT/rpisec-auth/test/alive")))
+                                                                        .nativeServiceHealthCheckTimeout(new Duration(60000))
                                                                         .build();
 
 }

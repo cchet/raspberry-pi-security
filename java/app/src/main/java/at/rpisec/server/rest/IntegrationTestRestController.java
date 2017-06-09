@@ -19,7 +19,7 @@ import javax.validation.constraints.Size;
  * @since 06/05/17
  */
 @RestController
-@RequestMapping("/api/system")
+@RequestMapping("/test")
 @ConditionalOnProperty(name = "test.integration.rest.api.enabled", havingValue = "true")
 @Validated
 public class IntegrationTestRestController {
