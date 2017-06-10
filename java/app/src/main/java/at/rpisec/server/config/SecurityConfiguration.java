@@ -2,21 +2,17 @@ package at.rpisec.server.config;
 
 import at.rpisec.server.config.adaptor.ResourceServerConfigurerAdapterImpl;
 import at.rpisec.server.config.adaptor.WebSecurityConfigurerAdapterImpl;
-import at.rpisec.server.security.UsernamePasswordAuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
@@ -34,16 +30,6 @@ public class SecurityConfiguration {
     PasswordEncoder producePasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-//    @Bean
-//    AuthenticationManager produceAuthenticationManager() {
-//        return new UsernamePasswordAuthenticationManager();
-//    }
-
-//    @Bean
-//    UserDetailsService produceUserDetailsService() {
-//        return new InMemoryUserDetailsManager();
-//    }
 
     @Bean
     ResourceServerConfigurerAdapter produceResourceServerConfigurerAdapter() {

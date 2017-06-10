@@ -41,6 +41,10 @@ subprojects {
 		}
 	}
 
+	clean.doFirst {
+		project.buildDir.delete()
+	}
+
 	idea {
 		module {
 			downloadJavadoc = true

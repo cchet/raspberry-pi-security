@@ -2,19 +2,14 @@ package at.rpisec.testsuite.client.test.rest.api;
 
 import at.rpisec.server.shared.rest.constants.ClientRestConstants;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
-import at.rpisec.server.shared.rest.model.TokenResponse;
+import at.rpisec.swagger.client.auth.api.ClientRestControllerApi;
+import at.rpisec.swagger.client.auth.invoker.ApiException;
+import at.rpisec.swagger.client.auth.invoker.ApiResponse;
+import at.rpisec.swagger.client.auth.model.TokenResponse;
 import at.rpisec.testsuite.client.test.api.BaseIntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
 
 /**
  * This test class tests the client login via the rest api specified at @{link {@link ClientRestConstants#URI_CLIENT_LOGIN}}.
@@ -25,90 +20,76 @@ import java.net.URI;
 public class ClientLoginTests extends BaseIntegrationTest {
 
     @Test
-    public void invalid_username() {
+    public void invalid_username() throws Exception {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate("unknown", SecurityConstants.ADMIN);
-        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_CLIENT_LOGIN)
-                                            .queryParam(ClientRestConstants.PARAM_DEVICE_ID, "myNewDevice").build().toUri();
-        final HttpMethod method = HttpMethod.GET;
+        final ClientRestControllerApi api = new ClientRestControllerApi(createAuthApiClient("unknown", SecurityConstants.USER_ADMIN));
 
-        // -- When --
-        final ResponseEntity<TokenResponse> response = template.exchange(url, method, null, TokenResponse.class);
-
-        // -- Then --
-        Assert.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-        Assert.assertNotNull(response.getBody());
-        Assert.assertNotNull(response.getBody().getError());
+        try {
+            // -- When --
+            api.loginUsingGETWithHttpInfo("myDeviceNew");
+            Assert.fail("Expected ApiException here");
+        } catch (ApiException e) {
+            // -- Then --
+            Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), e.getCode());
+        }
     }
 
     @Test
-    public void invalid_password() {
+    public void invalid_password() throws Exception {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.ADMIN, "unknown");
-        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_CLIENT_LOGIN)
-                                            .queryParam(ClientRestConstants.PARAM_DEVICE_ID, "myNewDevice").build().toUri();
-        final HttpMethod method = HttpMethod.GET;
+        final ClientRestControllerApi api = new ClientRestControllerApi(createAuthApiClient(SecurityConstants.USER_ADMIN, "unknown"));
+
+        try {
+            // -- When --
+            api.loginUsingGETWithHttpInfo("myDeviceNew");
+            Assert.fail("Expected ApiException here");
+        } catch (ApiException e) {
+            // -- Then --
+            Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), e.getCode());
+        }
+    }
+
+    // -- Then --
+    @Test(expected = ApiException.class)
+    public void invalid_client_no_device_id() throws Exception {
+        // -- Given --
+        final ClientRestControllerApi api = new ClientRestControllerApi(createAuthApiClient(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN));
 
         // -- When --
-        final ResponseEntity<TokenResponse> response = template.exchange(url, method, null, TokenResponse.class);
+        api.loginUsingGETWithHttpInfo(null);
+    }
 
-        // -- Then --
-        Assert.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-        Assert.assertNotNull(response.getBody());
-        Assert.assertNotNull(response.getBody().getError());
+    // -- Then --
+    @Test
+    public void invalid_empty_device_id() throws Exception {
+        // -- Given --
+        final ClientRestControllerApi api = new ClientRestControllerApi(createAuthApiClient(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN));
+
+        try {
+            // -- When --
+            api.loginUsingGETWithHttpInfo("      ");
+            Assert.fail("Expected ApiException here");
+        } catch (ApiException e) {
+            // -- Then --
+            Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), e.getCode());
+        }
     }
 
     @Test
-    public void invalid_no_device_id() {
+    public void valid_login() throws Exception {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
-        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_CLIENT_LOGIN).build().toUri();
-        final HttpMethod method = HttpMethod.GET;
+        final ClientRestControllerApi api = new ClientRestControllerApi(createAuthApiClient(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN));
 
         // -- When --
-        final ResponseEntity<TokenResponse> response = template.exchange(url, method, null, TokenResponse.class);
+        final ApiResponse<TokenResponse> response = api.loginUsingGETWithHttpInfo("MyDevice");
 
         // -- Then --
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        Assert.assertNotNull(response.getBody());
-        Assert.assertNotNull(response.getBody().getError());
-    }
-
-    @Test
-    public void invalid_empty_device_id() {
-        // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
-        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_CLIENT_LOGIN)
-                                            .queryParam(ClientRestConstants.PARAM_DEVICE_ID, "").build().toUri();
-        final HttpMethod method = HttpMethod.GET;
-
-        // -- When --
-        final ResponseEntity<TokenResponse> response = template.exchange(url, method, null, TokenResponse.class);
-
-        // -- Then --
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        Assert.assertNotNull(response.getBody());
-        Assert.assertNotNull(response.getBody().getError());
-    }
-
-    @Test
-    public void valid_login() {
-        // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
-        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_CLIENT_LOGIN)
-                                            .queryParam(ClientRestConstants.PARAM_DEVICE_ID, "myNewDevice").build().toUri();
-        final HttpMethod method = HttpMethod.GET;
-
-        // -- When --
-        final ResponseEntity<TokenResponse> response = template.exchange(url, method, null, TokenResponse.class);
-
-        // -- Then --
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assert.assertNotNull(response.getBody());
-        Assert.assertNotNull(response.getBody().getToken());
-        Assert.assertNotNull(response.getBody().getCreated());
-        Assert.assertNotNull(response.getBody().getClientId());
-        Assert.assertNotNull(response.getBody().getClientSecret());
-        Assert.assertNull(response.getBody().getError());
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+        Assert.assertNotNull(response.getData());
+        Assert.assertNotNull(response.getData().getToken());
+        Assert.assertNotNull(response.getData().getCreated());
+        Assert.assertNotNull(response.getData().getClientId());
+        Assert.assertNotNull(response.getData().getClientSecret());
+        Assert.assertNull(response.getData().getError());
     }
 }

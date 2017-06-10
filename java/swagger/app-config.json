@@ -1,0 +1,5 @@
+{
+  "apiPackage" : "at.rpisec.swagger.client.app.client.api",
+  "modelPackage" : "at.rpisec.swagger.client.app.client.model",
+  "invokerPackage" : "at.rpisec.swagger.client.app.client.invoker"
+}

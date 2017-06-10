@@ -5,10 +5,10 @@ import at.rpisec.oauth.rest.ClientRestController;
 import at.rpisec.oauth.rest.UserRestController;
 import at.rpisec.server.shared.rest.constants.ClientRestConstants;
 import at.rpisec.server.shared.rest.constants.UserRestConstants;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.AuthorizationScope;
 import springfox.documentation.service.BasicAuth;
@@ -24,17 +24,22 @@ import java.util.Collections;
  * @since 06/09/17
  */
 @Configuration
-@Profile({ConfigProperties.SupportedProfiles.DEV, ConfigProperties.SupportedProfiles.PROD})
+@Profile(ConfigProperties.SupportedProfiles.DEV)
 public class SwaggerConfiguration {
 
     @Bean
-    Docket produceClientApiSwaggerDocket(final @Value("${server.context-path}") String contextPath) {
+    Docket produceClientApiSwaggerDocket() {
         return createBasicAuthRestApiSwaggerDocket(ClientRestController.class.getSimpleName(), ClientRestConstants.BASE_URI + "/**");
     }
 
     @Bean
-    Docket produceInternalApiSwaggerDocket(final @Value("${server.context-path}") String contextPath) {
+    Docket produceInternalApiSwaggerDocket() {
         return createBasicAuthRestApiSwaggerDocket(UserRestController.class.getSimpleName(), UserRestConstants.REST_BASE + "/**");
+    }
+
+    @Bean
+    Docket produceOauthApiSwaggerDocket() {
+        return createBasicAuthRestApiSwaggerDocket(OAuth2Authentication.class.getSimpleName(), "/oauth/**");
     }
 
     private Docket createBasicAuthRestApiSwaggerDocket(final String groupName,

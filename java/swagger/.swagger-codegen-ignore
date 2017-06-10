@@ -1,0 +1,13 @@
+*.bat
+*.sh
+.*
+gradle/wrapper/
+docs/
+src/test/
+*.yml
+build.sbt
+*.md
+gradlew
+*.properties
+**/*.xml
+*.xml

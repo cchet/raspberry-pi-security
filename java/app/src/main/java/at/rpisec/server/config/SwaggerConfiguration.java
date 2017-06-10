@@ -3,7 +3,6 @@ package at.rpisec.server.config;
 import at.rpisec.server.rest.ClientRestController;
 import at.rpisec.server.rest.InternalRestController;
 import at.rpisec.server.shared.rest.constants.ClientRestConstants;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -22,19 +21,18 @@ import java.util.Collections;
  * @since 06/09/17
  */
 @Configuration
-@Profile({ConfigProperties.SupportedProfiles.DEV, ConfigProperties.SupportedProfiles.PROD})
+@Profile(ConfigProperties.SupportedProfiles.DEV)
 public class SwaggerConfiguration {
 
     @Bean
-    Docket produceClientApiSwaggerDocket(final @Value("${server.context-path}") String contextPath) {
+    Docket produceClientApiSwaggerDocket() {
         return createBasicAuthRestApiSwaggerDocket(ClientRestController.class.getSimpleName(), ClientRestConstants.BASE_URI + "/**");
     }
 
     @Bean
-    Docket produceInternalApiSwaggerDocket(final @Value("${server.context-path}") String contextPath) {
+    Docket produceInternalApiSwaggerDocket() {
         return createBasicAuthRestApiSwaggerDocket(InternalRestController.class.getSimpleName(), ClientRestConstants.BASE_INTERNAL_URI + "/**");
     }
-
 
     private Docket createBasicAuthRestApiSwaggerDocket(final String groupName,
                                                        final String antPath) {

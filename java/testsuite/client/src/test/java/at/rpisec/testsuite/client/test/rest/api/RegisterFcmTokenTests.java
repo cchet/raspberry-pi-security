@@ -1,20 +1,13 @@
 package at.rpisec.testsuite.client.test.rest.api;
 
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
+import at.rpisec.swagger.client.auth.api.ClientRestControllerApi;
+import at.rpisec.swagger.client.auth.invoker.ApiException;
+import at.rpisec.swagger.client.auth.invoker.ApiResponse;
 import at.rpisec.testsuite.client.test.api.BaseIntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
-import java.util.UUID;
 
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
@@ -23,130 +16,112 @@ import java.util.UUID;
 public class RegisterFcmTokenTests extends BaseIntegrationTest {
 
     @Test
-    public void invalid_username() {
+    public void invalid_username() throws Exception {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate("unknown", SecurityConstants.USER_ADMIN);
-        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
-                                            .queryParam(ClientRestConstants.PARAM_DEVICE_ID, SecurityConstants.USER_ADMIN)
-                                            .queryParam(ClientRestConstants.PARAM_FCM_TOKEN, UUID.randomUUID().toString()).build().toUri();
-        final HttpMethod method = HttpMethod.PUT;
+        final ClientRestControllerApi api = new ClientRestControllerApi(createAuthApiClient("unknown", SecurityConstants.USER_ADMIN));
 
-        // -- When --
-        final ResponseEntity<Void> response = template.exchange(url, method, null, Void.class);
-
-        // -- Then --
-        Assert.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        try {
+            // -- When --
+            api.registerFCMTokenUsingPUTWithHttpInfo(SecurityConstants.ADMIN, "myFcmToken");
+            Assert.fail("Expected ApiException here");
+        } catch (ApiException e) {
+            // -- Then --
+            Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), e.getCode());
+        }
     }
 
     @Test
-    public void invalid_password() {
+    public void invalid_password() throws Exception {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, "unknown");
-        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
-                                            .queryParam(ClientRestConstants.PARAM_DEVICE_ID, SecurityConstants.USER_ADMIN)
-                                            .queryParam(ClientRestConstants.PARAM_FCM_TOKEN, UUID.randomUUID().toString()).build().toUri();
-        final HttpMethod method = HttpMethod.PUT;
+        final ClientRestControllerApi api = new ClientRestControllerApi(createAuthApiClient(SecurityConstants.USER_ADMIN, "unknown"));
 
-        // -- When --
-        final ResponseEntity<Void> response = template.exchange(url, method, null, Void.class);
-
-        // -- Then --
-        Assert.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        try {
+            // -- When --
+            api.registerFCMTokenUsingPUTWithHttpInfo(SecurityConstants.ADMIN, "myFcmToken");
+            Assert.fail("Expected ApiException here");
+        } catch (ApiException e) {
+            // -- Then --
+            Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), e.getCode());
+        }
     }
 
-    @Test
-    public void invalid_no_device_parameter() {
+    // -- Then --
+    @Test(expected = ApiException.class)
+    public void invalid_client_no_device_id() throws Exception {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
-        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
-                                            .queryParam(ClientRestConstants.PARAM_FCM_TOKEN, UUID.randomUUID().toString()).build().toUri();
-        final HttpMethod method = HttpMethod.PUT;
+        final ClientRestControllerApi api = new ClientRestControllerApi(createAuthApiClient(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN));
 
         // -- When --
-        final ResponseEntity<Void> response = template.exchange(url, method, null, Void.class);
-
-        // -- Then --
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        api.registerFCMTokenUsingPUTWithHttpInfo(null, "myFcmToken");
     }
 
-    @Test
-    public void invalid_empty_device_parameter() {
+    // -- Then --
+    @Test(expected = ApiException.class)
+    public void invalid_client_no_fcm_token() throws Exception {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
-        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
-                                            .queryParam(ClientRestConstants.PARAM_DEVICE_ID, "")
-                                            .queryParam(ClientRestConstants.PARAM_FCM_TOKEN, UUID.randomUUID().toString()).build().toUri();
-        final HttpMethod method = HttpMethod.PUT;
+        final ClientRestControllerApi api = new ClientRestControllerApi(createAuthApiClient(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN));
 
         // -- When --
-        final ResponseEntity<Void> response = template.exchange(url, method, null, Void.class);
-
-        // -- Then --
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        api.registerFCMTokenUsingPUTWithHttpInfo(SecurityConstants.ADMIN, null);
     }
 
 
+    // -- Then --
     @Test
-    public void invalid_no_token_parameter() {
+    public void invalid_empty_device_id() throws Exception {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
-        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
-                                            .queryParam(ClientRestConstants.PARAM_DEVICE_ID, SecurityConstants.USER_ADMIN).build().toUri();
-        final HttpMethod method = HttpMethod.PUT;
+        final ClientRestControllerApi api = new ClientRestControllerApi(createAuthApiClient(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN));
 
-        // -- When --
-        final ResponseEntity<Void> response = template.exchange(url, method, null, Void.class);
-
-        // -- Then --
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        try {
+            // -- When --
+            api.registerFCMTokenUsingPUTWithHttpInfo("     ", "myFcmToken");
+            Assert.fail("Expected ApiException here");
+        } catch (ApiException e) {
+            // -- Then --
+            Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), e.getCode());
+        }
     }
 
-
+    // -- Then --
     @Test
-    public void invalid_empty_token_parameter() {
+    public void invalid_empty_fcm_token() throws Exception {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
-        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
-                                            .queryParam(ClientRestConstants.PARAM_DEVICE_ID, SecurityConstants.USER_ADMIN)
-                                            .queryParam(ClientRestConstants.PARAM_FCM_TOKEN, "").build().toUri();
-        final HttpMethod method = HttpMethod.PUT;
+        final ClientRestControllerApi api = new ClientRestControllerApi(createAuthApiClient(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN));
 
-        // -- When --
-        final ResponseEntity<Void> response = template.exchange(url, method, null, Void.class);
-
-        // -- Then --
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        try {
+            // -- When --
+            api.registerFCMTokenUsingPUTWithHttpInfo(SecurityConstants.ADMIN, "    ");
+            Assert.fail("Expected ApiException here");
+        } catch (ApiException e) {
+            // -- Then --
+            Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), e.getCode());
+        }
     }
 
     @Test
     public void invalid_unknown_device() {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
-        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
-                                            .queryParam(ClientRestConstants.PARAM_DEVICE_ID, "unknownDeviceId")
-                                            .queryParam(ClientRestConstants.PARAM_FCM_TOKEN, UUID.randomUUID().toString()).build().toUri();
-        final HttpMethod method = HttpMethod.PUT;
+        final ClientRestControllerApi api = new ClientRestControllerApi(createAuthApiClient(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN));
 
-        // -- When --
-        final ResponseEntity<Void> response = template.exchange(url, method, null, Void.class);
-
-        // -- Then --
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        try {
+            // -- When --
+            api.registerFCMTokenUsingPUTWithHttpInfo("unknownDevice", "myFcmToken");
+            Assert.fail("Expected ApiException here");
+        } catch (ApiException e) {
+            // -- Then --
+            Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), e.getCode());
+        }
     }
 
     @Test
-    public void valid() {
+    public void valid() throws Exception {
         // -- Given --
-        final RestTemplate template = prepareRestTemplate(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN);
-        final URI url = UriComponentsBuilder.fromHttpUrl(AUTH_REST_API_BASE + ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
-                                            .queryParam(ClientRestConstants.PARAM_DEVICE_ID, SecurityConstants.USER_ADMIN)
-                                            .queryParam(ClientRestConstants.PARAM_FCM_TOKEN, UUID.randomUUID().toString()).build().toUri();
-        final HttpMethod method = HttpMethod.PUT;
+        final ClientRestControllerApi api = new ClientRestControllerApi(createAuthApiClient(SecurityConstants.USER_ADMIN, SecurityConstants.USER_ADMIN));
 
         // -- When --
-        final ResponseEntity<Void> response = template.exchange(url, method, null, Void.class);
+        ApiResponse<Void> response = api.registerFCMTokenUsingPUTWithHttpInfo(SecurityConstants.ADMIN, "myFcmToken");
 
         // -- Then --
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
     }
 }

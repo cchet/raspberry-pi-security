@@ -30,10 +30,6 @@ idea {
     }
 }
 
-clean.doFirst {
-    project.buildDir.delete()
-}
-
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-security')
@@ -64,6 +60,9 @@ dependencies {
 
 // creates the fat jar
 task buildFatJar(type: GradleBuild) {
+    doFirst{
+        project.buildDir.delete()
+    }
     buildFile = 'build.gradle'
-    tasks = ['clean', 'compileJava', 'processResources', 'bootRepackage', 'jar']
+    tasks = ['clean', 'compileJava', 'processResources', 'jar', 'bootRepackage']
 }

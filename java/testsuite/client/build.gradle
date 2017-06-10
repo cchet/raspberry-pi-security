@@ -3,9 +3,11 @@ def dockerAppLocation = dockerRootLocation + "/app"
 def dockerAuthLocation = dockerRootLocation + "/auth"
 
 dependencies {
-    compile project(':shared')
-    compile project(':testsuite/base')
     testCompile 'org.springframework:spring-web'
+    testCompile project(':shared')
+    testCompile project(':testsuite/base')
+    testCompile project(':swagger/client/app')
+    testCompile project(':swagger/client/auth')
 }
 
 test {
@@ -17,27 +19,37 @@ test {
         environment('DOCKER_COMPOSE_LOCATION', 'C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker-compose.exe')
         environment('DOCKER_LOCATION', 'C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe')
     }
-    dependsOn = ['perpareDockerInfrastructure']
 }
 
-clean.doFirst {
-    project.buildDir.delete()
+task cleanState() {
+    gradle.taskGraph.whenReady { taskGraph ->
+        def tasks = taskGraph.getAllTasks()
+        tasks.each {
+            it.setOnlyIf { true }
+            it.outputs.upToDateWhen { false }
+        }
+    }
+    setOnlyIf { true }
+    outputs.upToDateWhen { false }
 }
 
-task perpareDockerInfrastructure(type: Copy, dependsOn: ['clean', ':app:buildFatJar', ':auth:buildFatJar', 'compileJava', 'compileTestJava', 'processResources', 'processTestResources']) {
+task perpareDockerInfrastructure(type: Copy, dependsOn: [':app:buildFatJar', ':auth:buildFatJar', 'compileJava', 'compileTestJava', 'processResources', 'processTestResources']) {
+
+    def dockerrootFileDirectory = new File(dockerRootLocation)
+    if(dockerrootFileDirectory.exists()){
+        dockerrootFileDirectory.delete()
+    }
 
     def appConfig = System.getProperty("app.config") ?: ""
     def authConfig = System.getProperty("auth.config") ?: ""
-    def appFirebaseConfig = System.getProperty("app.firebaseConfig") ?: ""
-    def authFirebaseConfig = System.getProperty("auth.firebaseConfig") ?: ""
+    def firebaseConfig = System.getProperty("firebaseConfig") ?: ""
 
     logger.info("---------------------------------------------------------------------------")
     logger.info("Set JVM Options for configuration")
     logger.info("---------------------------------------------------------------------------")
     logger.info("app.config:" + appConfig)
     logger.info("auth.config:" + authConfig)
-    logger.info("app.firebaseConfig:" + appFirebaseConfig)
-    logger.info("auth.firebaseConfig:" + authFirebaseConfig)
+    logger.info("firebaseConfig:" + firebaseConfig)
     logger.info("---------------------------------------------------------------------------")
 
     copy {
@@ -59,15 +71,14 @@ task perpareDockerInfrastructure(type: Copy, dependsOn: ['clean', ':app:buildFat
             into dockerAuthLocation
         }
     }
-    if(!appFirebaseConfig.isEmpty()) {
+    if(!firebaseConfig.isEmpty()) {
+        def firebaseConfigFile = new File(firebaseConfig)
         copy {
-            from new File(appFirebaseConfig)
+            from firebaseConfigFile
             into dockerAppLocation
         }
-    }
-    if(!authFirebaseConfig.isEmpty()) {
         copy {
-            from new File(authFirebaseConfig)
+            from firebaseConfigFile
             into dockerAuthLocation
         }
     }

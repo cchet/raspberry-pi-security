@@ -34,14 +34,14 @@ public class RestExceptionHandler {
 
     @ExceptionHandler({DbEntryNotFoundException.class})
     public @ResponseBody ResponseEntity<ErrorResponse> handleDbEntryNotFoundError(final DbEntryNotFoundException t) {
-        logger.info(String.format("Could not find db entry of type %s", t.getEntityClass().getName()));
+        logger.info(String.format("Could not find db entry of type %s. message: %s", t.getEntityClass().getName(), t.getMessage()));
 
         return new ResponseEntity<>(new ErrorResponse("Could not find db entry"), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({DbEntryAlreadyExistsException.class})
     public @ResponseBody ResponseEntity<ErrorResponse> handleDbEntryAlreadyExistsFoundError(final DbEntryAlreadyExistsException t) {
-        logger.info(String.format("Db entry already exists of type %s", t.getEntityClass().getName()));
+        logger.info(String.format("Db entry already exists of type %s. message: %s", t.getEntityClass().getName(), t.getMessage()));
 
         return new ResponseEntity<>(new ErrorResponse(String.format("An entry of type '%s' already exists.", t.getEntityClass().getName())), HttpStatus.BAD_REQUEST);
     }

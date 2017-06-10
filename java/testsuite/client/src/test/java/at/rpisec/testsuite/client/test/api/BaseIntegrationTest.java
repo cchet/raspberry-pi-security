@@ -1,6 +1,7 @@
 package at.rpisec.testsuite.client.test.api;
 
 import at.rpisec.server.shared.rest.constants.ClientRestConstants;
+import at.rpisec.swagger.client.auth.invoker.ApiClient;
 import org.junit.Before;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Objects;
 
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
@@ -42,6 +44,26 @@ public class BaseIntegrationTest {
         if (!HttpStatus.OK.equals(response.getStatusCode())) {
             throw new IllegalStateException("Could not clear auth server state after test");
         }
+    }
+
+    protected ApiClient createAuthApiClient(final String username,
+                                            final String password) {
+        return createApiClient(AUTH_BASE, username, password);
+    }
+
+    protected ApiClient createApiClient(final String baseUrl,
+                                        final String username,
+                                        final String password) {
+        Objects.requireNonNull(baseUrl, "BaseUrl must not be null");
+        Objects.requireNonNull(username, "Username must not be null");
+        Objects.requireNonNull(password, "Password must not be null");
+
+        final ApiClient client = new ApiClient();
+        client.setUsername(username);
+        client.setPassword(password);
+        client.setBasePath(baseUrl);
+
+        return client;
     }
 
     /**
