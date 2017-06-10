@@ -1,12 +1,13 @@
-package at.rpisec.client;
+package at.rpisec.client.activity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -14,6 +15,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -23,28 +25,25 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.nio.charset.Charset;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import at.rpisec.client.R;
+import at.rpisec.client.rest.OAuthCredentials;
+import at.rpisec.client.rest.RestHelper;
+import at.rpisec.client.util.PropertyUtil;
 import at.rpisec.server.shared.rest.constants.ClientRestConstants;
-import at.rpisec.server.shared.rest.constants.OAuthConstants;
-import at.rpisec.server.shared.rest.model.FirebaseMessage;
+import at.rpisec.server.shared.rest.model.FirebaseMessageResponse;
 import at.rpisec.server.shared.rest.model.TokenResponse;
 
 /**
- * Created by Philipp Wurm.
+ * @author Philipp Wurm <philipp.wurm@gmail.com>.
  */
 
 public class LoginActivity extends AppCompatActivity {
@@ -52,23 +51,10 @@ public class LoginActivity extends AppCompatActivity {
     // only for debug ...
     private static final String DEBUG_LOGIN_TAG = "FireBaseLogin";
 
-    private static final String OAUTH_CREDENTIAL_HEADER_CONTENT_TYPE_NAME = "Content-Type";
-    private static final String OAUTH_CREDENTIAL_HEADER_CONTENT_TYPE_VALUE = "application/x-www-form-urlencoded";
-    private static final String OAUTH_CREDENTIAL_HEADER_AUTHORIZATION_NAME = "Authorization";
-    private static final String OAUTH_CREDENTIAL_HEADER_AUTHORIZATION_TYPE = "Basic "; //!!! trailing whitespace is important !!!
-    private static final String OAUTH_CREDENTIAL_BODY_AUTHORIZATION_KEY_USERNAME = "username";
-    private static final String OAUTH_CREDENTIAL_BODY_AUTHORIZATION_KEY_PASSWORD = "password";
-
-    private static final String MULTIVALUEMAP_FIELD_KEY = "key";
-    private static final String MULTIVALUEMAP_FIELD_VALUE = "value";
-
-    private static final String CREDENTIAL_CHARSET = "US-ASCII";
-
     //for development only
     private static OAuthCredentials oAuthCredentials;
 
     private static String DEV_BASE_ADDRESS = "";
-    private static HttpEntity<Object> httpEntity;
     private static RestTemplate rpiSecRestTemplate;
     private static String generatedUUID;
     private FirebaseAuth mAuth;
@@ -87,31 +73,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return generatedUUID;
-    }
-
-    private static HttpEntity<Object> getHttpEntity(String userName, String password, MediaType mediaType, boolean headerOnly) {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(mediaType);
-
-        final String authStr = Base64.encodeToString((userName + ":" + password).getBytes(Charset.forName(CREDENTIAL_CHARSET)), Base64.URL_SAFE);
-
-        headers.add(OAUTH_CREDENTIAL_HEADER_AUTHORIZATION_NAME, OAUTH_CREDENTIAL_HEADER_AUTHORIZATION_TYPE + authStr);
-
-        if(!headerOnly) {
-            MultiValueMap<String, String> body = new LinkedMultiValueMap<String, String>();
-
-            headers.add(OAUTH_CREDENTIAL_HEADER_CONTENT_TYPE_NAME, OAUTH_CREDENTIAL_HEADER_CONTENT_TYPE_VALUE);
-
-            body.add(MULTIVALUEMAP_FIELD_KEY, OAUTH_CREDENTIAL_BODY_AUTHORIZATION_KEY_USERNAME);
-            body.add(MULTIVALUEMAP_FIELD_VALUE, userName);
-            body.add(MULTIVALUEMAP_FIELD_KEY, OAUTH_CREDENTIAL_BODY_AUTHORIZATION_KEY_PASSWORD);
-            body.add(MULTIVALUEMAP_FIELD_VALUE, password);
-
-            return new HttpEntity<>(body, headers);
-        }
-
-        return new HttpEntity<>(headers);
     }
 
     private static RestTemplate getRpiSecRestTemplate() {
@@ -226,49 +187,60 @@ public class LoginActivity extends AppCompatActivity {
         if (cancel) {
             focusView.requestFocus();
         } else {
-
             try {
-
-                String[] taskParams = {username, password};
-                boolean login = new ClientLoginOAuthTask().execute(taskParams).get();
-                String authToken ="";
+                oAuthCredentials = new OAuthCredentials(username, password);
+                boolean login = new ClientLoginOAuthTask().execute().get();
 
                 if (login) {
-                    if(oAuthCredentials != null) {
-                        authToken = oAuthCredentials.getToken();
-                        mAuth.signInWithCustomToken(authToken)
+                    if (oAuthCredentials != null && !oAuthCredentials.getToken().isEmpty()) {
+                        mAuth.signInWithCustomToken(oAuthCredentials.getToken())
                                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
-                                        System.out.println("[DEBUG] signInWithCustomToken:onComplete:" + task.isSuccessful());
+                                        Log.v(DEBUG_LOGIN_TAG, "[DEBUG] signInWithCustomToken:onComplete:" + task.isSuccessful());
+                                        System.out.println();
 
                                         if (!task.isSuccessful()) {
-                                            System.out.println("[DEBUG] signInWithCustomToken:failed " + task.getException());
+                                            Log.v(DEBUG_LOGIN_TAG, "[DEBUG] signInWithCustomToken:failed " + task.getException());
+                                            Toast.makeText(LoginActivity.this, "Login-Error! Please try again later...", Toast.LENGTH_LONG).show();
                                         } else {
                                             try {
-                                                boolean res = new RegisterFCMTask().execute(taskParams).get();
-                                            } catch (InterruptedException e) {
-                                                e.printStackTrace();
-                                            } catch (ExecutionException e) {
-                                                e.printStackTrace();
+                                                boolean registrationSuccessful = new RegisterFCMTask().execute().get();
+
+                                                if (registrationSuccessful) {
+                                                    startIncidentImageActivity();
+                                                } else {
+                                                    Toast.makeText(LoginActivity.this, "Login-Error! Please try again later...", Toast.LENGTH_LONG).show();
+                                                }
+
+                                            } catch (InterruptedException | ExecutionException e) {
+                                                Log.v(DEBUG_LOGIN_TAG, e.getMessage());
                                             }
 
-                                            Log.d(DEBUG_LOGIN_TAG, "signInWithCustomToken:success");
+                                            Log.v(DEBUG_LOGIN_TAG, "signInWithCustomToken:success");
                                         }
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                System.out.println("[DEBUG] failed to sign in with custom token " + e.getLocalizedMessage());
+                                Toast.makeText(LoginActivity.this, "Login-Error! Please try again later...", Toast.LENGTH_LONG).show();
+                                Log.v(DEBUG_LOGIN_TAG, "[DEBUG] failed to sign in with custom token " + e.getLocalizedMessage());
                             }
                         });
                     }
+                } else {
+                    Toast.makeText(LoginActivity.this, "Login-Error! Please try again later...", Toast.LENGTH_LONG).show();
                 }
-            }
-            catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+            } catch (InterruptedException | ExecutionException e) {
+                Log.e(DEBUG_LOGIN_TAG, e.getMessage());
             }
         }
+    }
+
+    private void startIncidentImageActivity() {
+        Intent intent = new Intent(this, IncidentsActivity.class);
+        intent.putExtra("OAuthCredentials", oAuthCredentials);
+        startActivity(intent);
     }
 
     private boolean isUsernameValid(String username) {
@@ -279,77 +251,48 @@ public class LoginActivity extends AppCompatActivity {
         return password.length() >= 8;
     }
 
-    private class ClientLoginOAuthTask extends AsyncTask<String, Void, Boolean>
-    {
-        private final String UriRegToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_CLIENT_LOGIN+"?deviceId="+getGeneratedUUID();
+    private class ClientLoginOAuthTask extends AsyncTask<Void, Void, Boolean> {
+        private final String UriRegToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_CLIENT_LOGIN + "?deviceId=" + getGeneratedUUID();
 
         @Override
-        protected Boolean doInBackground(String... params) {
+        protected Boolean doInBackground(Void... params) {
             try {
-                String username = params[0];
-                String password = params[1];
+                Log.v(DEBUG_LOGIN_TAG, "[DEBUG] UriRegToken: " + UriRegToken);
 
-                HttpEntity<Object> entity = getHttpEntity(username, password, MediaType.APPLICATION_JSON, true);
+                if (oAuthCredentials != null) {
+                    ResponseEntity<TokenResponse> response = getRpiSecRestTemplate().exchange(UriRegToken, HttpMethod.GET, RestHelper.getHttpEntity(oAuthCredentials.getUserName(), oAuthCredentials.getPassword()), TokenResponse.class);
+                    if (response.getStatusCode() == HttpStatus.OK) {
+                        TokenResponse res = response.getBody();
+                        oAuthCredentials.setToken(res.getToken());
+                        oAuthCredentials.setClientId(res.getClientId());
+                        oAuthCredentials.setClientSecret(res.getClientSecret());
 
-                ResponseEntity<TokenResponse> response = getRpiSecRestTemplate().exchange(UriRegToken, HttpMethod.GET, entity, TokenResponse.class);
-                if (response.getStatusCode() == HttpStatus.OK) {
-                    TokenResponse res = response.getBody();
-                    oAuthCredentials = new OAuthCredentials(res.getToken(), res.getClientId(), res.getClientSecret());
-                    return true;
+                        Log.v(DEBUG_LOGIN_TAG, "[ClientId] " + res.getClientId());
+                        Log.v(DEBUG_LOGIN_TAG, "[ClientSecret] " + res.getClientSecret());
+                        return true;
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
+            } catch (Exception e) {
+                Log.v(DEBUG_LOGIN_TAG, e.getMessage());
             }
             return false;
         }
     }
 
-    private class RegisterFCMTask extends AsyncTask<String, Void, Boolean> {
+    private class RegisterFCMTask extends AsyncTask<Void, Void, Boolean> {
         private final String fcmToken = FirebaseInstanceId.getInstance().getToken();
-        private final String UriFCMToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_REGISTER_FCM_TOKEN + "?uuid=%s&fcmToken=" + fcmToken;
+        private final String UriFCMToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_REGISTER_FCM_TOKEN + "?deviceId=%s&fcmToken=" + fcmToken;
 
         @Override
-        protected Boolean doInBackground(String... params) {
-
-            String username = params[0].trim();
-            String password = params[1].trim();
+        protected Boolean doInBackground(Void... params) {
             String fcmUri = String.format(UriFCMToken, getGeneratedUUID());
 
-            System.out.println("[DEBUG] FCM_Token: " + fcmUri);
-
-            HttpEntity<Object> entity = getHttpEntity(username, password, MediaType.APPLICATION_JSON, true);
+            Log.v(DEBUG_LOGIN_TAG, "[DEBUG] FCM_Token: " + fcmUri);
 
             // REGISTER FCM TOKEN /registerFcmToken
-            ResponseEntity<FirebaseMessage> fm = getRpiSecRestTemplate().exchange(fcmUri, HttpMethod.PUT, entity, FirebaseMessage.class);
+            ResponseEntity<FirebaseMessageResponse> fm = getRpiSecRestTemplate().exchange(fcmUri, HttpMethod.PUT, RestHelper.getHttpEntity(oAuthCredentials.getUserName(), oAuthCredentials.getPassword()), FirebaseMessageResponse.class);
 
             return (fm.getStatusCode() == HttpStatus.OK);
-        }
-    }
-
-    private class OAuthCredentials
-    {
-        private final String token;
-        private final String clientId;
-        private final String clientSecret;
-
-        public OAuthCredentials(String token, String clientId, String clientSecret) {
-            this.token = token;
-            this.clientId = clientId;
-            this.clientSecret = clientSecret;
-        }
-
-        public String getToken() {
-            return token;
-        }
-
-        public String getClientId() {
-            return clientId;
-        }
-
-        public String getClientSecret() {
-            return clientSecret;
         }
     }
 }

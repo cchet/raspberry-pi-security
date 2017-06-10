@@ -1,4 +1,4 @@
-package at.rpisec.client;
+package at.rpisec.client.util;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import at.rpisec.client.R;
+
 /**
- * Created by Philipp Wurm.
+ * @author Philipp Wurm <philipp.wurm@gmail.com>.
  */
 
 public final class PropertyUtil {
