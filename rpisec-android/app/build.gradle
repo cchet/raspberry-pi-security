@@ -40,9 +40,6 @@ android {
         exclude 'META-INF/license.txt'
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
-        exclude 'META-INF/spring.schemas'
-        exclude 'META-INF/spring.tooling'
-        exclude 'META-INF/spring.handlers'
     }
     dexOptions {
     }
@@ -51,7 +48,6 @@ android {
 dependencies {
 
     ext {
-        springAndroidRestTemplateVersion = '1.0.1.RELEASE'
         //googleFirebaseVersion = '10.2.1'
         googleFirebaseVersion = '10.2.1'
         rpisecSharedVersion = '0.0.1-SNAPSHOT'
@@ -73,7 +69,6 @@ dependencies {
     compile "com.google.firebase:firebase-auth:${googleFirebaseVersion}"
     compile "com.google.firebase:firebase-messaging:${googleFirebaseVersion}"
     compile "com.google.firebase:firebase-database:${googleFirebaseVersion}"
-    compile "org.springframework.android:spring-android-rest-template:${springAndroidRestTemplateVersion}"
     testCompile "junit:junit:${junitVersion}"
 }
 

@@ -67,21 +67,21 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private ClientRestControllerApi getAuthClientApi(final String username, final String password) {
-        return new ClientRestControllerApi(getApiClient(username, password));
+        return new ClientRestControllerApi(getApiClient(getAuthBaseAddress(), username, password));
     }
 
-    private ApiClient getApiClient(final String username, final String password) {
+    private ApiClient getApiClient(final String baseUrl, final String username, final String password) {
         final ApiClient apiClient = new ApiClient();
-        apiClient.setBasePath(getDevBaseAddress());
+        apiClient.setBasePath(baseUrl);
         apiClient.setUsername(username);
         apiClient.setPassword(password);
 
         return apiClient;
     }
 
-    private String getDevBaseAddress() {
+    private String getAuthBaseAddress() {
         if (DEV_BASE_ADDRESS.isEmpty()) {
-            DEV_BASE_ADDRESS = "http://" + PropertyUtil.getConfigValue(this, "base_uri") + ":" + PropertyUtil.getConfigValue(this, "base_port") + PropertyUtil.getConfigValue(this, "base_context_path");
+            DEV_BASE_ADDRESS = "http://" + PropertyUtil.getConfigValue(this, "base_auth_uri") + ":" + PropertyUtil.getConfigValue(this, "base_auth_port") + PropertyUtil.getConfigValue(this, "base_auth_context_path");
         }
 
         return DEV_BASE_ADDRESS;
