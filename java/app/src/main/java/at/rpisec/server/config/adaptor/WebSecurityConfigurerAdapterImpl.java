@@ -1,6 +1,6 @@
 package at.rpisec.server.config.adaptor;
 
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
+import at.rpisec.server.shared.rest.constants.AppRestConstants;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -38,7 +38,7 @@ public class WebSecurityConfigurerAdapterImpl extends WebSecurityConfigurerAdapt
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // Match any request on /internal which are protected by basic http auth
-        http.requestMatchers().antMatchers(ClientRestConstants.BASE_INTERNAL_URI + "/**")
+        http.requestMatchers().antMatchers(AppRestConstants.INTERNAL_REST_API_BASE + "/**")
             // enable basic auth for all resources under /internal
             .and().httpBasic()
             // any request to api under /internal must be authenticated against system user

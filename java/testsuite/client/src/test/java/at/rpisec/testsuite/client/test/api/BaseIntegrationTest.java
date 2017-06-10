@@ -1,6 +1,5 @@
 package at.rpisec.testsuite.client.test.api;
 
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
 import at.rpisec.swagger.client.auth.invoker.ApiClient;
 import org.junit.Before;
 import org.springframework.http.HttpHeaders;
@@ -25,7 +24,6 @@ import java.util.Objects;
 public class BaseIntegrationTest {
 
     protected static final String AUTH_BASE = "http://localhost:9080/rpisec-auth";
-    protected static final String AUTH_REST_API_BASE = AUTH_BASE + ClientRestConstants.BASE_URI;
     protected static final String AUTH_REST_SYSTEM_API_BASE = AUTH_BASE + "/test";
 
     /**

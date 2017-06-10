@@ -1,7 +1,7 @@
 package at.rpisec.server.config.adaptor;
 
 import at.rpisec.server.config.ConfigProperties;
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
+import at.rpisec.server.shared.rest.constants.AppRestConstants;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,7 +34,7 @@ public class ResourceServerConfigurerAdapterImpl extends ResourceServerConfigure
     public void configure(HttpSecurity http) throws Exception {
         // Match any request on /api which are protected by oauth
         http.requestMatchers()
-            .antMatchers(ClientRestConstants.BASE_URI + "/**")
+            .antMatchers(AppRestConstants.CLIENT_REST_API_BASE + "/**")
             .and().authorizeRequests()
             // All requests under /api are protected by basic auth
             .anyRequest()

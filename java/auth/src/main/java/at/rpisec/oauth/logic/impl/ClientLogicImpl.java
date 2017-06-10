@@ -9,7 +9,7 @@ import at.rpisec.oauth.logic.api.ClientDetailsFactory;
 import at.rpisec.oauth.logic.api.ClientLogic;
 import at.rpisec.oauth.logic.event.ClientCreatedEvent;
 import at.rpisec.oauth.logic.event.ClientFcmTokenRegisteredEvent;
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
+import at.rpisec.server.shared.rest.constants.AuthRestConstants;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import at.rpisec.server.shared.rest.model.TokenResponse;
 import com.google.firebase.auth.FirebaseAuth;
@@ -104,7 +104,7 @@ public class ClientLogicImpl implements ClientLogic {
             throw new IllegalStateException("Could not retrieve firebase token");
         }
 
-        return new TokenResponse(LocalDateTime.now().format(DateTimeFormatter.ofPattern(ClientRestConstants.PATTERN_DATE_TIME)),
+        return new TokenResponse(LocalDateTime.now().format(DateTimeFormatter.ofPattern(AuthRestConstants.PATTERN_DATE_TIME)),
                                  firebaseToken,
                                  clientId,
                                  secret);

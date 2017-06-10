@@ -13,10 +13,10 @@
 
 package at.rpisec.swagger.client.app.client.model;
 
-import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import java.util.Objects;
 
 /**
  * TokenResponse

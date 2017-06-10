@@ -13,7 +13,7 @@
 
 package at.rpisec.swagger.client.app.client.invoker;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-06-10T14:10:14.119+02:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-06-10T21:05:56.466+02:00")
 public class Pair {
     private String name = "";
     private String value = "";

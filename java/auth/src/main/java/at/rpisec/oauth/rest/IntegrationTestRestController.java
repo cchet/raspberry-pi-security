@@ -6,7 +6,7 @@ import at.rpisec.oauth.jpa.model.ClientDevice;
 import at.rpisec.oauth.jpa.model.User;
 import at.rpisec.oauth.jpa.repositories.UserRepository;
 import at.rpisec.oauth.logic.api.ClientDetailsFactory;
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
+import at.rpisec.server.shared.rest.constants.AppRestConstants;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -99,8 +99,8 @@ public class IntegrationTestRestController {
 
         // register client on app server
         final MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
-        data.put(ClientRestConstants.PARAM_DEVICE_ID, Collections.singletonList(deviceId));
-        data.put(ClientRestConstants.PARAM_USER_ID, Collections.singletonList(admin.getId().toString()));
+        data.put(AppRestConstants.PARAM_DEVICE_ID, Collections.singletonList(deviceId));
+        data.put(AppRestConstants.PARAM_USER_ID, Collections.singletonList(admin.getId().toString()));
         final HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(data, new HttpHeaders() {{
             put(HttpHeaders.CONTENT_TYPE, Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
         }});

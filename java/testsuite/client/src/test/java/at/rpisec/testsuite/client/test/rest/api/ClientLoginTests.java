@@ -1,6 +1,5 @@
 package at.rpisec.testsuite.client.test.rest.api;
 
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import at.rpisec.swagger.client.auth.api.ClientRestControllerApi;
 import at.rpisec.swagger.client.auth.invoker.ApiException;
@@ -12,7 +11,7 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
 /**
- * This test class tests the client login via the rest api specified at @{link {@link ClientRestConstants#URI_CLIENT_LOGIN}}.
+ * This test class tests the client login via the rest api specified at @{link {@link at.rpisec.server.shared.rest.constants.AuthRestConstants#REL_CLIENT_LOGIN}}.
  *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 06/04/17

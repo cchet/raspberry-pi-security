@@ -6,7 +6,7 @@ import at.rpisec.oauth.config.other.ConfigProperties;
 import at.rpisec.oauth.security.ClientUserAuthenticationManager;
 import at.rpisec.oauth.security.ClientUserDetailsService;
 import at.rpisec.oauth.security.ClientUserPasswordTokenGranter;
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
+import at.rpisec.server.shared.rest.constants.AppRestConstants;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,21 +159,21 @@ public class SecurityConfiguration {
     @Scope("prototype")
     @Qualifier(QUALIFIER_OAUTH_URL_REGISTER_CLIENT)
     String produceOAuthRegisterClientUrl() {
-        return rpisecProperties.getBaseUrl() + ClientRestConstants.URI_REGISTER;
+        return rpisecProperties.getBaseUrl() + AppRestConstants.URI_REGISTER;
     }
 
     @Bean
     @Scope("prototype")
     @Qualifier(QUALIFIER_OAUTH_URL_UNREGISTER_CLIENT)
     String produceOAuthUnregsiterClientUrl() {
-        return rpisecProperties.getBaseUrl() + ClientRestConstants.URI_UNREGISTER;
+        return rpisecProperties.getBaseUrl() + AppRestConstants.URI_UNREGISTER;
     }
 
     @Bean
     @Scope("prototype")
     @Qualifier(QUALIFIER_OAUTH_URL_REGISTER_CLIENT_FCM_TOKEN)
     String produceOAuthRegsiterClientFcmTokenUrl() {
-        return rpisecProperties.getBaseUrl() + ClientRestConstants.URI_REGISTER_FCM_TOKEN;
+        return rpisecProperties.getBaseUrl() + AppRestConstants.URI_REGISTER_FCM_TOKEN;
     }
 
     @Bean

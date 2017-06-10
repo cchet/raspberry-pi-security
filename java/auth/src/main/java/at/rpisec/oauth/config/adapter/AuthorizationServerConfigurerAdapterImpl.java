@@ -1,6 +1,5 @@
 package at.rpisec.oauth.config.adapter;
 
-import at.rpisec.oauth.security.ClientUserAuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;

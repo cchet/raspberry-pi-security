@@ -4,7 +4,7 @@ import at.rpisec.oauth.config.SecurityConfiguration;
 import at.rpisec.oauth.logic.event.ClientCreatedEvent;
 import at.rpisec.oauth.logic.event.ClientFcmTokenRegisteredEvent;
 import at.rpisec.oauth.logic.event.ClientRemovedEvent;
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
+import at.rpisec.server.shared.rest.constants.AppRestConstants;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,8 +56,8 @@ public class ClientEventObserver {
     void observerAfterCommitClientRemovedEvent(final ClientRemovedEvent event) {
 
         final MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
-        data.put(ClientRestConstants.PARAM_DEVICE_ID, event.getDeviceIds());
-        data.put(ClientRestConstants.PARAM_USER_ID, Collections.singletonList(event.getUserId().toString()));
+        data.put(AppRestConstants.PARAM_DEVICE_ID, event.getDeviceIds());
+        data.put(AppRestConstants.PARAM_USER_ID, Collections.singletonList(event.getUserId().toString()));
         final HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(data, new HttpHeaders() {{
             put(HttpHeaders.CONTENT_TYPE, Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
         }});
@@ -76,8 +76,8 @@ public class ClientEventObserver {
     void observerAfterCommitClientCreatedEvent(final ClientCreatedEvent event) {
 
         final Map<String, List<Object>> data = new LinkedMultiValueMap<>();
-        data.put(ClientRestConstants.PARAM_DEVICE_ID, Collections.singletonList(event.getDeviceId()));
-        data.put(ClientRestConstants.PARAM_USER_ID, Collections.singletonList(event.getUserId().toString()));
+        data.put(AppRestConstants.PARAM_DEVICE_ID, Collections.singletonList(event.getDeviceId()));
+        data.put(AppRestConstants.PARAM_USER_ID, Collections.singletonList(event.getUserId().toString()));
         final HttpEntity<Map<String, List<Object>>> entity = new HttpEntity<>(data, new HttpHeaders() {{
             put(HttpHeaders.CONTENT_TYPE, Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
         }});
@@ -96,9 +96,9 @@ public class ClientEventObserver {
     void observerAfterCommitClientFcmTokenRegisteredEvent(final ClientFcmTokenRegisteredEvent event) {
 
         final Map<String, List<Object>> data = new LinkedMultiValueMap<>();
-        data.put(ClientRestConstants.PARAM_DEVICE_ID, Collections.singletonList(event.getDeviceId()));
-        data.put(ClientRestConstants.PARAM_FCM_TOKEN, Collections.singletonList(event.getFcmToken()));
-        data.put(ClientRestConstants.PARAM_USER_ID, Collections.singletonList(event.getUserId().toString()));
+        data.put(AppRestConstants.PARAM_DEVICE_ID, Collections.singletonList(event.getDeviceId()));
+        data.put(AppRestConstants.PARAM_FCM_TOKEN, Collections.singletonList(event.getFcmToken()));
+        data.put(AppRestConstants.PARAM_USER_ID, Collections.singletonList(event.getUserId().toString()));
         final HttpEntity<Map<String, List<Object>>> entity = new HttpEntity<>(data, new HttpHeaders() {{
             put(HttpHeaders.CONTENT_TYPE, Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
         }});

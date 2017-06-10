@@ -8,7 +8,8 @@ src/test/
 build.sbt
 *.md
 gradlew
-*.properties
+/gradle.properties
 **/*.xml
 *.xml
 settings.*
+/build.gradle

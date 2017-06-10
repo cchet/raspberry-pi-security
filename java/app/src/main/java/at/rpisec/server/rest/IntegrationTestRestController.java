@@ -3,7 +3,7 @@ package at.rpisec.server.rest;
 import at.rpisec.server.jpa.model.Client;
 import at.rpisec.server.jpa.model.ClientId;
 import at.rpisec.server.jpa.repositories.ClientRepository;
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
+import at.rpisec.server.shared.rest.constants.AppRestConstants;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * @author Thomas Herzog <t.herzog@curecomp.com>
@@ -33,8 +32,8 @@ public class IntegrationTestRestController {
     }
 
     @PostMapping("/prepare")
-    public void clear(final @NotEmpty @RequestParam(ClientRestConstants.PARAM_DEVICE_ID) String deviceId,
-                      final @NotNull @Min(1) @RequestParam(ClientRestConstants.PARAM_USER_ID) Long userId) {
+    public void clear(final @NotEmpty @RequestParam(AppRestConstants.PARAM_DEVICE_ID) String deviceId,
+                      final @NotNull @Min(1) @RequestParam(AppRestConstants.PARAM_USER_ID) Long userId) {
         // Delete all registered clients
         clientRepo.deleteAll();
 

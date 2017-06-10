@@ -1,7 +1,7 @@
 package at.rpisec.oauth.rest;
 
 import at.rpisec.oauth.logic.api.ClientLogic;
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
+import at.rpisec.server.shared.rest.constants.AuthRestConstants;
 import at.rpisec.server.shared.rest.model.TokenResponse;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 04/19/17
  */
 @RestController
-@RequestMapping(ClientRestConstants.BASE_URI)
+@RequestMapping(AuthRestConstants.CLIENT_REST_API_BASE)
 @Validated
 public class ClientRestController {
 
@@ -25,8 +25,8 @@ public class ClientRestController {
     @Autowired
     private Logger log;
 
-    @GetMapping(value = ClientRestConstants.REL_CLIENT_LOGIN, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TokenResponse login(final @NotEmpty(message = "deviceId must not be null or empty") @RequestParam(ClientRestConstants.PARAM_DEVICE_ID) String deviceId,
+    @GetMapping(value = AuthRestConstants.REL_CLIENT_LOGIN, produces = MediaType.APPLICATION_JSON_VALUE)
+    public TokenResponse login(final @NotEmpty(message = "deviceId must not be null or empty") @RequestParam(AuthRestConstants.PARAM_DEVICE_ID) String deviceId,
                                final Authentication auth) {
         final TokenResponse response = clientLogic.loginClient(auth.getPrincipal().toString(), deviceId);
 
@@ -35,9 +35,9 @@ public class ClientRestController {
         return response;
     }
 
-    @PutMapping(ClientRestConstants.REL_URI_REGISTER_FCM_TOKEN)
-    public void registerFCMToken(final @NotEmpty(message = "deviceId must not be null or empty") @RequestParam(ClientRestConstants.PARAM_DEVICE_ID) String deviceId,
-                                 final @NotEmpty(message = "fcmToken must not be null or empty") @RequestParam(ClientRestConstants.PARAM_FCM_TOKEN) String fcmToken,
+    @PutMapping(AuthRestConstants.REL_URI_REGISTER_FCM_TOKEN)
+    public void registerFCMToken(final @NotEmpty(message = "deviceId must not be null or empty") @RequestParam(AuthRestConstants.PARAM_DEVICE_ID) String deviceId,
+                                 final @NotEmpty(message = "fcmToken must not be null or empty") @RequestParam(AuthRestConstants.PARAM_FCM_TOKEN) String fcmToken,
                                  final Authentication auth) {
         clientLogic.registerFcmToken(auth.getPrincipal().toString(), deviceId, fcmToken);
 

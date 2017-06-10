@@ -3,7 +3,7 @@ package at.rpisec.server.rest;
 import at.rpisec.server.Application;
 import at.rpisec.server.logic.api.IClientLogic;
 import at.rpisec.server.logic.api.IIncidentLogic;
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
+import at.rpisec.server.shared.rest.constants.AppRestConstants;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.io.IOException;
  * @since 04/19/17
  */
 @RestController
-@RequestMapping(ClientRestConstants.BASE_URI)
+@RequestMapping(AppRestConstants.CLIENT_REST_API_BASE)
 @Validated
 public class ClientRestController {
 
@@ -30,7 +30,7 @@ public class ClientRestController {
     @Autowired
     private Logger log;
 
-    @PutMapping("/notify")
+    @PutMapping(AppRestConstants.REL_URI_CAPTURE)
     public void notifyTest() throws IOException {
         final byte[] data = IOUtils.toByteArray(Application.class.getResourceAsStream("/giraffe.jpg"));
         incidentLogic.logIncidentWithImage(data, "jpg");

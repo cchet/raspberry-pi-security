@@ -27,7 +27,6 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 
 
-import at.rpisec.swagger.client.app.client.model.TokenResponse;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -54,138 +53,14 @@ public class ClientRestControllerApi {
         this.apiClient = apiClient;
     }
 
-    /* Build call for loginUsingGET */
-    private com.squareup.okhttp.Call loginUsingGETCall(String deviceId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    /* Build call for notifyTestUsingPUT */
+    private com.squareup.okhttp.Call notifyTestUsingPUTCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
         
         // create path and map variables
-        String localVarPath = "/api/client/clientLogin".replaceAll("\\{format\\}","json");
+        String localVarPath = "/api/client/capture".replaceAll("\\{format\\}","json");
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        if (deviceId != null)
-        localVarQueryParams.addAll(apiClient.parameterToPairs("", "deviceId", deviceId));
-
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-        final String[] localVarAccepts = {
-            "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-            "application/json"
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
-
-        if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
-                @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
-                    return originalResponse.newBuilder()
-                    .body(new ProgressResponseBody(originalResponse.body(), progressListener))
-                    .build();
-                }
-            });
-        }
-
-        String[] localVarAuthNames = new String[] { "basicAuth" };
-        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
-    }
-    
-    @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call loginUsingGETValidateBeforeCall(String deviceId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
-        // verify the required parameter 'deviceId' is set
-        if (deviceId == null) {
-            throw new ApiException("Missing the required parameter 'deviceId' when calling loginUsingGET(Async)");
-        }
-        
-        
-        com.squareup.okhttp.Call call = loginUsingGETCall(deviceId, progressListener, progressRequestListener);
-        return call;
-
-        
-        
-        
-        
-    }
-
-    /**
-     * login
-     * 
-     * @param deviceId deviceId (required)
-     * @return TokenResponse
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     */
-    public TokenResponse loginUsingGET(String deviceId) throws ApiException {
-        ApiResponse<TokenResponse> resp = loginUsingGETWithHttpInfo(deviceId);
-        return resp.getData();
-    }
-
-    /**
-     * login
-     * 
-     * @param deviceId deviceId (required)
-     * @return ApiResponse&lt;TokenResponse&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     */
-    public ApiResponse<TokenResponse> loginUsingGETWithHttpInfo(String deviceId) throws ApiException {
-        com.squareup.okhttp.Call call = loginUsingGETValidateBeforeCall(deviceId, null, null);
-        Type localVarReturnType = new TypeToken<TokenResponse>(){}.getType();
-        return apiClient.execute(call, localVarReturnType);
-    }
-
-    /**
-     * login (asynchronously)
-     * 
-     * @param deviceId deviceId (required)
-     * @param callback The callback to be executed when the API call finishes
-     * @return The request call
-     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-     */
-    public com.squareup.okhttp.Call loginUsingGETAsync(String deviceId, final ApiCallback<TokenResponse> callback) throws ApiException {
-
-        ProgressResponseBody.ProgressListener progressListener = null;
-        ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
-
-        if (callback != null) {
-            progressListener = new ProgressResponseBody.ProgressListener() {
-                @Override
-                public void update(long bytesRead, long contentLength, boolean done) {
-                    callback.onDownloadProgress(bytesRead, contentLength, done);
-                }
-            };
-
-            progressRequestListener = new ProgressRequestBody.ProgressRequestListener() {
-                @Override
-                public void onRequestProgress(long bytesWritten, long contentLength, boolean done) {
-                    callback.onUploadProgress(bytesWritten, contentLength, done);
-                }
-            };
-        }
-
-        com.squareup.okhttp.Call call = loginUsingGETValidateBeforeCall(deviceId, progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<TokenResponse>(){}.getType();
-        apiClient.executeAsync(call, localVarReturnType, callback);
-        return call;
-    }
-    /* Build call for registerFCMTokenUsingPUT */
-    private com.squareup.okhttp.Call registerFCMTokenUsingPUTCall(String deviceId, String fcmToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = null;
-        
-        // create path and map variables
-        String localVarPath = "/api/client/registerFcmToken".replaceAll("\\{format\\}","json");
-
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        if (deviceId != null)
-        localVarQueryParams.addAll(apiClient.parameterToPairs("", "deviceId", deviceId));
-        if (fcmToken != null)
-        localVarQueryParams.addAll(apiClient.parameterToPairs("", "fcmToken", fcmToken));
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 
@@ -220,20 +95,10 @@ public class ClientRestControllerApi {
     }
     
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call registerFCMTokenUsingPUTValidateBeforeCall(String deviceId, String fcmToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
-        // verify the required parameter 'deviceId' is set
-        if (deviceId == null) {
-            throw new ApiException("Missing the required parameter 'deviceId' when calling registerFCMTokenUsingPUT(Async)");
-        }
-        
-        // verify the required parameter 'fcmToken' is set
-        if (fcmToken == null) {
-            throw new ApiException("Missing the required parameter 'fcmToken' when calling registerFCMTokenUsingPUT(Async)");
-        }
+    private com.squareup.okhttp.Call notifyTestUsingPUTValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
         
-        com.squareup.okhttp.Call call = registerFCMTokenUsingPUTCall(deviceId, fcmToken, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = notifyTestUsingPUTCall(progressListener, progressRequestListener);
         return call;
 
         
@@ -243,39 +108,33 @@ public class ClientRestControllerApi {
     }
 
     /**
-     * registerFCMToken
+     * notifyTest
      * 
-     * @param deviceId deviceId (required)
-     * @param fcmToken fcmToken (required)
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public void registerFCMTokenUsingPUT(String deviceId, String fcmToken) throws ApiException {
-        registerFCMTokenUsingPUTWithHttpInfo(deviceId, fcmToken);
+    public void notifyTestUsingPUT() throws ApiException {
+        notifyTestUsingPUTWithHttpInfo();
     }
 
     /**
-     * registerFCMToken
+     * notifyTest
      * 
-     * @param deviceId deviceId (required)
-     * @param fcmToken fcmToken (required)
      * @return ApiResponse&lt;Void&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<Void> registerFCMTokenUsingPUTWithHttpInfo(String deviceId, String fcmToken) throws ApiException {
-        com.squareup.okhttp.Call call = registerFCMTokenUsingPUTValidateBeforeCall(deviceId, fcmToken, null, null);
+    public ApiResponse<Void> notifyTestUsingPUTWithHttpInfo() throws ApiException {
+        com.squareup.okhttp.Call call = notifyTestUsingPUTValidateBeforeCall(null, null);
         return apiClient.execute(call);
     }
 
     /**
-     * registerFCMToken (asynchronously)
+     * notifyTest (asynchronously)
      * 
-     * @param deviceId deviceId (required)
-     * @param fcmToken fcmToken (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call registerFCMTokenUsingPUTAsync(String deviceId, String fcmToken, final ApiCallback<Void> callback) throws ApiException {
+    public com.squareup.okhttp.Call notifyTestUsingPUTAsync(final ApiCallback<Void> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -296,7 +155,7 @@ public class ClientRestControllerApi {
             };
         }
 
-        com.squareup.okhttp.Call call = registerFCMTokenUsingPUTValidateBeforeCall(deviceId, fcmToken, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = notifyTestUsingPUTValidateBeforeCall(progressListener, progressRequestListener);
         apiClient.executeAsync(call, callback);
         return call;
     }

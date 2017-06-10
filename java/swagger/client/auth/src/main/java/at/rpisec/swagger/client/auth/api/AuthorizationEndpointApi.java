@@ -28,7 +28,6 @@ import java.io.IOException;
 
 
 import at.rpisec.swagger.client.auth.model.ModelAndView;
-import at.rpisec.swagger.client.auth.model.View;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -55,141 +54,6 @@ public class AuthorizationEndpointApi {
         this.apiClient = apiClient;
     }
 
-    /* Build call for approveOrDenyUsingPOST */
-    private com.squareup.okhttp.Call approveOrDenyUsingPOSTCall(String approvalParameters, String userOauthApproval, Map<String, String> model, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = null;
-        
-        // create path and map variables
-        String localVarPath = "/oauth/authorize".replaceAll("\\{format\\}","json");
-
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        if (approvalParameters != null)
-        localVarQueryParams.addAll(apiClient.parameterToPairs("", "approvalParameters", approvalParameters));
-        if (model != null)
-        localVarQueryParams.addAll(apiClient.parameterToPairs("", "model", model));
-        if (userOauthApproval != null)
-        localVarQueryParams.addAll(apiClient.parameterToPairs("", "user_oauth_approval", userOauthApproval));
-
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-        final String[] localVarAccepts = {
-            "*/*"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-            "application/json"
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
-
-        if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
-                @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
-                    return originalResponse.newBuilder()
-                    .body(new ProgressResponseBody(originalResponse.body(), progressListener))
-                    .build();
-                }
-            });
-        }
-
-        String[] localVarAuthNames = new String[] { "basicAuth" };
-        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
-    }
-    
-    @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call approveOrDenyUsingPOSTValidateBeforeCall(String approvalParameters, String userOauthApproval, Map<String, String> model, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
-        // verify the required parameter 'approvalParameters' is set
-        if (approvalParameters == null) {
-            throw new ApiException("Missing the required parameter 'approvalParameters' when calling approveOrDenyUsingPOST(Async)");
-        }
-        
-        // verify the required parameter 'userOauthApproval' is set
-        if (userOauthApproval == null) {
-            throw new ApiException("Missing the required parameter 'userOauthApproval' when calling approveOrDenyUsingPOST(Async)");
-        }
-        
-        
-        com.squareup.okhttp.Call call = approveOrDenyUsingPOSTCall(approvalParameters, userOauthApproval, model, progressListener, progressRequestListener);
-        return call;
-
-        
-        
-        
-        
-    }
-
-    /**
-     * approveOrDeny
-     * 
-     * @param approvalParameters approvalParameters (required)
-     * @param userOauthApproval  (required)
-     * @param model model (optional)
-     * @return View
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     */
-    public View approveOrDenyUsingPOST(String approvalParameters, String userOauthApproval, Map<String, String> model) throws ApiException {
-        ApiResponse<View> resp = approveOrDenyUsingPOSTWithHttpInfo(approvalParameters, userOauthApproval, model);
-        return resp.getData();
-    }
-
-    /**
-     * approveOrDeny
-     * 
-     * @param approvalParameters approvalParameters (required)
-     * @param userOauthApproval  (required)
-     * @param model model (optional)
-     * @return ApiResponse&lt;View&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     */
-    public ApiResponse<View> approveOrDenyUsingPOSTWithHttpInfo(String approvalParameters, String userOauthApproval, Map<String, String> model) throws ApiException {
-        com.squareup.okhttp.Call call = approveOrDenyUsingPOSTValidateBeforeCall(approvalParameters, userOauthApproval, model, null, null);
-        Type localVarReturnType = new TypeToken<View>(){}.getType();
-        return apiClient.execute(call, localVarReturnType);
-    }
-
-    /**
-     * approveOrDeny (asynchronously)
-     * 
-     * @param approvalParameters approvalParameters (required)
-     * @param userOauthApproval  (required)
-     * @param model model (optional)
-     * @param callback The callback to be executed when the API call finishes
-     * @return The request call
-     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-     */
-    public com.squareup.okhttp.Call approveOrDenyUsingPOSTAsync(String approvalParameters, String userOauthApproval, Map<String, String> model, final ApiCallback<View> callback) throws ApiException {
-
-        ProgressResponseBody.ProgressListener progressListener = null;
-        ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
-
-        if (callback != null) {
-            progressListener = new ProgressResponseBody.ProgressListener() {
-                @Override
-                public void update(long bytesRead, long contentLength, boolean done) {
-                    callback.onDownloadProgress(bytesRead, contentLength, done);
-                }
-            };
-
-            progressRequestListener = new ProgressRequestBody.ProgressRequestListener() {
-                @Override
-                public void onRequestProgress(long bytesWritten, long contentLength, boolean done) {
-                    callback.onUploadProgress(bytesWritten, contentLength, done);
-                }
-            };
-        }
-
-        com.squareup.okhttp.Call call = approveOrDenyUsingPOSTValidateBeforeCall(approvalParameters, userOauthApproval, model, progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<View>(){}.getType();
-        apiClient.executeAsync(call, localVarReturnType, callback);
-        return call;
-    }
     /* Build call for authorizeUsingDELETE */
     private com.squareup.okhttp.Call authorizeUsingDELETECall(String parameters, Map<String, String> model, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
@@ -811,6 +675,131 @@ public class AuthorizationEndpointApi {
         }
 
         com.squareup.okhttp.Call call = authorizeUsingPATCHValidateBeforeCall(parameters, model, progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<ModelAndView>(){}.getType();
+        apiClient.executeAsync(call, localVarReturnType, callback);
+        return call;
+    }
+    /* Build call for authorizeUsingPOST */
+    private com.squareup.okhttp.Call authorizeUsingPOSTCall(String parameters, Map<String, String> model, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = null;
+        
+        // create path and map variables
+        String localVarPath = "/oauth/authorize".replaceAll("\\{format\\}","json");
+
+        List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        if (model != null)
+        localVarQueryParams.addAll(apiClient.parameterToPairs("", "model", model));
+        if (parameters != null)
+        localVarQueryParams.addAll(apiClient.parameterToPairs("", "parameters", parameters));
+
+        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+
+        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+
+        final String[] localVarAccepts = {
+            "*/*"
+        };
+        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
+
+        final String[] localVarContentTypes = {
+            "application/json"
+        };
+        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        localVarHeaderParams.put("Content-Type", localVarContentType);
+
+        if(progressListener != null) {
+            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+                @Override
+                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
+                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                    return originalResponse.newBuilder()
+                    .body(new ProgressResponseBody(originalResponse.body(), progressListener))
+                    .build();
+                }
+            });
+        }
+
+        String[] localVarAuthNames = new String[] { "basicAuth" };
+        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
+    }
+    
+    @SuppressWarnings("rawtypes")
+    private com.squareup.okhttp.Call authorizeUsingPOSTValidateBeforeCall(String parameters, Map<String, String> model, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        
+        // verify the required parameter 'parameters' is set
+        if (parameters == null) {
+            throw new ApiException("Missing the required parameter 'parameters' when calling authorizeUsingPOST(Async)");
+        }
+        
+        
+        com.squareup.okhttp.Call call = authorizeUsingPOSTCall(parameters, model, progressListener, progressRequestListener);
+        return call;
+
+        
+        
+        
+        
+    }
+
+    /**
+     * authorize
+     * 
+     * @param parameters parameters (required)
+     * @param model model (optional)
+     * @return ModelAndView
+     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     */
+    public ModelAndView authorizeUsingPOST(String parameters, Map<String, String> model) throws ApiException {
+        ApiResponse<ModelAndView> resp = authorizeUsingPOSTWithHttpInfo(parameters, model);
+        return resp.getData();
+    }
+
+    /**
+     * authorize
+     * 
+     * @param parameters parameters (required)
+     * @param model model (optional)
+     * @return ApiResponse&lt;ModelAndView&gt;
+     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     */
+    public ApiResponse<ModelAndView> authorizeUsingPOSTWithHttpInfo(String parameters, Map<String, String> model) throws ApiException {
+        com.squareup.okhttp.Call call = authorizeUsingPOSTValidateBeforeCall(parameters, model, null, null);
+        Type localVarReturnType = new TypeToken<ModelAndView>(){}.getType();
+        return apiClient.execute(call, localVarReturnType);
+    }
+
+    /**
+     * authorize (asynchronously)
+     * 
+     * @param parameters parameters (required)
+     * @param model model (optional)
+     * @param callback The callback to be executed when the API call finishes
+     * @return The request call
+     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
+     */
+    public com.squareup.okhttp.Call authorizeUsingPOSTAsync(String parameters, Map<String, String> model, final ApiCallback<ModelAndView> callback) throws ApiException {
+
+        ProgressResponseBody.ProgressListener progressListener = null;
+        ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
+
+        if (callback != null) {
+            progressListener = new ProgressResponseBody.ProgressListener() {
+                @Override
+                public void update(long bytesRead, long contentLength, boolean done) {
+                    callback.onDownloadProgress(bytesRead, contentLength, done);
+                }
+            };
+
+            progressRequestListener = new ProgressRequestBody.ProgressRequestListener() {
+                @Override
+                public void onRequestProgress(long bytesWritten, long contentLength, boolean done) {
+                    callback.onUploadProgress(bytesWritten, contentLength, done);
+                }
+            };
+        }
+
+        com.squareup.okhttp.Call call = authorizeUsingPOSTValidateBeforeCall(parameters, model, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<ModelAndView>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;

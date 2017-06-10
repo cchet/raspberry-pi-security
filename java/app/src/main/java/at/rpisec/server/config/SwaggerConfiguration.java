@@ -2,7 +2,7 @@ package at.rpisec.server.config;
 
 import at.rpisec.server.rest.ClientRestController;
 import at.rpisec.server.rest.InternalRestController;
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
+import at.rpisec.server.shared.rest.constants.AppRestConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -24,14 +24,16 @@ import java.util.Collections;
 @Profile(ConfigProperties.SupportedProfiles.DEV)
 public class SwaggerConfiguration {
 
+    private static final String APP_PREFIX = "App";
+
     @Bean
     Docket produceClientApiSwaggerDocket() {
-        return createBasicAuthRestApiSwaggerDocket(ClientRestController.class.getSimpleName(), ClientRestConstants.BASE_URI + "/**");
+        return createBasicAuthRestApiSwaggerDocket(APP_PREFIX + ClientRestController.class.getSimpleName(), AppRestConstants.CLIENT_REST_API_BASE + "/**");
     }
 
     @Bean
     Docket produceInternalApiSwaggerDocket() {
-        return createBasicAuthRestApiSwaggerDocket(InternalRestController.class.getSimpleName(), ClientRestConstants.BASE_INTERNAL_URI + "/**");
+        return createBasicAuthRestApiSwaggerDocket(APP_PREFIX + InternalRestController.class.getSimpleName(), AppRestConstants.INTERNAL_REST_API_BASE + "/**");
     }
 
     private Docket createBasicAuthRestApiSwaggerDocket(final String groupName,

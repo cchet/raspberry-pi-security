@@ -1,8 +1,7 @@
 package at.rpisec.oauth.config.adapter;
 
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
+import at.rpisec.server.shared.rest.constants.AuthRestConstants;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
-import at.rpisec.server.shared.rest.constants.UserRestConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -38,8 +37,8 @@ public class WebSecurityConfigurerAdapterImpl extends WebSecurityConfigurerAdapt
             .and().authorizeRequests().antMatchers("/test/**").permitAll()
             // enable basic auth for all resources under /api/client and /api/user
             .and().httpBasic()
-            .and().authorizeRequests().antMatchers(ClientRestConstants.BASE_URI + "/**").hasAnyRole(SecurityConstants.ADMIN, SecurityConstants.CLIENT)
-            .and().authorizeRequests().antMatchers(UserRestConstants.REST_BASE + "/**").hasAnyRole(SecurityConstants.ADMIN)
+            .and().authorizeRequests().antMatchers(AuthRestConstants.CLIENT_REST_API_BASE + "/**").hasAnyRole(SecurityConstants.ADMIN, SecurityConstants.CLIENT)
+            .and().authorizeRequests().antMatchers(AuthRestConstants.CLIENT_REST_API_BASE + "/**").hasAnyRole(SecurityConstants.ADMIN)
             // We have rest so need for cross site request forgery protection
             .and().csrf().disable()
             // rest api has to be called stateless

@@ -21,7 +21,7 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * OAuth2RefreshToken
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-06-10T14:10:08.051+02:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-06-10T21:05:53.360+02:00")
 public class OAuth2RefreshToken {
   @SerializedName("value")
   private String value = null;

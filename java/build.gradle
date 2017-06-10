@@ -106,3 +106,19 @@ subprojects {
 		}
 	}
 }
+
+task buildAndPublishAll(type: GradleBuild){
+	buildFile = 'build.gradle'
+	tasks = [':app:jar',
+			 ':app:publishToMavenLocal',
+			 ':auth:jar',
+			 ':auth:publishToMavenLocal',
+			 ':shared:jar',
+			 ':shared:publishToMavenLocal',
+			 ':sensor/api:jar',
+			 ':sensor/impl:publishToMavenLocal',
+			 ':swagger/client/app:jar',
+			 ':swagger/client/app:publishToMavenLocal',
+			 ':swagger/client/auth:jar',
+			 ':swagger/client/auth:publishToMavenLocal']
+}
