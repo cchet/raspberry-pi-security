@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -25,22 +24,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
 
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
-
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import at.rpisec.client.R;
 import at.rpisec.client.rest.OAuthCredentials;
-import at.rpisec.client.rest.RestHelper;
 import at.rpisec.client.util.PropertyUtil;
-import at.rpisec.server.shared.rest.constants.ClientRestConstants;
-import at.rpisec.server.shared.rest.model.FirebaseMessageResponse;
-import at.rpisec.server.shared.rest.model.TokenResponse;
+import at.rpisec.swagger.client.auth.api.ClientRestControllerApi;
+import at.rpisec.swagger.client.auth.invoker.ApiClient;
+import at.rpisec.swagger.client.auth.invoker.ApiException;
 
 /**
  * @author Philipp Wurm <philipp.wurm@gmail.com>.
@@ -55,7 +47,6 @@ public class LoginActivity extends AppCompatActivity {
     private static OAuthCredentials oAuthCredentials;
 
     private static String DEV_BASE_ADDRESS = "";
-    private static RestTemplate rpiSecRestTemplate;
     private static String generatedUUID;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -75,18 +66,22 @@ public class LoginActivity extends AppCompatActivity {
         return generatedUUID;
     }
 
-    private static RestTemplate getRpiSecRestTemplate() {
-        if (rpiSecRestTemplate == null) {
-            rpiSecRestTemplate = new RestTemplate();
-            rpiSecRestTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-        }
+    private ClientRestControllerApi getAuthClientApi(final String username, final String password) {
+        return new ClientRestControllerApi(getApiClient(username, password));
+    }
 
-        return rpiSecRestTemplate;
+    private ApiClient getApiClient(final String username, final String password) {
+        final ApiClient apiClient = new ApiClient();
+        apiClient.setBasePath(getDevBaseAddress());
+        apiClient.setUsername(username);
+        apiClient.setPassword(password);
+
+        return apiClient;
     }
 
     private String getDevBaseAddress() {
         if (DEV_BASE_ADDRESS.isEmpty()) {
-            DEV_BASE_ADDRESS = "http://" + PropertyUtil.getConfigValue(this, "base_uri") + ":" + PropertyUtil.getConfigValue(this, "base_port");
+            DEV_BASE_ADDRESS = "http://" + PropertyUtil.getConfigValue(this, "base_uri") + ":" + PropertyUtil.getConfigValue(this, "base_port") + PropertyUtil.getConfigValue(this, "base_context_path");
         }
 
         return DEV_BASE_ADDRESS;
@@ -252,17 +247,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private class ClientLoginOAuthTask extends AsyncTask<Void, Void, Boolean> {
-        private final String UriRegToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_CLIENT_LOGIN + "?deviceId=" + getGeneratedUUID();
 
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                Log.v(DEBUG_LOGIN_TAG, "[DEBUG] UriRegToken: " + UriRegToken);
-
                 if (oAuthCredentials != null) {
-                    ResponseEntity<TokenResponse> response = getRpiSecRestTemplate().exchange(UriRegToken, HttpMethod.GET, RestHelper.getHttpEntity(oAuthCredentials.getUserName(), oAuthCredentials.getPassword()), TokenResponse.class);
-                    if (response.getStatusCode() == HttpStatus.OK) {
-                        TokenResponse res = response.getBody();
+
+                    try {
+                        at.rpisec.swagger.client.auth.model.TokenResponse res = getAuthClientApi(oAuthCredentials.getUserName(), oAuthCredentials.getPassword()).loginUsingGET(getGeneratedUUID());
                         oAuthCredentials.setToken(res.getToken());
                         oAuthCredentials.setClientId(res.getClientId());
                         oAuthCredentials.setClientSecret(res.getClientSecret());
@@ -270,6 +262,9 @@ public class LoginActivity extends AppCompatActivity {
                         Log.v(DEBUG_LOGIN_TAG, "[ClientId] " + res.getClientId());
                         Log.v(DEBUG_LOGIN_TAG, "[ClientSecret] " + res.getClientSecret());
                         return true;
+                        // thrown in case of null parameter or if required or 200 > status > 300
+                    } catch (ApiException e) {
+                        Log.v(DEBUG_LOGIN_TAG, e.getMessage());
                     }
                 }
             } catch (Exception e) {
@@ -281,18 +276,16 @@ public class LoginActivity extends AppCompatActivity {
 
     private class RegisterFCMTask extends AsyncTask<Void, Void, Boolean> {
         private final String fcmToken = FirebaseInstanceId.getInstance().getToken();
-        private final String UriFCMToken = getDevBaseAddress() + "/rpisec" + ClientRestConstants.URI_REGISTER_FCM_TOKEN + "?deviceId=%s&fcmToken=" + fcmToken;
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            String fcmUri = String.format(UriFCMToken, getGeneratedUUID());
-
-            Log.v(DEBUG_LOGIN_TAG, "[DEBUG] FCM_Token: " + fcmUri);
-
-            // REGISTER FCM TOKEN /registerFcmToken
-            ResponseEntity<FirebaseMessageResponse> fm = getRpiSecRestTemplate().exchange(fcmUri, HttpMethod.PUT, RestHelper.getHttpEntity(oAuthCredentials.getUserName(), oAuthCredentials.getPassword()), FirebaseMessageResponse.class);
-
-            return (fm.getStatusCode() == HttpStatus.OK);
+            try {
+                getAuthClientApi(oAuthCredentials.getUserName(), oAuthCredentials.getPassword()).registerFCMTokenUsingPUT(getGeneratedUUID(), fcmToken);
+                return true;
+            } catch (ApiException e) {
+                // thrown in case of null parameter or if required or 200 > status > 300
+                return false;
+            }
         }
     }
 }

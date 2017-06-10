@@ -65,6 +65,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile "at.rpisec:rpisec-shared:${rpisecSharedVersion}"
+    compile "at.rpisec:rpisec-swagger-client-app:${rpisecSharedVersion}"
+    compile "at.rpisec:rpisec-swagger-client-auth:${rpisecSharedVersion}"
     compile "com.android.support:appcompat-v7:${androidAppcompatV7Version}"
     compile "com.android.support:design:${androidDesignVersion}"
     compile "com.google.firebase:firebase-core:${googleFirebaseVersion}"
