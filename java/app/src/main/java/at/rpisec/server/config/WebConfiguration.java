@@ -22,5 +22,4 @@ public class WebConfiguration {
     WebMvcConfigurerAdapter produceWebMvcConfigurationAdaptor() {
         return new WebMvcConfigurerAdapterImpl();
     }
-
 }

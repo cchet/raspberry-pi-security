@@ -1,8 +1,8 @@
-package at.rpisec.oauth.rest;
+package at.rpisec.oauth.rest.controller;
 
 import at.rpisec.oauth.logic.api.ClientLogic;
+import at.rpisec.oauth.rest.model.TokenResponse;
 import at.rpisec.server.shared.rest.constants.AuthRestConstants;
-import at.rpisec.server.shared.rest.model.TokenResponse;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

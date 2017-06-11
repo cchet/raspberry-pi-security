@@ -1,4 +1,4 @@
-package at.rpisec.oauth.rest;
+package at.rpisec.oauth.rest.controller;
 
 import at.rpisec.oauth.config.SecurityConfiguration;
 import at.rpisec.oauth.config.other.ConfigProperties;

@@ -21,7 +21,7 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * TokenResponse
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-06-10T21:05:54.719+02:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-06-11T13:47:43.058+02:00")
 public class TokenResponse {
   @SerializedName("clientId")
   private String clientId = null;

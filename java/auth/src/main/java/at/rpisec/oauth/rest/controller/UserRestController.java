@@ -1,4 +1,4 @@
-package at.rpisec.oauth.rest;
+package at.rpisec.oauth.rest.controller;
 
 import at.rpisec.oauth.logic.api.UserLogic;
 import at.rpisec.server.shared.rest.constants.AuthRestConstants;

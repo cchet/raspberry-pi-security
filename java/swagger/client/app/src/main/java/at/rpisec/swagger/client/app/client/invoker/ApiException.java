@@ -13,8 +13,8 @@
 
 package at.rpisec.swagger.client.app.client.invoker;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-06-10T21:05:56.466+02:00")
 public class ApiException extends Exception {

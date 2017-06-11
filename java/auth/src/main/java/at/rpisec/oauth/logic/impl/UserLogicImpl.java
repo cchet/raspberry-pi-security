@@ -134,11 +134,7 @@ public class UserLogicImpl implements UserLogic {
         Objects.requireNonNull(uuid, "Cannot load user with null uuid");
 
         final User user = userRepo.findByVerifyUUID(uuid);
-        if (user == null) {
-            throw new DbEntryNotFoundException(String.format("User not found for uuid: %s", uuid), User.class);
-        }
-
-        return mapper.map(user, UserDto.class);
+        return (user != null) ? mapper.map(user, UserDto.class) : null;
 
     }
 

@@ -1,4 +1,4 @@
-package at.rpisec.server.rest;
+package at.rpisec.server.rest.controller;
 
 import at.rpisec.server.Application;
 import at.rpisec.server.logic.api.IClientLogic;

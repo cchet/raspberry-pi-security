@@ -1,5 +1,6 @@
-package at.rpisec.server.shared.rest.model;
+package at.rpisec.oauth.rest.model;
 
+import at.rpisec.server.shared.rest.model.ErrorResponse;
 import lombok.*;
 
 /**

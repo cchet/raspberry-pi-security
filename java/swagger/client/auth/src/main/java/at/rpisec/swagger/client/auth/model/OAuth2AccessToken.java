@@ -25,7 +25,7 @@ import org.joda.time.DateTime;
 /**
  * OAuth2AccessToken
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-06-10T21:05:53.360+02:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-06-11T13:47:41.431+02:00")
 public class OAuth2AccessToken {
   @SerializedName("additionalInformation")
   private Object additionalInformation = null;

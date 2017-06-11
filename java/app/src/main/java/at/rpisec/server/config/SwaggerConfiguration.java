@@ -1,7 +1,7 @@
 package at.rpisec.server.config;
 
-import at.rpisec.server.rest.ClientRestController;
-import at.rpisec.server.rest.InternalRestController;
+import at.rpisec.server.rest.controller.ClientRestController;
+import at.rpisec.server.rest.controller.InternalRestController;
 import at.rpisec.server.shared.rest.constants.AppRestConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,16 +24,14 @@ import java.util.Collections;
 @Profile(ConfigProperties.SupportedProfiles.DEV)
 public class SwaggerConfiguration {
 
-    private static final String APP_PREFIX = "App";
-
     @Bean
     Docket produceClientApiSwaggerDocket() {
-        return createBasicAuthRestApiSwaggerDocket(APP_PREFIX + ClientRestController.class.getSimpleName(), AppRestConstants.CLIENT_REST_API_BASE + "/**");
+        return createBasicAuthRestApiSwaggerDocket(ClientRestController.class.getSimpleName(), AppRestConstants.CLIENT_REST_API_BASE + "/**");
     }
 
     @Bean
     Docket produceInternalApiSwaggerDocket() {
-        return createBasicAuthRestApiSwaggerDocket(APP_PREFIX + InternalRestController.class.getSimpleName(), AppRestConstants.INTERNAL_REST_API_BASE + "/**");
+        return createBasicAuthRestApiSwaggerDocket(InternalRestController.class.getSimpleName(), AppRestConstants.INTERNAL_REST_API_BASE + "/**");
     }
 
     private Docket createBasicAuthRestApiSwaggerDocket(final String groupName,

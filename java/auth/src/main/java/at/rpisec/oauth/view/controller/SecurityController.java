@@ -4,14 +4,13 @@ import at.rpisec.oauth.logic.api.UserLogic;
 import at.rpisec.oauth.view.model.PasswordChangeFormModel;
 import at.rpisec.oauth.view.model.VerifyAccountFormModel;
 import at.rpisec.server.shared.rest.model.UserDto;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -21,16 +20,20 @@ import javax.validation.Valid;
  * @since 04/21/17
  */
 @Controller
+@RequestMapping("/")
+@Validated
 public class SecurityController {
 
     @Autowired
     private UserLogic userLogic;
 
     @GetMapping("/verifyAccount")
-    public ModelAndView verifyAccount(final @RequestParam(value = "uuid") String uuid) {
+    public ModelAndView verifyAccount(final @NotEmpty @RequestParam(value = "uuid") String uuid) {
         final UserDto user = userLogic.byVerifyUUID(uuid);
 
-        return new ModelAndView("verify_account", "model", new VerifyAccountFormModel(uuid));
+        return (user != null)
+                ? new ModelAndView("verify_account", "model", new VerifyAccountFormModel(uuid))
+                : new ModelAndView("404");
     }
 
     @PostMapping("/verifyAccount")
@@ -51,7 +54,7 @@ public class SecurityController {
     }
 
     @GetMapping("/changePassword")
-    public ModelAndView setPassword(final @RequestParam(value = "username") String username) {
+    public ModelAndView setPassword(final @NotEmpty @RequestParam(value = "username") String username) {
         final UserDto user = userLogic.byUsername(username);
         return new ModelAndView("change_password", "model", new PasswordChangeFormModel(user.getUsername()));
     }

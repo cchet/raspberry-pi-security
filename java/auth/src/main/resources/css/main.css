@@ -14,7 +14,11 @@ div.centered {
     max-width: 600px;
 }
 
-h1, h2, h3, input, label {
+h1, h2, h3, input, label, span {
     color: #ffffff;
+}
+
+.inverted-colors {
+    filter: invert(100%);
 }
 

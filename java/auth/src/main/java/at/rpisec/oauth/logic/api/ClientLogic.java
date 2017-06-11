@@ -1,6 +1,7 @@
 package at.rpisec.oauth.logic.api;
 
-import at.rpisec.server.shared.rest.model.TokenResponse;
+
+import at.rpisec.oauth.rest.model.TokenResponse;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>

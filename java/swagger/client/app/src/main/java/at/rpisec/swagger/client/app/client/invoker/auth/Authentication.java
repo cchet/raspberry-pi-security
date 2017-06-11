@@ -15,8 +15,8 @@ package at.rpisec.swagger.client.app.client.invoker.auth;
 
 import at.rpisec.swagger.client.app.client.invoker.Pair;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 public interface Authentication {
     /**

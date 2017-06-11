@@ -1,8 +1,8 @@
 package at.rpisec.oauth.config;
 
 import at.rpisec.oauth.config.other.ConfigProperties;
-import at.rpisec.oauth.rest.ClientRestController;
-import at.rpisec.oauth.rest.UserRestController;
+import at.rpisec.oauth.rest.controller.ClientRestController;
+import at.rpisec.oauth.rest.controller.UserRestController;
 import at.rpisec.server.shared.rest.constants.AuthRestConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,21 +26,19 @@ import java.util.Collections;
 @Profile(ConfigProperties.SupportedProfiles.DEV)
 public class SwaggerConfiguration {
 
-    private static final String APP_PREFIX = "Auth";
-
     @Bean
     Docket produceClientApiSwaggerDocket() {
-        return createBasicAuthRestApiSwaggerDocket(APP_PREFIX + ClientRestController.class.getSimpleName(), AuthRestConstants.CLIENT_REST_API_BASE + "/**");
+        return createBasicAuthRestApiSwaggerDocket(ClientRestController.class.getSimpleName(), AuthRestConstants.CLIENT_REST_API_BASE + "/**");
     }
 
     @Bean
     Docket produceInternalApiSwaggerDocket() {
-        return createBasicAuthRestApiSwaggerDocket(APP_PREFIX + UserRestController.class.getSimpleName(), AuthRestConstants.USER_REST_PAI_BASE + "/**");
+        return createBasicAuthRestApiSwaggerDocket(UserRestController.class.getSimpleName(), AuthRestConstants.USER_REST_PAI_BASE + "/**");
     }
 
     @Bean
     Docket produceOauthApiSwaggerDocket() {
-        return createBasicAuthRestApiSwaggerDocket(APP_PREFIX + OAuth2Authentication.class.getSimpleName(), "/oauth/**");
+        return createBasicAuthRestApiSwaggerDocket(OAuth2Authentication.class.getSimpleName(), "/oauth/**");
     }
 
     private Docket createBasicAuthRestApiSwaggerDocket(final String groupName,

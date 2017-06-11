@@ -53,6 +53,12 @@ public class WebMvcConfigurerAdapterImpl extends WebMvcConfigurerAdapter {
                 .resourceChain(false)
                 .addResolver(createResourceResolver());
 
+        registry.addResourceHandler("/icon/**")
+                .addResourceLocations("classpath:/icon/")
+                .setCacheControl(CacheControl.empty().cachePublic())
+                .resourceChain(false)
+                .addResolver(createResourceResolver());
+
         registry.addResourceHandler("swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
 

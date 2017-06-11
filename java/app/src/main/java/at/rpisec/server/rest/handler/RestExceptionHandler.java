@@ -1,6 +1,8 @@
-package at.rpisec.oauth.exception;
+package at.rpisec.server.rest.handler;
 
-import at.rpisec.oauth.rest.ClientRestController;
+import at.rpisec.server.exception.DbEntryAlreadyExistsException;
+import at.rpisec.server.exception.DbEntryNotFoundException;
+import at.rpisec.server.rest.controller.ClientRestController;
 import at.rpisec.server.shared.rest.model.ErrorResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +36,14 @@ public class RestExceptionHandler {
 
     @ExceptionHandler({DbEntryNotFoundException.class})
     public @ResponseBody ResponseEntity<ErrorResponse> handleDbEntryNotFoundError(final DbEntryNotFoundException t) {
-        logger.info(String.format("Could not find db entry of type %s. message: %s", t.getEntityClass().getName(), t.getMessage()));
+        logger.info(String.format("Could not find db entry of type %s", t.getEntityClass().getName()));
 
         return new ResponseEntity<>(new ErrorResponse("Could not find db entry"), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({DbEntryAlreadyExistsException.class})
     public @ResponseBody ResponseEntity<ErrorResponse> handleDbEntryAlreadyExistsFoundError(final DbEntryAlreadyExistsException t) {
-        logger.info(String.format("Db entry already exists of type %s. message: %s", t.getEntityClass().getName(), t.getMessage()));
+        logger.info(String.format("Db entry already exists of type %s", t.getEntityClass().getName()));
 
         return new ResponseEntity<>(new ErrorResponse(String.format("An entry of type '%s' already exists.", t.getEntityClass().getName())), HttpStatus.BAD_REQUEST);
     }
