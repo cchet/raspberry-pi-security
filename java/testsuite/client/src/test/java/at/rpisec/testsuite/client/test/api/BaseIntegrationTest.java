@@ -26,18 +26,9 @@ public class BaseIntegrationTest {
     protected static final String AUTH_BASE = "http://localhost:9080/rpisec-auth";
     protected static final String AUTH_REST_SYSTEM_API_BASE = AUTH_BASE + "/test";
 
-    /**
-     * Prepares a plain rest template.
-     *
-     * @return the prepared rest template
-     */
-    protected RestTemplate prepareRestTemplate() {
-        return prepareRestTemplate(null, null);
-    }
-
     @Before
     public void before() {
-        final RestTemplate template = prepareRestTemplate();
+        final RestTemplate template = prepareRestTemplate(null, null);
         final ResponseEntity<Void> response = template.exchange(AUTH_REST_SYSTEM_API_BASE + "/prepare", HttpMethod.POST, null, Void.class);
         if (!HttpStatus.OK.equals(response.getStatusCode())) {
             throw new IllegalStateException("Could not clear auth server state after test");
@@ -71,7 +62,7 @@ public class BaseIntegrationTest {
      * @param password the user's password
      * @return the prepared rest template
      */
-    protected RestTemplate prepareRestTemplate(final String username,
+    private RestTemplate prepareRestTemplate(final String username,
                                                final String password) {
         final RestTemplate template = new RestTemplate();
         if ((username != null) && (password != null)) {

@@ -28,8 +28,8 @@ import java.util.Map;
 
 import at.rpisec.client.R;
 import at.rpisec.client.activity.IncidentsActivity;
-import at.rpisec.server.shared.rest.constants.FirebaseConstants;
-import at.rpisec.server.shared.rest.model.FirebaseDatabaseItem;
+import at.rpisec.shared.rest.constants.FirebaseConstants;
+import at.rpisec.shared.rest.model.FirebaseDatabaseItem;
 
 /**
  * @author Philipp Wurm <philipp.wurm@gmail.com>.

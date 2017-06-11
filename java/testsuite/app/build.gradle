@@ -1,7 +1,0 @@
-apply plugin: 'org.springframework.boot'
-
-dependencies {
-	compile project(':testsuite/base')
-
-	// Test dependencies
-}
