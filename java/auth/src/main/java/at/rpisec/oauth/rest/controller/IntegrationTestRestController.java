@@ -1,6 +1,5 @@
 package at.rpisec.oauth.rest.controller;
 
-import at.rpisec.oauth.config.SecurityConfiguration;
 import at.rpisec.oauth.config.other.ConfigProperties;
 import at.rpisec.oauth.jpa.model.ClientDevice;
 import at.rpisec.oauth.jpa.model.User;
@@ -8,12 +7,15 @@ import at.rpisec.oauth.jpa.repositories.UserRepository;
 import at.rpisec.oauth.logic.api.ClientDetailsFactory;
 import at.rpisec.server.shared.rest.constants.AppRestConstants;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
@@ -23,9 +25,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.Collections;
 
 /**
@@ -46,8 +52,7 @@ public class IntegrationTestRestController {
     @Autowired
     private PasswordEncoder encoder;
     @Autowired
-    @Qualifier(SecurityConfiguration.QUALIFIER_OAUTH_REST_TEMPLATE)
-    private RestTemplate appRestTemplate;
+    private Logger log;
 
     @GetMapping("/alive")
     public boolean alive() {
@@ -105,6 +110,32 @@ public class IntegrationTestRestController {
             put(HttpHeaders.CONTENT_TYPE, Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
         }});
 
-        appRestTemplate.postForEntity(rpisecProperties.getBaseUrl() + "/test/prepare", entity, Void.class);
+        createRestTemplate().postForEntity(rpisecProperties.getBaseUrl() + "/test/prepare", entity, Void.class);
+    }
+
+    private RestTemplate createRestTemplate() {
+        final RestTemplate appRestTemplate = new RestTemplate();
+        final String auth = rpisecProperties.getSystemUser() + ":" + rpisecProperties.getSystemPassword();
+        final String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(Charset.forName("US-ASCII")));
+
+        appRestTemplate.getMessageConverters().add(new FormHttpMessageConverter());
+        appRestTemplate.getInterceptors().add((request, body, execution) -> {
+            request.getHeaders().put(HttpHeaders.AUTHORIZATION, Collections.singletonList(String.format("Basic %s", encodedAuth)));
+            return execution.execute(request, body);
+        });
+
+        appRestTemplate.setErrorHandler(new ResponseErrorHandler() {
+            @Override
+            public boolean hasError(ClientHttpResponse response) throws IOException {
+                return !HttpStatus.OK.equals(response.getStatusCode());
+            }
+
+            @Override
+            public void handleError(ClientHttpResponse response) throws IOException {
+                log.error("Could not post oauth client to app server");
+            }
+        });
+
+        return appRestTemplate;
     }
 }

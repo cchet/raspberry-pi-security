@@ -40,9 +40,9 @@ dependencies {
         compile("org.postgresql:postgresql")
     }else {
         compile("com.h2database:h2")
+        compile("io.springfox:springfox-swagger-ui")
     }
     compile("io.springfox:springfox-swagger2")
-    compile("io.springfox:springfox-swagger-ui")
     compile("io.springfox:springfox-bean-validators")
     compile("com.google.firebase:firebase-admin")
     compile("org.apache.commons:commons-io")

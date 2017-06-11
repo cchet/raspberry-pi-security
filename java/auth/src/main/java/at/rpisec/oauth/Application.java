@@ -1,12 +1,17 @@
 package at.rpisec.oauth;
 
+import at.rpisec.oauth.config.other.ConfigProperties;
 import at.rpisec.oauth.config.other.ConfigurableMapperImpl;
 import at.rpisec.oauth.jpa.model.User;
 import at.rpisec.oauth.jpa.repositories.UserRepository;
+import at.rpisec.swagger.client.app.client.api.InternalRestControllerApi;
+import at.rpisec.swagger.client.app.client.invoker.ApiClient;
 import ma.glasnost.orika.MapperFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InjectionPoint;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -87,5 +92,21 @@ public class Application {
     String produceBaseUrl(@Value("${link.baseUrl}") String baseUrl,
                           @Value("${server.context-path}") String contextPath) {
         return baseUrl + contextPath;
+    }
+
+    @Bean
+    @Qualifier("appServer")
+    ApiClient produceAppServerApiClient(final ConfigProperties.RpisecProperties rpisecProperties){
+        final ApiClient client = new ApiClient();
+        client.setUsername(rpisecProperties.getSystemUser());
+        client.setPassword(rpisecProperties.getSystemPassword());
+        client.setBasePath(rpisecProperties.getBaseUrl());
+
+        return client;
+    }
+
+    @Bean
+    InternalRestControllerApi produceInternalRestControllerApi(final @Qualifier("appServer") ApiClient client){
+        return new InternalRestControllerApi(client);
     }
 }

@@ -1,24 +1,17 @@
 package at.rpisec.oauth.logic.event.observer;
 
-import at.rpisec.oauth.config.SecurityConfiguration;
 import at.rpisec.oauth.logic.event.ClientCreatedEvent;
 import at.rpisec.oauth.logic.event.ClientFcmTokenRegisteredEvent;
 import at.rpisec.oauth.logic.event.ClientRemovedEvent;
-import at.rpisec.server.shared.rest.constants.AppRestConstants;
+import at.rpisec.swagger.client.app.client.api.InternalRestControllerApi;
+import at.rpisec.swagger.client.app.client.invoker.ApiCallback;
+import at.rpisec.swagger.client.app.client.invoker.ApiException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -32,17 +25,7 @@ import java.util.Map;
 public class ClientEventObserver {
 
     @Autowired
-    @Qualifier(SecurityConfiguration.QUALIFIER_OAUTH_URL_UNREGISTER_CLIENT)
-    private String urlUnregisterClient;
-    @Autowired
-    @Qualifier(SecurityConfiguration.QUALIFIER_OAUTH_URL_REGISTER_CLIENT)
-    private String urlRegisterClient;
-    @Autowired
-    @Qualifier(SecurityConfiguration.QUALIFIER_OAUTH_URL_REGISTER_CLIENT_FCM_TOKEN)
-    private String urlRegisterClientFcmToken;
-    @Autowired
-    @Qualifier(SecurityConfiguration.QUALIFIER_OAUTH_REST_TEMPLATE)
-    private RestTemplate appRestTemplate;
+    private InternalRestControllerApi appServerInternalClient;
 
     @Autowired
     private Logger log;
@@ -54,17 +37,31 @@ public class ClientEventObserver {
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void observerAfterCommitClientRemovedEvent(final ClientRemovedEvent event) {
+        try {
+            appServerInternalClient.unregisterClientSUsingPOSTAsync(event.getDeviceIds(), event.getUserId(), new ApiCallback<Void>() {
+                @Override public void onFailure(ApiException e,
+                                                int statusCode,
+                                                Map<String, List<String>> responseHeaders) {
+                    log.error("Could not unregister client devices of user. code: {} /  devices: {} / user: {}", statusCode, String.join(", ", event.getDeviceIds()), event.getUserId());
+                }
 
-        final MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
-        data.put(AppRestConstants.PARAM_DEVICE_ID, event.getDeviceIds());
-        data.put(AppRestConstants.PARAM_USER_ID, Collections.singletonList(event.getUserId().toString()));
-        final HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(data, new HttpHeaders() {{
-            put(HttpHeaders.CONTENT_TYPE, Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
-        }});
+                @Override public void onSuccess(Void result,
+                                                int statusCode,
+                                                Map<String, List<String>> responseHeaders) {
+                    log.error("Successfully unregistered client devices of user. devices: {} / user: {}", String.join(", ", event.getDeviceIds()), event.getUserId());
+                }
 
-        appRestTemplate.postForEntity(urlUnregisterClient, entity, Void.class);
+                @Override public void onUploadProgress(long bytesWritten,
+                                                       long contentLength,
+                                                       boolean done) { }
 
-        log.info("Unregistered client device on app server. deviceIds={}", String.join(",", event.getDeviceIds()));
+                @Override public void onDownloadProgress(long bytesRead,
+                                                         long contentLength,
+                                                         boolean done) { }
+            });
+        } catch (ApiException e) {
+            log.error("Could not unregister client devices of user.", e);
+        }
     }
 
     /**
@@ -74,17 +71,31 @@ public class ClientEventObserver {
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void observerAfterCommitClientCreatedEvent(final ClientCreatedEvent event) {
+        try {
+            appServerInternalClient.registerClientUsingPOSTAsync(event.getDeviceId(), event.getUserId(), new ApiCallback<Void>() {
+                @Override public void onFailure(ApiException e,
+                                                int statusCode,
+                                                Map<String, List<String>> responseHeaders) {
+                    log.error("Could not register client device of user. code: {} /  device: {} / user: {}", statusCode, event.getDeviceId(), event.getUserId());
+                }
 
-        final Map<String, List<Object>> data = new LinkedMultiValueMap<>();
-        data.put(AppRestConstants.PARAM_DEVICE_ID, Collections.singletonList(event.getDeviceId()));
-        data.put(AppRestConstants.PARAM_USER_ID, Collections.singletonList(event.getUserId().toString()));
-        final HttpEntity<Map<String, List<Object>>> entity = new HttpEntity<>(data, new HttpHeaders() {{
-            put(HttpHeaders.CONTENT_TYPE, Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
-        }});
+                @Override public void onSuccess(Void result,
+                                                int statusCode,
+                                                Map<String, List<String>> responseHeaders) {
+                    log.error("Successfully registered client device of user. code: {} /  device: {} / user: {}", statusCode, event.getDeviceId(), event.getUserId());
+                }
 
-        appRestTemplate.postForEntity(urlRegisterClient, entity, Void.class);
+                @Override public void onUploadProgress(long bytesWritten,
+                                                       long contentLength,
+                                                       boolean done) { }
 
-        log.info("Registered client device on app server. user_id={} / client_id={}", event.getUserId(), event.getDeviceId());
+                @Override public void onDownloadProgress(long bytesRead,
+                                                         long contentLength,
+                                                         boolean done) { }
+            });
+        } catch (ApiException e) {
+            log.error("Could not register client devices of user.", e);
+        }
     }
 
     /**
@@ -94,17 +105,38 @@ public class ClientEventObserver {
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void observerAfterCommitClientFcmTokenRegisteredEvent(final ClientFcmTokenRegisteredEvent event) {
+        try {
+            appServerInternalClient.registerFCMTokenUsingPOSTAsync(event.getDeviceId(), event.getFcmToken(), event.getUserId(), new ApiCallback<Void>() {
+                @Override public void onFailure(ApiException e,
+                                                int statusCode,
+                                                Map<String, List<String>> responseHeaders) {
+                    log.error("Could not register fcm token for client device of user. code: {} / fcmToken: {} / device: {} / user: {}",
+                              statusCode,
+                              event.getFcmToken(),
+                              event.getDeviceId(),
+                              event.getUserId());
+                }
 
-        final Map<String, List<Object>> data = new LinkedMultiValueMap<>();
-        data.put(AppRestConstants.PARAM_DEVICE_ID, Collections.singletonList(event.getDeviceId()));
-        data.put(AppRestConstants.PARAM_FCM_TOKEN, Collections.singletonList(event.getFcmToken()));
-        data.put(AppRestConstants.PARAM_USER_ID, Collections.singletonList(event.getUserId().toString()));
-        final HttpEntity<Map<String, List<Object>>> entity = new HttpEntity<>(data, new HttpHeaders() {{
-            put(HttpHeaders.CONTENT_TYPE, Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
-        }});
+                @Override public void onSuccess(Void result,
+                                                int statusCode,
+                                                Map<String, List<String>> responseHeaders) {
+                    log.error("Successfully registered fcm token for client device of user. code: {} / fcmToken: {} / device: {} / user: {}",
+                              statusCode,
+                              event.getFcmToken(),
+                              event.getDeviceId(),
+                              event.getUserId());
+                }
 
-        appRestTemplate.postForEntity(urlRegisterClientFcmToken, entity, Void.class);
+                @Override public void onUploadProgress(long bytesWritten,
+                                                       long contentLength,
+                                                       boolean done) { }
 
-        log.info("Registered client device fcm token on app server. user_id={} / client_id={}", event.getUserId(), event.getDeviceId());
+                @Override public void onDownloadProgress(long bytesRead,
+                                                         long contentLength,
+                                                         boolean done) { }
+            });
+        } catch (ApiException e) {
+            log.error("Could not register fcmToken.", e);
+        }
     }
 }

@@ -6,19 +6,13 @@ import at.rpisec.oauth.config.other.ConfigProperties;
 import at.rpisec.oauth.security.ClientUserAuthenticationManager;
 import at.rpisec.oauth.security.ClientUserDetailsService;
 import at.rpisec.oauth.security.ClientUserPasswordTokenGranter;
-import at.rpisec.server.shared.rest.constants.AppRestConstants;
 import at.rpisec.server.shared.rest.constants.SecurityConstants;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -37,14 +31,8 @@ import org.springframework.security.oauth2.provider.token.AuthorizationServerTok
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
-import org.springframework.web.client.ResponseErrorHandler;
-import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Base64;
-import java.util.Collections;
 import java.util.UUID;
 
 /**
@@ -55,9 +43,6 @@ import java.util.UUID;
 public class SecurityConfiguration {
 
     public static final String QUALIFIER_APP_SERVER_RESOURCE_ID = "QUALIFIER_APP_SERVER_RESOURCE_ID";
-    public static final String QUALIFIER_OAUTH_URL_REGISTER_CLIENT = "QUALIFIER_OAUTH_URL_CREATE_CLIENT";
-    public static final String QUALIFIER_OAUTH_URL_UNREGISTER_CLIENT = "QUALIFIER_OAUTH_URL_UNREGISTER_CLIENT";
-    public static final String QUALIFIER_OAUTH_URL_REGISTER_CLIENT_FCM_TOKEN = "QUALIFIER_OAUTH_URL_REGISTER_CLIENT_FCM_TOKEN";
     public static final String QUALIFIER_OAUTH_REST_TEMPLATE = "QUALIFIER_OAUTH_REST_TEMPLATE";
 
     @Autowired
@@ -152,58 +137,5 @@ public class SecurityConfiguration {
     @Qualifier(QUALIFIER_APP_SERVER_RESOURCE_ID)
     String produceAppServerResourceId() {
         return rpisecProperties.getResourceId();
-    }
-
-
-    @Bean
-    @Scope("prototype")
-    @Qualifier(QUALIFIER_OAUTH_URL_REGISTER_CLIENT)
-    String produceOAuthRegisterClientUrl() {
-        return rpisecProperties.getBaseUrl() + AppRestConstants.URI_REGISTER;
-    }
-
-    @Bean
-    @Scope("prototype")
-    @Qualifier(QUALIFIER_OAUTH_URL_UNREGISTER_CLIENT)
-    String produceOAuthUnregsiterClientUrl() {
-        return rpisecProperties.getBaseUrl() + AppRestConstants.URI_UNREGISTER;
-    }
-
-    @Bean
-    @Scope("prototype")
-    @Qualifier(QUALIFIER_OAUTH_URL_REGISTER_CLIENT_FCM_TOKEN)
-    String produceOAuthRegsiterClientFcmTokenUrl() {
-        return rpisecProperties.getBaseUrl() + AppRestConstants.URI_REGISTER_FCM_TOKEN;
-    }
-
-    @Bean
-    @Scope("prototype")
-    @Qualifier(QUALIFIER_OAUTH_REST_TEMPLATE)
-    RestTemplate produceFcmRestTemplate(final Logger log) {
-        final RestTemplate oauthRestTemplate = new RestTemplate();
-        final String auth = rpisecProperties.getSystemUser() + ":" + rpisecProperties.getSystemPassword();
-        final String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(Charset.forName("US-ASCII")));
-
-        oauthRestTemplate.getMessageConverters().add(new FormHttpMessageConverter());
-        oauthRestTemplate.getInterceptors().add((request, body, execution) -> {
-            request.getHeaders().put(HttpHeaders.AUTHORIZATION, Collections.singletonList(String.format("Basic %s", encodedAuth)));
-            return execution.execute(request, body);
-        });
-
-        oauthRestTemplate.setErrorHandler(new ResponseErrorHandler() {
-            @Override
-            public boolean hasError(ClientHttpResponse response) throws IOException {
-                return !HttpStatus.OK.equals(response.getStatusCode());
-            }
-
-            @Override
-            public void handleError(ClientHttpResponse response) throws IOException {
-                log.error("Could not post oauth client to app server");
-                throw new IllegalStateException(String.format("Could not invoke rest api on app server. HttpStatus: %s",
-                                                              response.getStatusCode()));
-            }
-        });
-
-        return oauthRestTemplate;
     }
 }
