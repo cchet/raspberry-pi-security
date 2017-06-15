@@ -1,5 +1,7 @@
 package at.rpisec.app.config;
 
+import at.rpisec.app.config.other.ConfigProperties;
+import at.rpisec.app.config.other.StartupRunner;
 import at.rpisec.sensor.api.ISensorApplication;
 import at.rpisec.sensor.api.exception.SensorAppShutdownException;
 import at.rpisec.sensor.impl.SensorApplication;
@@ -12,6 +14,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextStoppedEvent;
 
 /**
+ * This class holds the producer for the prod profile.
+ *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 05/25/17
  */

@@ -1,4 +1,4 @@
-package at.rpisec.app.config;
+package at.rpisec.app.config.other;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +17,9 @@ public class ConfigProperties {
     private ConfigProperties() {
     }
 
+    /**
+     * Specifies the supported profiles
+     */
     public static final class SupportedProfiles {
         public static final String PROD = "prod";
         public static final String DEV = "dev";
@@ -24,6 +27,9 @@ public class ConfigProperties {
         public static final String INTEGRATION_TEST = "integrationTest";
     }
 
+    /**
+     * Specifies the firebase properties.
+     */
     @Component
     @ConfigurationProperties("firebase")
     @Getter
@@ -37,6 +43,9 @@ public class ConfigProperties {
         private String cloudMessagingUrl;
     }
 
+    /**
+     * Specifies the webjars properties.
+     */
     @Component
     @ConfigurationProperties("webjar")
     @Getter
@@ -49,6 +58,9 @@ public class ConfigProperties {
 
     }
 
+    /**
+     * Specifies the rpisec oauth properties.
+     */
     @Component
     @ConfigurationProperties("rpisec-oauth")
     @Getter
@@ -61,6 +73,7 @@ public class ConfigProperties {
         private String clientId;
         private String clientSecret;
         private String checkTokenEndpoint;
+        private String getTokenEndpoint;
         private String systemUser;
         private String systemPassword;
     }

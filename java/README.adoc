@@ -8,14 +8,14 @@ The app server is a spring boot application which manages the sensor application
 reports incidents to the registered clients and pushes the taken images to the firebase
 database. +
 
-link:rpisec-app/README.adoc[App server documentation] +
+link:app/README.adoc[App server documentation] +
 
 # Authentication server
 The authentication server manages the domain users provides the oauth authentication mechanism
 for the clients for accessing the app server. The registered client devices and firebase cloud messaging tokens
 are pushed to the apps server, so that the app server is able to notify the clients about security incidents.
 
-link:rpisec-oauth/README.adoc[Authentication server documentation] +
+link:auth/README.adoc[Authentication server documentation] +
 
 # Sensor application
 The sensor application is a plain java implementation which manages and is hosted by the app server. +

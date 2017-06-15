@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 /**
+ * This class provides all producers for all firebase relevant beans.
+ *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 05/07/17
  */

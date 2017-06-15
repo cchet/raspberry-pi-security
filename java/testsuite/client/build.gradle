@@ -16,10 +16,16 @@ test {
     filter {
         includeTestsMatching '*.*Suite'
     }
-    // Set environment variables if executed on a windows system
-    if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
-        environment('DOCKER_COMPOSE_LOCATION', 'C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker-compose.exe')
-        environment('DOCKER_LOCATION', 'C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe')
+    doFirst {
+        // Set environment variables if executed on a windows system
+        if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+            if (System.getenv('DOCKER_COMPOSE_LOCATION') == null) {
+                environment('DOCKER_COMPOSE_LOCATION', 'C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker-compose.exe')
+            }
+            if (System.getenv('DOCKER_LOCATION') == null) {
+                environment('DOCKER_LOCATION', 'C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe')
+            }
+        }
     }
 }
 
@@ -35,25 +41,7 @@ task cleanState() {
     outputs.upToDateWhen { false }
 }
 
-task perpareDockerInfrastructure(type: Copy, dependsOn: [':app:buildFatJar', ':auth:buildFatJar', 'compileJava', 'compileTestJava', 'processResources', 'processTestResources']) {
-
-    def dockerrootFileDirectory = new File(dockerRootLocation)
-    if(dockerrootFileDirectory.exists()){
-        dockerrootFileDirectory.delete()
-    }
-
-    def appConfig = System.getProperty("app.config") ?: ""
-    def authConfig = System.getProperty("auth.config") ?: ""
-    def firebaseConfig = System.getProperty("firebaseConfig") ?: ""
-
-    logger.info("---------------------------------------------------------------------------")
-    logger.info("Set JVM Options for configuration")
-    logger.info("---------------------------------------------------------------------------")
-    logger.info("app.config:" + appConfig)
-    logger.info("auth.config:" + authConfig)
-    logger.info("firebaseConfig:" + firebaseConfig)
-    logger.info("---------------------------------------------------------------------------")
-
+task perpareDockerInfrastructure(dependsOn: [':app:buildFatJar', ':auth:buildFatJar', 'compileJava', 'compileTestJava', 'processResources', 'processTestResources']) {
     copy {
         from sourceSets.main.resources.asFileTree.matching {
             include '**/docker/**/*'
@@ -61,38 +49,53 @@ task perpareDockerInfrastructure(type: Copy, dependsOn: [':app:buildFatJar', ':a
         }
         into project.buildDir.absolutePath
     }
-    if(!appConfig.isEmpty()) {
-        copy {
-            from new File(appConfig)
-            into dockerAppLocation
-        }
-    }
-    if(!authConfig.isEmpty()) {
-        copy {
-            from new File(authConfig)
-            into dockerAuthLocation
-        }
-    }
-    if(!firebaseConfig.isEmpty()) {
-        def firebaseConfigFile = new File(firebaseConfig)
-        copy {
-            from firebaseConfigFile
-            into dockerAppLocation
-        }
-        copy {
-            from firebaseConfigFile
-            into dockerAuthLocation
-        }
-    }
 
-    copy {
-        from project(":app").jar.archivePath
-        into dockerAppLocation
-        rename(project(":app").jar.archiveName, "app.jar")
-    }
-    copy {
-        from project(":auth").jar.archivePath
-        into dockerAuthLocation
-        rename(project(":auth").jar.archiveName, "app.jar")
+    doLast {
+        def appConfig = System.getProperty("app.config") ?: ""
+        def authConfig = System.getProperty("auth.config") ?: ""
+        def firebaseConfig = System.getProperty("firebaseConfig") ?: ""
+
+        logger.info("---------------------------------------------------------------------------")
+        logger.info("Set JVM Options for configuration")
+        logger.info("---------------------------------------------------------------------------")
+        logger.info("app.config:" + appConfig)
+        logger.info("auth.config:" + authConfig)
+        logger.info("firebaseConfig:" + firebaseConfig)
+        logger.info("---------------------------------------------------------------------------")
+
+        if (!appConfig.isEmpty()) {
+            copy {
+                from new File(appConfig)
+                into dockerAppLocation
+            }
+        }
+        if (!authConfig.isEmpty()) {
+            copy {
+                from new File(authConfig)
+                into dockerAuthLocation
+            }
+        }
+        if (!firebaseConfig.isEmpty()) {
+            def firebaseConfigFile = new File(firebaseConfig)
+            copy {
+                from firebaseConfigFile
+                into dockerAppLocation
+            }
+            copy {
+                from firebaseConfigFile
+                into dockerAuthLocation
+            }
+        }
+
+        copy {
+            from project(":app").jar.archivePath
+            into dockerAppLocation
+            rename(project(":app").jar.archiveName, "app.jar")
+        }
+        copy {
+            from project(":auth").jar.archivePath
+            into dockerAuthLocation
+            rename(project(":auth").jar.archiveName, "app.jar")
+        }
     }
 }

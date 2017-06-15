@@ -21,13 +21,13 @@ import javax.validation.Valid;
  */
 @Controller
 @RequestMapping("/")
-@Validated
 public class SecurityController {
 
     @Autowired
     private UserLogic userLogic;
 
     @GetMapping("/verifyAccount")
+    @Validated
     public ModelAndView verifyAccount(final @NotEmpty @RequestParam(value = "uuid") String uuid) {
         final UserDto user = userLogic.byVerifyUUID(uuid);
 
@@ -54,12 +54,14 @@ public class SecurityController {
     }
 
     @GetMapping("/changePassword")
+    @Validated
     public ModelAndView setPassword(final @NotEmpty @RequestParam(value = "username") String username) {
         final UserDto user = userLogic.byUsername(username);
         return new ModelAndView("change_password", "model", new PasswordChangeFormModel(user.getUsername()));
     }
 
     @PostMapping("/changePassword")
+    @Validated
     public ModelAndView setPassword(final @Valid @ModelAttribute("model") PasswordChangeFormModel model,
                                     final BindingResult result) {
         if (result.hasFieldErrors()) {

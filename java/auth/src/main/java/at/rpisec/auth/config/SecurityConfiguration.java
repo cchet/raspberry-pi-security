@@ -36,6 +36,8 @@ import javax.sql.DataSource;
 import java.util.UUID;
 
 /**
+ * This class holds all producers for security relevant beans such as oauth2 provided beans and app server constants.
+ *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 05/09/17
  */
@@ -43,7 +45,6 @@ import java.util.UUID;
 public class SecurityConfiguration {
 
     public static final String QUALIFIER_APP_SERVER_RESOURCE_ID = "QUALIFIER_APP_SERVER_RESOURCE_ID";
-    public static final String QUALIFIER_OAUTH_REST_TEMPLATE = "QUALIFIER_OAUTH_REST_TEMPLATE";
 
     @Autowired
     private DataSource dataSource;

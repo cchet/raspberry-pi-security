@@ -1,6 +1,6 @@
 package at.rpisec.app;
 
-import at.rpisec.app.config.ConfigurableMapperImpl;
+import at.rpisec.app.config.other.ConfigurableMapperImpl;
 import at.rpisec.app.jpa.model.Client;
 import at.rpisec.app.jpa.repositories.ClientRepository;
 import ma.glasnost.orika.MapperFacade;

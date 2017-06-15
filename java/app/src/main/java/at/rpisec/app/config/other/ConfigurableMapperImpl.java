@@ -1,4 +1,4 @@
-package at.rpisec.app.config;
+package at.rpisec.app.config.other;
 
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.ConfigurableMapper;

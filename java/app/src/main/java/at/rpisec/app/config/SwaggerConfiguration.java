@@ -1,5 +1,6 @@
 package at.rpisec.app.config;
 
+import at.rpisec.app.config.other.ConfigProperties;
 import at.rpisec.app.rest.controller.ClientRestController;
 import at.rpisec.app.rest.controller.InternalRestController;
 import at.rpisec.shared.rest.constants.AppRestConstants;

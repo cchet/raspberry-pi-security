@@ -1,6 +1,6 @@
 package at.rpisec.app.config.adaptor;
 
-import at.rpisec.app.config.ConfigProperties;
+import at.rpisec.app.config.other.ConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.CacheControl;
@@ -14,6 +14,8 @@ import org.springframework.web.servlet.resource.VersionResourceResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
 /**
+ * This class configures the web mvc resources.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/21/17
  */

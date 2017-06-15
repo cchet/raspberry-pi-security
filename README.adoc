@@ -44,5 +44,5 @@ image:doc/images/Infrastructure.jpg[Infrastructure] +
 # Documentation
 The parts of the application are documented at the following locations:
 
-link:rpisec-java/README.adoc[Raspberry PI hosted application documentation] +
+link:java/README.adoc[Raspberry PI hosted application documentation] +
 link:host/docker/README.adoc[Docker infrastructure documentation] +

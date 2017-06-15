@@ -1,4 +1,4 @@
-package at.rpisec.app.config;
+package at.rpisec.app.config.other;
 
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
@@ -8,6 +8,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 /**
+ * This class specifies the servlet context default settings.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/23/17
  */

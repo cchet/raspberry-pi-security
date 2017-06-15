@@ -27,7 +27,7 @@ public class RestExceptionHandler {
     @Autowired
     private Logger logger;
 
-    @ExceptionHandler({ConstraintViolationException.class, MissingServletRequestParameterException.class})
+    @ExceptionHandler(ConstraintViolationException.class)
     public @ResponseBody ResponseEntity<ErrorResponse> handleMissingParameterError(final Exception exception) {
         final String message = exception.getMessage();
         logger.info("Validation failed for rest call parameter or model. message: {}", message);

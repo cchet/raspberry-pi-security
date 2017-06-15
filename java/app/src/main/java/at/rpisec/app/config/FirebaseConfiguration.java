@@ -1,5 +1,6 @@
 package at.rpisec.app.config;
 
+import at.rpisec.app.config.other.ConfigProperties;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
@@ -24,6 +25,8 @@ import java.nio.file.Paths;
 import java.util.Collections;
 
 /**
+ * This class holds the producers for the firebase related beans.
+ *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 05/07/17
  */

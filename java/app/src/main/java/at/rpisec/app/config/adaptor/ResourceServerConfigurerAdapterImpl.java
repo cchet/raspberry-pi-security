@@ -1,6 +1,6 @@
 package at.rpisec.app.config.adaptor;
 
-import at.rpisec.app.config.ConfigProperties;
+import at.rpisec.app.config.other.ConfigProperties;
 import at.rpisec.shared.rest.constants.AppRestConstants;
 import at.rpisec.shared.rest.constants.SecurityConstants;
 import org.springframework.beans.factory.annotation.Autowired;

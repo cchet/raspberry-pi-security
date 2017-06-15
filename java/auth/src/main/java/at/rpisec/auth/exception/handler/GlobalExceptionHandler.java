@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,6 +20,12 @@ public class GlobalExceptionHandler {
 
     @Autowired
     private Logger logger;
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ModelAndView handleMissingParameterError(final Exception exception) {
+        logger.info("Missing servlet request parameter: ", exception.getMessage());
+        return new ModelAndView("404");
+    }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public Object handleNoHandlerFound(final NoHandlerFoundException ex) {

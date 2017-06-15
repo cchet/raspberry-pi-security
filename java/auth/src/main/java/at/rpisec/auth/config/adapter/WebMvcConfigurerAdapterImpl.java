@@ -14,6 +14,8 @@ import org.springframework.web.servlet.resource.VersionResourceResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
 /**
+ * This class configures the web mvc resources.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/21/17
  */

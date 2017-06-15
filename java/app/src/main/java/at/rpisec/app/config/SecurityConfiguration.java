@@ -2,6 +2,7 @@ package at.rpisec.app.config;
 
 import at.rpisec.app.config.adaptor.ResourceServerConfigurerAdapterImpl;
 import at.rpisec.app.config.adaptor.WebSecurityConfigurerAdapterImpl;
+import at.rpisec.app.config.other.ConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,8 @@ import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 
 /**
+ * This class holds the producer for the security relevant beans.
+ *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 05/09/17
  */

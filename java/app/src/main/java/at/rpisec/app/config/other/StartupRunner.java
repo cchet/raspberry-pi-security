@@ -1,5 +1,6 @@
-package at.rpisec.app.config;
+package at.rpisec.app.config.other;
 
+import at.rpisec.app.config.SecurityConfiguration;
 import at.rpisec.app.logic.api.IIncidentLogic;
 import at.rpisec.sensor.api.ISensorApplication;
 import at.rpisec.sensor.impl.config.PropertiesfileSensorApplicationConfiguration;
