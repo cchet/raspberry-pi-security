@@ -3,7 +3,7 @@
 \usepackage[german]{babel}   % enables umlaute
 \usepackage[utf8]{inputenc}  % set encoding to utf8 otherwise no umlaute
 \usepackage{graphicx}        % for including graphics
-\usepackage{hyperref}        % for using hyperlinks in the document
+\usepackage[hidelinks]{hyperref}        % for using hyperlinks in the document
 \usepackage{tabularx}        % for extending tabluar
 \usepackage{multirow}        % for rowspan in tabularx
 \usepackage{ltablex}         % tables over multiple pages
@@ -20,6 +20,7 @@
 
 
 \newcommand{\imageDir}{../images}
+\newcommand{\srcDir}{../example-src}
 \newcommand{\dockerTestDir}{../../java/testsuite/client/src/main/resources/docker}
 \newcommand{\dockerRPIDir}{../../host/docker}
 \renewcommand\listingscaption{Quelltext}
@@ -46,6 +47,8 @@
 \include{introduction}
 \include{raspberry}
 \include{software}
+\include{sensor}
+\include{client}
 \include{docker}
 
 

@@ -15,7 +15,3 @@ Die beiden \emph{Microservices} müssen Daten persistent halten und sind daher a
 \newline
 \newline
 Als \emph{Cloud} Anbieter wurde \emph{Google} gewählt, welcher die Plattform \emph{Firebase} anbietet, die eine JSON-Datenbank und einen \emph{Cloud Messaging} Dienst anbietet. Für diesen Dienst gibt es eine Java Implementierung das sogenannte \emph{firebase-admin-sdk}, das eine API zum Interagieren mit der JSON-Datenbank und eine API zum Erstellen von Authentifizierungstoken für die \emph{Client}-Authentifizierung bei Firebase zur Verfügung stellt. In der Java Implementierung wird zurzeit keine API für die Interaktion mit dem \emph{Messaging} Dienst zur Verfügung gestellt, was aber kein Problem darstellt, da es sich hierbei um eine einfache Anfrage an eine \emph{REST-API} handelt, die mit Spring \emph{RestTemplate} durchgeführt wird.
-
-\subsection{Sensor Applikation}
-
-\subsection{Mobiler \emph{Client}}
