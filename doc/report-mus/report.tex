@@ -1,0 +1,63 @@
+\documentclass[]{article}
+% used packages
+\usepackage[german]{babel}   % enables umlaute
+\usepackage[utf8]{inputenc}  % set encoding to utf8 otherwise no umlaute
+\usepackage{graphicx}        % for including graphics
+\usepackage{hyperref}        % for using hyperlinks in the document
+\usepackage{tabularx}        % for extending tabluar
+\usepackage{multirow}        % for rowspan in tabularx
+\usepackage{ltablex}         % tables over multiple pages
+\usepackage{textcmds}        % for quote support
+\usepackage{pdfpages}        % for pdf include
+\usepackage{caption}
+\usepackage{minted}
+\usepackage{listings}
+\usepackage[left=1.0in, right=1.0in, top=1.0in, bottom=1.0in]{geometry} % for custom page layout
+
+% Title Page
+\title{Raspberry PI Security Application}
+\author{Thonas Herzog, Philipp Wurm}
+
+
+\newcommand{\imageDir}{../images}
+\newcommand{\dockerTestDir}{../../java/testsuite/client/src/main/resources/docker}
+\newcommand{\dockerRPIDir}{../../host/docker}
+\renewcommand\listingscaption{Quelltext}
+
+\newenvironment{code}{\captionsetup{type=listing}}{}
+
+\newmintedfile[yamlFile]{yaml}{
+	linenos=true, 
+	frame=single, 
+	breaklines=true, 
+	tabsize=2,
+	numbersep=5pt,
+	xleftmargin=10pt,
+	baselinestretch=1,
+	fontsize=\footnotesize
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\include{introduction}
+\include{raspberry}
+\include{software}
+\include{docker}
+
+
+% Quellen
+% AZDeliveryPICam:
+% https://www.amazon.de/dp/B01M6UCEM5/ref=pe_386171_51767411_TE_dp_3
+% -------------------------------------------------------------------
+% HC-SR501
+% https://www.amazon.de/dp/B00TI2ZC72/ref=pe_386171_38075861_TE_item
+% -------------------------------------------------------------------
+% HC-SR501 Schema
+% ttp://www.netzmafia.de/skripten/hardware/RasPi/Projekt-PIR/
+% -------------------------------------------------------------------
+
+\end{document}          

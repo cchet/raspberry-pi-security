@@ -1,0 +1,10 @@
+\section{Docker Infrastruktur}
+Dieser Abschnitt behandelt die Docker Infrastruktur, welche die Service und deren Abhängigkeiten hosted und verwaltet. Da der Umgang mit Docker und einer umfangreicheren Infrastruktur mit viel Shell-Skripten verbunden ist, wird das Python basierte Tool Docker-Compose verwendet, das es erlaubt eine Infrastruktur, die aus einer Menge von untereinander abhängigen Services besteht, deklarativ über eine \emph{YAML}-Konfigurationsdatei definiert werden kann. 
+\newline
+\newline
+Der Quelltext \ref{src:test-docker-compose} zeigt den Inhalt der \emph{docker-compose.yml}, welche die Docker Infrastruktur für \emph{RPISec} amd \emph{Raspberry PI} definiert. Die in der Datei vorkommenden Textfragmente im Format \emph{\$\{...\}} stellen Variablen dar, die \emph{Docker Compose} entweder aus einer Datei mit dem Namen \emph{.env}, die auf derselben Ebene wie die \emph{docker-compose.yml} platziert werden muss, oder aus den Umgebungsvariablen des Benutzers, mit dem die Infrastruktur erstellt wird, auflöst. Sollten Variablen nicht auflösbar sein, so wird eine entsprechende Meldung auf die Konsole ausgegeben.
+\begin{code}
+	\caption{docker-compose.yml für RPISec am \emph{Raspberry PI}}
+	\yamlFile{\dockerRPIDir/docker-compose.yml}
+	\label{src:test-docker-compose}
+\end{code}
