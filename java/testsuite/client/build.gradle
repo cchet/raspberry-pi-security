@@ -42,15 +42,15 @@ task cleanState() {
 }
 
 task perpareDockerInfrastructure(dependsOn: [':app:buildFatJar', ':auth:buildFatJar', 'compileJava', 'compileTestJava', 'processResources', 'processTestResources']) {
-    copy {
-        from sourceSets.main.resources.asFileTree.matching {
-            include '**/docker/**/*'
-            exclude '**/docker/**/dummy*'
-        }
-        into project.buildDir.absolutePath
-    }
-
     doLast {
+        copy {
+            from sourceSets.main.resources.asFileTree.matching {
+                include '**/docker/**/*'
+                exclude '**/docker/**/dummy*'
+            }
+            into project.buildDir.absolutePath
+        }
+
         def appConfig = System.getProperty("app.config") ?: ""
         def authConfig = System.getProperty("auth.config") ?: ""
         def firebaseConfig = System.getProperty("firebaseConfig") ?: ""

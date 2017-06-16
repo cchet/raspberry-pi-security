@@ -1,4 +1,4 @@
-FROM library/debian:jessie
+FROM rpisec-test-base:latest
 MAINTAINER Thomas Herzog <herzog.thomas81@gmail.com>
 
 RUN apt-get update -y && \
