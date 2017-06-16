@@ -60,9 +60,6 @@ dependencies {
 
 // creates the fat jar
 task buildFatJar(type: GradleBuild) {
-    doFirst{
-        project.buildDir.delete()
-    }
     buildFile = 'build.gradle'
     tasks = ['clean', 'compileJava', 'processResources', 'jar', 'bootRepackage']
 }

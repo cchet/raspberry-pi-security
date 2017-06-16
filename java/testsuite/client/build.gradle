@@ -41,7 +41,7 @@ task cleanState() {
     outputs.upToDateWhen { false }
 }
 
-task perpareDockerInfrastructure(dependsOn: [':app:buildFatJar', ':auth:buildFatJar', 'compileJava', 'compileTestJava', 'processResources', 'processTestResources']) {
+task prepareDockerInfrastructure(dependsOn: [':app:buildFatJar', ':auth:buildFatJar', 'compileJava', 'compileTestJava', 'processResources', 'processTestResources']) {
     doLast {
         copy {
             from sourceSets.main.resources.asFileTree.matching {
@@ -60,7 +60,7 @@ task perpareDockerInfrastructure(dependsOn: [':app:buildFatJar', ':auth:buildFat
         logger.info("---------------------------------------------------------------------------")
         logger.info("app.config:" + appConfig)
         logger.info("auth.config:" + authConfig)
-        logger.info("firebaseConfig:" + firebaseConfig)
+        logger.info("firebase.config:" + firebaseConfig)
         logger.info("---------------------------------------------------------------------------")
 
         if (!appConfig.isEmpty()) {
