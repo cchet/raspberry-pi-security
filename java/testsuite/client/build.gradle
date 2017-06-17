@@ -43,25 +43,23 @@ task cleanState() {
 
 task prepareDockerInfrastructure(dependsOn: [':app:buildFatJar', ':auth:buildFatJar', 'compileJava', 'compileTestJava', 'processResources', 'processTestResources']) {
     doLast {
-        copy {
-            from sourceSets.main.resources.asFileTree.matching {
-                include '**/docker/**/*'
-                exclude '**/docker/**/dummy*'
-            }
-            into project.buildDir.absolutePath
-        }
-
         def appConfig = System.getProperty("app.config") ?: ""
         def authConfig = System.getProperty("auth.config") ?: ""
         def firebaseConfig = System.getProperty("firebase.config") ?: ""
+        def Pi = (System.getProperty("pi") != null) ? "-pi" : ""
 
-        logger.info("---------------------------------------------------------------------------")
-        logger.info("Set JVM Options for configuration")
-        logger.info("---------------------------------------------------------------------------")
-        logger.info("app.config:" + appConfig)
-        logger.info("auth.config:" + authConfig)
-        logger.info("firebase.config:" + firebaseConfig)
-        logger.info("---------------------------------------------------------------------------")
+        copy {
+            from sourceSets.main.resources.asFileTree.matching {
+                include '**/docker/app/*'
+                include '**/docker/auth/*'
+                include '**/docker/nginx/*'
+                include '**/docker/volumes/**/*'
+                include '**/docker/docker-compose' + Pi + ".yml"
+                exclude '**/docker/**/dummy*'
+            }
+            into project.buildDir.absolutePath
+            rename("docker-compose-pi.yml", "docker-compose.yml")
+        }
 
         if (!appConfig.isEmpty()) {
             copy {

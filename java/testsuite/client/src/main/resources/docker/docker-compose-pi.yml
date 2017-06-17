@@ -2,21 +2,21 @@ version: "2.1"
 services:
     rpisec-test-auth-db:
         container_name: rpisec-test-auth-db
-        image: postgres:9.6
+        image: tobi312/rpi-postgresql:9.6
         environment:
             - POSTGRES_USER=rpisec-auth
             - POSTGRES_PASSWORD=rpisec-auth
             - POSTGRES_DATABASE=rpisec-auth
-        mem_limit: 128m
+        mem_limit: 64m
         cpu_shares: 2
     rpisec-test-app-db:
         container_name: rpisec-test-app-db
-        image: postgres:9.6
+        image: tobi312/rpi-postgresql:9.6
         environment:
             - POSTGRES_USER=rpisec-app
             - POSTGRES_PASSWORD=rpisec-app
             - POSTGRES_DATABASE=rpisec-app
-        mem_limit: 128m
+        mem_limit: 64m
         cpu_shares: 2
     rpisec-test-auth:
         container_name: rpisec-test-auth
@@ -27,7 +27,7 @@ services:
         volumes:
             - ./volumes/log:/home/user/log
         mem_limit: 256m
-        cpu_shares: 2
+        cpu_shares: 4
         depends_on:
             - rpisec-test-auth-db
             - rpisec-test-app
@@ -40,7 +40,7 @@ services:
         volumes:
             - ./volumes/log:/home/user/log
         mem_limit: 256m
-        cpu_shares: 2
+        cpu_shares: 4
         depends_on:
             - rpisec-test-app-db
     rpisec-test-nginx:
@@ -49,8 +49,8 @@ services:
             context: ./nginx
         volumes:
             - ./volumes/log:/var/log/nginx/
-        mem_limit: 256m
-        cpu_shares: 2
+        mem_limit: 64m
+        cpu_shares: 4
         ports:
             - 9080:8080
         depends_on:

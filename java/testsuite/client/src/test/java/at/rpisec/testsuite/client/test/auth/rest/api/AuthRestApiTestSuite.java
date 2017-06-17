@@ -34,7 +34,7 @@ public class AuthRestApiTestSuite {
                                                                                            HealthChecks.toRespond2xxOverHttp(8080,
                                                                                                                              (port) -> port.inFormat(
                                                                                                                                      "http://$HOST:$EXTERNAL_PORT/rpisec-auth/test/alive")))
-                                                                        .nativeServiceHealthCheckTimeout(new Duration(60000))
+                                                                        .nativeServiceHealthCheckTimeout(new Duration(120000))
                                                                         .build();
 
 }
