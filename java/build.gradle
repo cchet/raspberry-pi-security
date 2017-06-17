@@ -1,6 +1,9 @@
 buildscript {
-	repositories {
-		jcenter()
+	repositories {	
+		// use this instead of jcenter() to avoid https errors on raspberry pi
+		//jcenter()
+		maven { url "http://jcenter.bintray.com" }
+		
 		mavenCentral()
 		maven {
 			url "http://plugins.gradle.org/m2"
