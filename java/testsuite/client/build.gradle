@@ -4,7 +4,7 @@ def dockerAuthLocation = dockerRootLocation + "/auth"
 
 dependencies {
     testCompile 'org.springframework:spring-web'
-    //testCompile "com.palantir.docker.compose:docker-compose-rule-junit4"
+    testCompile "com.palantir.docker.compose:docker-compose-rule-junit4"
     testCompile "junit:junit"
     testCompile "org.slf4j:slf4j-simple"
     testCompile project(':shared')
