@@ -7,7 +7,7 @@ services:
             - POSTGRES_USER=rpisec-app
             - POSTGRES_PASSWORD=rpisec-app
             - POSTGRES_DATABASE=rpisec-app
-        mem_limit: 64m
+        mem_limit: 100m
         cpu_shares: 2
         volumes:
             - ${APP_DB_VOLUME}:/var/lib/postgresql/data:rw
@@ -18,7 +18,7 @@ services:
             - POSTGRES_USER=rpisec-auth
             - POSTGRES_PASSWORD=rpisec-auth
             - POSTGRES_DATABASE=rpisec-auth
-        mem_limit: 64m
+        mem_limit: 100m
         cpu_shares: 2
         volumes:
             - ${AUTH_DB_VOLUME}:/var/lib/postgresql/data:rw
@@ -35,8 +35,7 @@ services:
             - ${APP_IMAGE_VOLUME}:/home/app/image:rw
         environment:
             - APP_JAVA_OPTS=-Xms128m -Xmx200m
-            - RPISEC_VERSION=${RPISEC_VERSION}
-        mem_limit: 200m
+        mem_limit: 256m
         cpu_shares: 4
         privileged: true
         depends_on:
@@ -50,8 +49,7 @@ services:
             - ${AUTH_LOG_VOLUME}:/home/auth/log:rw
         environment:
             - AUTH_JAVA_OPTS=-Dadmin.email=fh.ooe.mus.rpisec@gmail.com -Xms128m -Xmx200m
-            - RPISEC_VERSION=${RPISEC_VERSION}
-        mem_limit: 200m
+        mem_limit: 256m
         cpu_shares: 4
         depends_on:
             - rpisec-auth-db
@@ -64,7 +62,7 @@ services:
         volumes:
             - ${NGINX_LOG_VOLUME}:/var/log/nginx:rw
             - ${NGINX_CERT_VOLUME}:/cert:ro
-        mem_limit: 64m
+        mem_limit: 128m
         cpu_shares: 4
         ports:
             - 443:443
