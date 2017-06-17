@@ -1,8 +1,6 @@
-FROM library/debian:jessie
+FROM resin/rpi-raspbian:jessie
 MAINTAINER Thomas Herzog <herzog.thomas81@gmail.com>
 
-RUN RUN apt-get update -y && \
-    apt-get install -y oracle-java8-jdk \
-    apt-get autoremove --purge -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# container update and dependency installation
+RUN apt-get update -y && \
+    apt-get install -y oracle-java8-jdk
