@@ -30,9 +30,9 @@ services:
                - VIDEO_GUID=44
                - UID=1000
         volumes:
-            - ${APP_CONF_VOLUME}:/home/rpisec/conf:ro
-            - ${APP_LOG_VOLUME}:/home/rpisec/log:rw
-            - ${APP_IMAGE_VOLUME}:/home/rpisec/image:rw
+            - ${APP_CONF_VOLUME}:/home/app/conf:ro
+            - ${APP_LOG_VOLUME}:/home/app/log:rw
+            - ${APP_IMAGE_VOLUME}:/home/app/image:rw
         environment:
             - APP_JAVA_OPTS=-Xms128m -Xmx200m
             - RPISEC_VERSION=${RPISEC_VERSION}

@@ -13,7 +13,7 @@ ADD auth-service.jar /home/auth/app/auth-service.jar
 
 # switch ownership and make sh executable
 RUN chown auth:auth /home/auth && \
-    chmod +x /home/auth/*.sh && \
+    chmod +x /home/auth/*.sh
 
 # switch to auth user
 USER auth
