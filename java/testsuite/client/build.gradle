@@ -53,7 +53,7 @@ task prepareDockerInfrastructure(dependsOn: [':app:buildFatJar', ':auth:buildFat
 
         def appConfig = System.getProperty("app.config") ?: ""
         def authConfig = System.getProperty("auth.config") ?: ""
-        def firebaseConfig = System.getProperty("firebaseConfig") ?: ""
+        def firebaseConfig = System.getProperty("firebase.config") ?: ""
 
         logger.info("---------------------------------------------------------------------------")
         logger.info("Set JVM Options for configuration")
