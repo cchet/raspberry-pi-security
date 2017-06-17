@@ -9,7 +9,7 @@ buildscript {
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 		classpath "io.spring.gradle:dependency-management-plugin:${springDependencyManagementPluginVersion}"
-		classpath "gradle.plugin.com.palantir.gradle.docker:gradle-docker:${palantirDockerPluginVersion}"
+		//classpath "gradle.plugin.com.palantir.gradle.docker:gradle-docker:${palantirDockerPluginVersion}"
 	}
 }
 
@@ -36,9 +36,9 @@ subprojects {
 		// For dependency spring-test-junit5
 		maven { url 'https://jitpack.io' }
 		// palantir docker-compose-rule is published on bintray
-		maven {
-			url 'https://dl.bintray.com/palantir/releases'
-		}
+		//maven {
+		//	url 'https://dl.bintray.com/palantir/releases'
+		//}
 	}
 
 	clean.doFirst {
@@ -101,7 +101,7 @@ subprojects {
 
 			// Test dependencies
 			dependency "junit:junit:${junit4Version}"
-			dependency "com.palantir.docker.compose:docker-compose-rule-junit4:${palantirDockerComposeJunit4}"
+			//dependency "com.palantir.docker.compose:docker-compose-rule-junit4:${palantirDockerComposeJunit4}"
 			dependency "org.springframework:spring-web:${springWebVersion}"
 		}
 	}
