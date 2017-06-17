@@ -7,6 +7,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
+ * The repository for the {@link User} entity type.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/15/17
  */

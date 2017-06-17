@@ -16,6 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
+ * The custom class for the token grant which requires an assignment between the user and the client device.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 05/12/17
  */

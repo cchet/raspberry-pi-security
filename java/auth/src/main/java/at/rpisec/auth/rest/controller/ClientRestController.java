@@ -12,6 +12,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
+ * This class represents the rest interface for the clients.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/19/17
  */

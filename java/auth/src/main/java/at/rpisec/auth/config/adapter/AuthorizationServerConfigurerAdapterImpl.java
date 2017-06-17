@@ -17,8 +17,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import javax.sql.DataSource;
 
 /**
- * url: https://spring.io/guides/tutorials/spring-boot-oauth2/
- * token
+ * This class is the adaptor for the configuration of the oauth2 server.
  *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/29/17
@@ -38,8 +37,6 @@ public class AuthorizationServerConfigurerAdapterImpl extends AuthorizationServe
     private AuthorizationServerTokenServices authorizationServerTokenServices;
     @Autowired
     private TokenGranter tokenGranter;
-    @Autowired
-    private DataSource dataSource;
     @Autowired
     private JdbcClientDetailsService clientDetailsService;
 

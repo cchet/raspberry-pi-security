@@ -16,6 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 
 /**
+ * The view controller for the security related views.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/21/17
  */

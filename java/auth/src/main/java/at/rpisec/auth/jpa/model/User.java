@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Theis entity represents an registered user.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/14/17
  */

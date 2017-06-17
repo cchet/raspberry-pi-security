@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
+ * This class holds the producers for the web related ebans.
+ *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 05/09/17
  */

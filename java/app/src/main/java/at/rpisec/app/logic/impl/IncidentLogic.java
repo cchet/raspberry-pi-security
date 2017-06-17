@@ -28,6 +28,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -71,6 +72,12 @@ public class IncidentLogic implements IIncidentLogic {
     @Override
     public Task<Void> logIncidentWithImageAsync(byte[] image,
                                                 String extension) {
+        Objects.requireNonNull(image, "Image must be given");
+        Objects.requireNonNull(extension, "Image extension must not be null");
+        if (extension.trim().isEmpty()) {
+            throw new IllegalArgumentException("DeviceId must not be empty");
+        }
+
         log.debug("Logging async reported incident with image");
         final Locale locale = Locale.ENGLISH;
         final String base64Data = Base64.getEncoder().encodeToString(image);

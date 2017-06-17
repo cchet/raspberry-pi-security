@@ -12,6 +12,8 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 /**
+ * This entity represents the client device assigned to a user.
+ *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 05/17/17
  */

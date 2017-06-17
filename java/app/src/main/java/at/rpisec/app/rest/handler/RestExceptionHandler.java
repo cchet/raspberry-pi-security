@@ -1,14 +1,13 @@
 package at.rpisec.app.rest.handler;
 
 import at.rpisec.app.exception.DbEntryAlreadyExistsException;
-import at.rpisec.app.rest.controller.ClientRestController;
 import at.rpisec.app.exception.DbEntryNotFoundException;
+import at.rpisec.app.rest.controller.ClientRestController;
 import at.rpisec.shared.rest.model.ErrorResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.validation.ConstraintViolationException;
 
 /**
- * This class handles the data rest exceptions for the clients.
+ * This class handles the rest related exceptions.
  *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/15/17

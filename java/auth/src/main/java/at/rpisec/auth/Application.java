@@ -25,15 +25,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.Locale;
-
 /**
- * Doc-url: https://github.com/spring-projects/spring-security-oauth/blob/master/docs/oauth2.md
+ * This is the entrypoint for the auth service and holds producer for application specific beans.
  *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/28/17
@@ -75,11 +71,6 @@ public class Application {
         return messageSource;
     }
 
-    @Bean("localeResolver")
-    LocaleResolver produceLocaleResolver() {
-        return new FixedLocaleResolver(Locale.US);
-    }
-
     /**
      * Builds the baseUrl of the hosted application
      *
@@ -95,7 +86,7 @@ public class Application {
 
     @Bean
     @Qualifier("appServer")
-    ApiClient produceAppServerApiClient(final ConfigProperties.RpisecProperties rpisecProperties){
+    ApiClient produceAppServerApiClient(final ConfigProperties.RpisecProperties rpisecProperties) {
         final ApiClient client = new ApiClient();
         client.setUsername(rpisecProperties.getSystemUser());
         client.setPassword(rpisecProperties.getSystemPassword());
@@ -105,7 +96,7 @@ public class Application {
     }
 
     @Bean
-    InternalRestControllerApi produceInternalRestControllerApi(final @Qualifier("appServer") ApiClient client){
+    InternalRestControllerApi produceInternalRestControllerApi(final @Qualifier("appServer") ApiClient client) {
         return new InternalRestControllerApi(client);
     }
 }

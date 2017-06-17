@@ -12,6 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 /**
+ * The global exception handler.
+ *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 06/11/17
  */

@@ -19,15 +19,15 @@ public class ClientDetailsFactory {
     }
 
     /**
-     * Creates a mobile oauth client.
+     * Creates a mobile oauth2 client.
      *
-     * @param clientId
-     * @param clientSecret
-     * @param issuer
-     * @param username
-     * @param device
-     * @param resourceIds
-     * @return
+     * @param clientId     the client id
+     * @param clientSecret the client secret
+     * @param issuer       the issues whoc creates this device
+     * @param username     the username the device is assigned to
+     * @param device       the device name
+     * @param resourceIds  the resource ids the client supports
+     * @return the created oauth2  client details object
      */
     public static ClientDetails createMobileClientDetails(final String clientId,
                                                           final String clientSecret,
@@ -61,12 +61,12 @@ public class ClientDetailsFactory {
     /**
      * Creates a rpisec app server oauth client.
      *
-     * @param clientId
-     * @param clientSecret
-     * @param issuer
-     * @param username
-     * @param resourceIds
-     * @return
+     * @param clientId     the client id
+     * @param clientSecret the client secret
+     * @param issuer       the issuer whoc creates this client
+     * @param username     the username this client is assigned to
+     * @param resourceIds  the resource ids the client supports
+     * @return the created oauth2 client details object
      */
     public static ClientDetails createAppClientDetails(final String clientId,
                                                        final String clientSecret,

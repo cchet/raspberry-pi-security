@@ -5,13 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.resource.ContentVersionStrategy;
 import org.springframework.web.servlet.resource.ResourceResolver;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
-import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
 /**
  * This class configures the web mvc resources.
@@ -23,11 +21,6 @@ public class WebMvcConfigurerAdapterImpl extends WebMvcConfigurerAdapter {
 
     @Autowired
     private ConfigProperties.WebjarProperties webjarProperties;
-
-    @Override
-    public void configureViewResolvers(ViewResolverRegistry registry) {
-        registry.viewResolver(new ThymeleafViewResolver());
-    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -42,25 +35,6 @@ public class WebMvcConfigurerAdapterImpl extends WebMvcConfigurerAdapter {
                 .setCacheControl(CacheControl.empty().cachePublic())
                 .resourceChain(false)
                 .addResolver(createResourceResolver());
-
-        registry.addResourceHandler("/css/**")
-                .addResourceLocations("classpath:/css/")
-                .setCacheControl(CacheControl.empty().cachePublic())
-                .resourceChain(false)
-                .addResolver(createResourceResolver());
-
-        registry.addResourceHandler("/js/**")
-                .addResourceLocations("classpath:/js/")
-                .setCacheControl(CacheControl.empty().cachePublic())
-                .resourceChain(false)
-                .addResolver(createResourceResolver());
-
-        registry.addResourceHandler("/icon/**")
-                .addResourceLocations("classpath:/icon/")
-                .setCacheControl(CacheControl.empty().cachePublic())
-                .resourceChain(false)
-                .addResolver(createResourceResolver());
-
         registry.addResourceHandler("swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
 

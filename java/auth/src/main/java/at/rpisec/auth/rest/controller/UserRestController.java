@@ -11,6 +11,8 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
+ * This class represents the rest interface for the clients regarding user actions.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/19/17
  */

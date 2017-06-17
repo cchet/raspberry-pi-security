@@ -19,6 +19,8 @@ import springfox.documentation.spring.web.plugins.Docket;
 import java.util.Collections;
 
 /**
+ * This class holds the producers for the swagger related beans.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/09/17
  */

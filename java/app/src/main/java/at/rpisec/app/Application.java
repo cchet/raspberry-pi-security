@@ -23,14 +23,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.Locale;
-
+/**
+ * This class is the entrypoint for the app service and holds the producers for the application specific beans.
+ */
 @SpringBootApplication
 @ComponentScan(basePackageClasses = {Application.class, Jsr310JpaConverters.class})
 @EnableWebMvc
@@ -76,11 +75,6 @@ public class Application {
         messageSource.setDefaultEncoding("UTF8");
         messageSource.setCacheSeconds(60 * 60 * 24);
         return messageSource;
-    }
-
-    @Bean("localeResolver")
-    LocaleResolver produceLocaleResolver() {
-        return new FixedLocaleResolver(Locale.US);
     }
 
     /**

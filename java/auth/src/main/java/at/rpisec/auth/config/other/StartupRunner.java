@@ -14,6 +14,8 @@ import org.springframework.security.oauth2.provider.client.JdbcClientDetailsServ
 import java.util.Collections;
 
 /**
+ * The startup runner which creates the administrator user if not already created.
+ *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 05/09/17
  */
@@ -36,6 +38,7 @@ public class StartupRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         log.info("Start command line runner: {}", StartupRunner.class.getName());
+        // create admin is not already present
         if (userLogic.byUsername(SecurityConstants.USER_ADMIN) == null) {
             final String adminEmail = System.getProperty(ConfigProperties.VMOptions.ADMIN_EMAIL);
             if ((adminEmail == null) || (adminEmail.trim().isEmpty())) {
@@ -53,7 +56,7 @@ public class StartupRunner implements CommandLineRunner {
             userLogic.create(admin);
         }
 
-        // Create oauth client for main apps server
+        // Create oauth client for app server
         try {
             clientService.loadClientByClientId(rpisecProperties.getClientId());
         } catch (NoSuchClientException e) {

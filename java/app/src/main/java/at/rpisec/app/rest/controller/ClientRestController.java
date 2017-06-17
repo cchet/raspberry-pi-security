@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 /**
+ * This class represents the rest interface for the clients.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/19/17
  */
@@ -31,7 +33,7 @@ public class ClientRestController {
     private Logger log;
 
     @PutMapping(AppRestConstants.REL_URI_CAPTURE)
-    public void notifyTest() throws IOException {
+    public void capture() throws IOException {
         final byte[] data = IOUtils.toByteArray(Application.class.getResourceAsStream("/giraffe.jpg"));
         incidentLogic.logIncidentWithImageAsync(data, "jpg");
     }

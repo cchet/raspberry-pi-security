@@ -17,7 +17,10 @@ public class ConfigProperties {
     private ConfigProperties() {
     }
 
-    public static final class VMOptions{
+    /**
+     * The necessary vm options
+     */
+    public static final class VMOptions {
 
         public static final String ADMIN_EMAIL = "admin.email";
 
@@ -25,6 +28,9 @@ public class ConfigProperties {
         }
     }
 
+    /**
+     * The supported profiles
+     */
     public static final class SupportedProfiles {
         public static final String PROD = "prod";
         public static final String DEV = "dev";
@@ -32,6 +38,9 @@ public class ConfigProperties {
         public static final String INTEGRATION_TEST = "integrationTest";
     }
 
+    /**
+     * The firebase configuration properties
+     */
     @Component
     @ConfigurationProperties("firebase")
     @Getter
@@ -45,6 +54,9 @@ public class ConfigProperties {
         private String cloudMessagingUrl;
     }
 
+    /**
+     * The webjar configuration properties
+     */
     @Component
     @ConfigurationProperties("webjar")
     @Getter
@@ -57,6 +69,9 @@ public class ConfigProperties {
 
     }
 
+    /**
+     * The rpisec configuration properties
+     */
     @Component
     @ConfigurationProperties("rpisec")
     @Getter

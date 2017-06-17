@@ -5,6 +5,8 @@ import at.rpisec.shared.rest.model.UserDto;
 import java.util.List;
 
 /**
+ * This interface specifies the {@link at.rpisec.auth.jpa.model.User} related business logic.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/17/17
  */
@@ -16,7 +18,7 @@ public interface UserLogic {
      * @param uuid     the uuid identifying the user account
      * @param password the user's password
      * @return the user id
-     * @throws NullPointerException                               if the uuid or the raw password is null
+     * @throws NullPointerException                              if the uuid or the raw password is null
      * @throws at.rpisec.auth.exception.DbEntryNotFoundException if the user could not be found for the given uuid
      */
     Long verifyAccount(String uuid,
@@ -28,7 +30,7 @@ public interface UserLogic {
      * @param username the username of the account to set new password for
      * @param password the user's password
      * @return the user id
-     * @throws NullPointerException                               if the username or the raw password is null
+     * @throws NullPointerException                              if the username or the raw password is null
      * @throws at.rpisec.auth.exception.DbEntryNotFoundException if the user could not be found for the given username
      */
     Long setPassword(String username,
@@ -40,7 +42,7 @@ public interface UserLogic {
      * @param username the user's username
      * @param password the raw password
      * @return true if valid, false otherwise
-     * @throws NullPointerException                               if the username or the raw password is null
+     * @throws NullPointerException                              if the username or the raw password is null
      * @throws at.rpisec.auth.exception.DbEntryNotFoundException if the user could not be found for the given username
      */
     boolean isPasswordValid(String username,

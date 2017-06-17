@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
+ * The custom user details service implementation.
+ *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 05/10/17
  */

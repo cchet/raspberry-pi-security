@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
+ * This class configures the webs ecurity for non oauth2 related uris.
+ *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 05/09/17
  */

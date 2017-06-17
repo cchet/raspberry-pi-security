@@ -1,8 +1,8 @@
 package at.rpisec.app.logic.impl;
 
-import at.rpisec.app.jpa.model.ClientId;
 import at.rpisec.app.exception.DbEntryNotFoundException;
 import at.rpisec.app.jpa.model.Client;
+import at.rpisec.app.jpa.model.ClientId;
 import at.rpisec.app.jpa.repositories.ClientRepository;
 import at.rpisec.app.logic.api.IClientLogic;
 import at.rpisec.shared.rest.constants.SecurityConstants;
@@ -33,6 +33,12 @@ public class ClientLogic implements IClientLogic {
     @Override
     public void register(final String deviceId,
                          final Long userId) {
+        Objects.requireNonNull(deviceId, "The device id must not be null");
+        Objects.requireNonNull(userId, "The device id must not be null");
+        if (deviceId.trim().isEmpty()) {
+            throw new IllegalArgumentException("DeviceId must not be empty");
+        }
+
         final ClientId id = new ClientId(deviceId, userId);
         Client client = clientRepo.findOne(id);
 
@@ -49,6 +55,8 @@ public class ClientLogic implements IClientLogic {
     @Override
     public void unregister(final List<String> deviceIds,
                            final Long userId) {
+        Objects.requireNonNull(deviceIds, "The device id collection must not be null");
+        Objects.requireNonNull(userId, "The device id must not be null");
         deviceIds.stream().map(deviceId -> new ClientId(deviceId, userId)).forEach(clientRepo::delete);
     }
 
@@ -58,6 +66,10 @@ public class ClientLogic implements IClientLogic {
                                  final Long userId) {
         Objects.requireNonNull(deviceId, "Cannot register fcm token for null client id");
         Objects.requireNonNull(token, "Cannot register null fcm token");
+        Objects.requireNonNull(userId, "The device id must not be null");
+        if (deviceId.trim().isEmpty()) {
+            throw new IllegalArgumentException("DeviceId must not be empty");
+        }
 
         Client client = clientRepo.findOne(new ClientId(deviceId, userId));
 

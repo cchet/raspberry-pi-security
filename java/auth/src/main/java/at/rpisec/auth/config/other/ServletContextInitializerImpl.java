@@ -8,6 +8,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 /**
+ * This class configures the servlet context of the hosting server.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 04/23/17
  */

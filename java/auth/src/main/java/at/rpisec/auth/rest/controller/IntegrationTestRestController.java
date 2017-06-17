@@ -35,6 +35,8 @@ import java.util.Base64;
 import java.util.Collections;
 
 /**
+ * This class represents the rest interface for the integration tests which is only active if the 'integrationTest' profile is active.
+ *
  * @author Thomas Herzog <t.herzog@curecomp.com>
  * @since 06/05/17
  */
