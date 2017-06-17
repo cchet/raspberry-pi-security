@@ -1,124 +1,131 @@
 buildscript {
-	repositories {
-		jcenter()
-		mavenCentral()
-		maven {
-			url "http://plugins.gradle.org/m2"
-		}
-	}
-	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-		classpath "io.spring.gradle:dependency-management-plugin:${springDependencyManagementPluginVersion}"
-		classpath "gradle.plugin.com.palantir.gradle.docker:gradle-docker:${palantirDockerPluginVersion}"
-	}
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven {
+            url "http://plugins.gradle.org/m2"
+        }
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath "io.spring.gradle:dependency-management-plugin:${springDependencyManagementPluginVersion}"
+//        classpath "gradle.plugin.com.palantir.gradle.docker:gradle-docker:${palantirDockerPluginVersion}"
+    }
 }
 
-subprojects{ subproject ->
-	if (subproject.name.startsWith("testsuite/client")) {
-		//apply plugin: "com.palantir.docker"
-	}
+def prefix = 'rpisec-'
+
+subprojects { subproject ->
+    if (subproject.name.startsWith("testsuite/client")) {
+        //apply plugin: "com.palantir.docker"
+    }
 }
 
 subprojects {
-	apply plugin: 'java'
-	apply plugin: 'idea'
-	apply plugin: 'io.spring.dependency-management'
-	apply plugin: 'maven-publish'
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'maven-publish'
 
-	version = '0.0.1-SNAPSHOT'
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
-	repositories {
-		mavenLocal()
-		jcenter()
-		mavenCentral()
-		// For dependency spring-test-junit5
-		maven { url 'https://jitpack.io' }
-		// palantir docker-compose-rule is published on bintray
-		maven {
-			url 'https://dl.bintray.com/palantir/releases'
-		}
-	}
+    repositories {
+        mavenLocal()
+        jcenter()
+        mavenCentral()
+        // For dependency spring-test-junit5
+        maven { url 'https://jitpack.io' }
+        // palantir docker-compose-rule is published on bintray
+        maven {
+            url 'https://dl.bintray.com/palantir/releases'
+        }
+    }
 
-	clean.doFirst {
-		project.buildDir.delete()
-	}
+    clean.doFirst {
+        project.buildDir.delete()
+    }
 
-	idea {
-		module {
-			downloadJavadoc = true
-			downloadSources = true
-		}
-	}
+    idea {
+        module {
+            downloadJavadoc = true
+            downloadSources = true
+        }
+    }
 
-	jar {
-		archiveName="${applicationName}-" + project.name.replace('/', '-') + '.jar'
-	}
+    jar {
+        archiveName = prefix + project.name.replace('/', '-') + '.jar'
+    }
 
-	task sourceJar ( type: Jar, dependsOn: classes ) {
-		classifier 'sources'
-		from sourceSets.main.allJava
-	}
+    task sourceJar(type: Jar, dependsOn: classes) {
+        classifier 'sources'
+        from sourceSets.main.allJava
+    }
 
 
-	publishing {
-		publications {
-			maven(MavenPublication) {
-				groupId "at.${applicationName}"
-				artifactId jar.archiveName.replace(".jar","")
-				version project.version
-				from components.java
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId "at."  +prefix.replace("-","")
+                artifactId jar.archiveName.replace(".jar", "")
+                version project.version
+                from components.java
 
-				artifact sourceJar {
-					sourceJar
-				}
-			}
-		}
-	}
+                artifact sourceJar {
+                    sourceJar
+                }
+            }
+        }
+    }
 
-	dependencies {
-		compileOnly ("org.projectlombok:lombok:${lombokVersion}")
-	}
+    dependencies {
+        compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    }
 
-	dependencyManagement {
-		dependencies {
-			dependency "com.h2database:h2:${h2DatabaseVersion}"
-			dependency "org.postgresql:postgresql:${postgresDatabaseVersion}"
-			dependency "io.springfox:springfox-swagger2:${springfoxSwaggerVersion}"
-			dependency "io.springfox:springfox-swagger-ui:${swaggerUiVersion}"
-			dependency "io.springfox:springfox-bean-validators:${springfoxBeanValidatorsVersion}"
-			dependency "com.google.firebase:firebase-admin:${firebaseAdminVersion}"
-			dependency "org.apache.commons:commons-io:${commonsIoVersion}"
-			dependency "ma.glasnost.orika:orika-core:${orikaVersion}"
-			dependency "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonJsr310Version}"
-			dependency "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
-			dependency "com.pi4j:pi4j-core:${pi4jVersion}"
-			dependency "org.webjars:bootstrap:${webjarsBootstrapVersion}"
-			dependency "com.github.sbrannen:spring-test-junit5:${sbrannenSpringJunit5}"
-			dependency "org.slf4j:slf4j-api:${log4jVersion}"
-			dependency "org.slf4j:slf4j-simple:${log4jVersion}"
+    dependencyManagement {
+        dependencies {
+            dependency "com.h2database:h2:${h2DatabaseVersion}"
+            dependency "org.postgresql:postgresql:${postgresDatabaseVersion}"
+            dependency "io.springfox:springfox-swagger2:${springfoxSwaggerVersion}"
+            dependency "io.springfox:springfox-swagger-ui:${swaggerUiVersion}"
+            dependency "io.springfox:springfox-bean-validators:${springfoxBeanValidatorsVersion}"
+            dependency "com.google.firebase:firebase-admin:${firebaseAdminVersion}"
+            dependency "org.apache.commons:commons-io:${commonsIoVersion}"
+            dependency "ma.glasnost.orika:orika-core:${orikaVersion}"
+            dependency "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonJsr310Version}"
+            dependency "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
+            dependency "com.pi4j:pi4j-core:${pi4jVersion}"
+            dependency "org.webjars:bootstrap:${webjarsBootstrapVersion}"
+            dependency "com.github.sbrannen:spring-test-junit5:${sbrannenSpringJunit5}"
+            dependency "org.slf4j:slf4j-api:${log4jVersion}"
+            dependency "org.slf4j:slf4j-simple:${log4jVersion}"
 
-			// Test dependencies
-			dependency "junit:junit:${junit4Version}"
-			dependency "com.palantir.docker.compose:docker-compose-rule-junit4:${palantirDockerComposeJunit4}"
-			dependency "org.springframework:spring-web:${springWebVersion}"
-		}
-	}
+            // Test dependencies
+            dependency "junit:junit:${junit4Version}"
+            dependency "com.palantir.docker.compose:docker-compose-rule-junit4:${palantirDockerComposeJunit4}"
+            dependency "org.springframework:spring-web:${springWebVersion}"
+        }
+    }
 }
 
-task buildAndPublishAll(type: GradleBuild){
-	buildFile = 'build.gradle'
-	tasks = [':app:jar',
-			 ':app:publishToMavenLocal',
-			 ':auth:jar',
-			 ':auth:publishToMavenLocal',
-			 ':shared:jar',
-			 ':shared:publishToMavenLocal',
-			 ':sensor/api:jar',
-			 ':sensor/impl:publishToMavenLocal',
-			 ':swagger/client/app:jar',
-			 ':swagger/client/app:publishToMavenLocal',
-			 ':swagger/client/auth:jar',
-			 ':swagger/client/auth:publishToMavenLocal']
+task publishAll(type: GradleBuild){
+    buildFile = 'build.gradle'
+    tasks = [':shared:publishToMavenLocal',
+             ':sensor/impl:publishToMavenLocal',
+             ':swagger/client/app:publishToMavenLocal',
+             ':swagger/client/auth:publishToMavenLocal']
+}
+
+task buildAndPublishAll() {
+    doLast {
+        project(':app').tasks.buildFatJar.execute()
+        project(':auth').tasks.buildFatJar.execute()
+        project(':shared').tasks.jar.execute()
+        project(':sensor/api').tasks.jar.execute()
+        project(':sensor/impl').tasks.jar.execute()
+        project(':swagger/client/app').tasks.jar.execute()
+        project(':swagger/client/auth').tasks.jar.execute()
+        project.tasks.publishAll.execute()
+    }
 }
