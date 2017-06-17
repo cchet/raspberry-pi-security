@@ -24,6 +24,7 @@ services:
             context: ./auth
         environment:
             - OAUTH_JAVA_OPTS=-Xms128m -Xmx256m
+            - WAIT_INTERVAL=5
         volumes:
             - ./volumes/log:/home/user/log
         mem_limit: 256m
@@ -37,6 +38,7 @@ services:
             context: ./app
         environment:
             - APP_JAVA_OPTS=-Xms128m -Xmx256m
+            - WAIT_INTERVAL=5
         volumes:
             - ./volumes/log:/home/user/log
         mem_limit: 256m
