@@ -22,9 +22,9 @@ This section deals with the docker-infrastructure hosted service.
 | Service name             | Usage
 | rpisec-app               | The service hosting the __rpisec-app__ which hosts the sesnor application and pushes the notifications to the client devices interacts with the firebase database
 | rpisec-app-db            | The service hosting the postgres database used by the __rpisec-app__ service
-| rpisec-oauth             | The service hosting the spring boot authentication server for authentication and user management
-| rpisec-oauth-db          | The service hosting the postgres database used by the __rpisec-oauth__ service
-| rpisec-nginx             | The service hosting the reverse proxy for accessing the __rpisec-app__ and __rpisec-oauth__ services
+| rpisec-auth             | The service hosting the spring boot authentication server for authentication and user management
+| rpisec-auth-db          | The service hosting the postgres database used by the __rpisec-auth__ service
+| rpisec-nginx             | The service hosting the reverse proxy for accessing the __rpisec-app__ and __rpisec-auth__ services
 |======================
 
 # Configuration
@@ -35,15 +35,13 @@ The following tables shows the necessary environment variables, their usage and 
 [options="header"]
 |==============================
 | Variable             | Value                       | Usage                                                   | Location
-| APP_APP_VOLUME       | ~/docker-volumes/app/app    | mapped volume for the rpisec-app jars                   | .env
 | APP_CONF_VOLUME      | ~/docker-volumes/app/conf   | mapped volume for the rpisec-app configurations         | .env
 | APP_LOG_VOLUME       | ~/docker-volumes/app/log    | mapped volume for the rpisec-app logs                   | .env
 | APP_IMAGE_VOLUME     | ~/docker-volumes/app/image  | mapped volume for the rpisec-app incident images        | .env
 | APP_DB_VOLUME        | ~/docker-volumes/app/db     | mapped volume for the rpisec-app database               | .env
-| OAUTH_APP_VOLUME     | ~/docker-volumes/oauth/app  | mapped volume for the rpisec-oauth jars                 | .env
-| OAUTH_CONF_VOLUME    | ~/docker-volumes/oauth/conf | mapped volume for the rpisec-oauth configuration        | .env
-| OAUTH_LOG_VOLUME     | ~/docker-volumes/oauth/log  | mapped volume for the rpisec-oauth logs                 | .env
-| OAUTH_DB_VOLUME      | ~/docker-volumes/oauth/db   | mapped volume for the rpisec-oauth database             | .env
+| AUTH_CONF_VOLUME    | ~/docker-volumes/auth/conf | mapped volume for the rpisec-auth configuration        | .env
+| AUTH_LOG_VOLUME     | ~/docker-volumes/auth/log  | mapped volume for the rpisec-auth logs                 | .env
+| AUTH_DB_VOLUME      | ~/docker-volumes/auth/db   | mapped volume for the rpisec-auth database             | .env
 | NGINX_LOG_VOLUME     | ~/docker-volumes/nginx/logs | mapped volume for the nginx logs                        | .env
 | NGINX_CERT_VOLUME    | ~/docker-volumes/nginx/cert | mapped volume for the nginx used certs                  | .env
 | RPISEC_VERSION       | 0.0.1-SNAPSHOT              | the current version of the microservice infrastructure  | ~/.bashrc
@@ -56,20 +54,18 @@ This sections deals with the preparations for the docker infrastructure. +
 - Set environment variable __DOCKER_INFRASTRUCTURE_HOME__ in __.bashrc__ to point to __docker-compose.yml__ direcotry
 - Set environment variable __RPISEC_VERSION__ in __.bashrc__ to define application version
 - Create volume directories defined by the __.env__ contained environment variables in the docker executing user's home
-- Define the configuration file __app-external-application.properties__ and place it in the directory defined by the environment variable __APP_CONF_VOLUME__
-- Define the configuration file __oauth-external-application.properties__ and place it in the directory defined by the environment variable __OAUTH_CONF_VOLUME__
+- Define the configuration file __app.properties__ and place it in the directory defined by the environment variable __APP_CONF_VOLUME__
+- Define the configuration file __auth.properties__ and place it in the directory defined by the environment variable __AUTH_CONF_VOLUME__
 - Get firebase configuration file __firebase-account.json__ from firebase console and place it in the directory defined by the environment variable __APP_CONF_VOLUME__
-- Get firebase configuration file __firebase-account.json__ from firebase console and place it in the directory defined by the environment variable __OAUTH_CONF_VOLUME__
+- Get firebase configuration file __firebase-account.json__ from firebase console and place it in the directory defined by the environment variable __AUTH_CONF_VOLUME__
 - Place a private and public certificate __(privatekey.pem, cert.pem)__ in the directory defined by the environment variable __NGINX_CERT_VOLUME__
-- Deploy __rpisec-app.jar__ to directory defined by the environment variable __APP_APP_VOLUME__
-- Deploy __rpisec-oauth.jar__ to directory defined by the environment variable __OAUTH_APP_VOLUME__
 - Create the __rpisec-base__ image via `./util.sh rebuildRpisecBase` in the directory __*/host/docker__ +
   __This could take a while because the raspberry pi binary sources are cloned from git and build for the specific environment__
 
 # First start
 This section deals with the first start of the docker infrastructure. +
 Therefore that the databases are created the first time and the __postgres__ images return ok state in the meaning of docker, but do create
-the database afterwards, it could be that the __rpisec-app__ and __rpisec-oauth__ service fail because the databases are not ready. +
+the database afterwards, it could be that the __rpisec-app__ and __rpisec-auth__ service fail because the databases are not ready. +
 This could only occur when the database are getting initialized the first time, so restart the infrastructure and everything will work.
 
 # Start stop infrastructure
