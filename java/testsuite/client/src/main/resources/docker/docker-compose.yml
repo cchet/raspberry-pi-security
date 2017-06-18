@@ -25,9 +25,7 @@ services:
         environment:
             - OAUTH_JAVA_OPTS=-Xms128m -Xmx256m
             - WAIT_INTERVAL=5
-        volumes:
-            - ./volumes/log:/home/user/log
-        mem_limit: 256m
+        mem_limit: 396m
         cpu_shares: 2
         depends_on:
             - rpisec-test-auth-db
@@ -39,9 +37,7 @@ services:
         environment:
             - APP_JAVA_OPTS=-Xms128m -Xmx256m
             - WAIT_INTERVAL=5
-        volumes:
-            - ./volumes/log:/home/user/log
-        mem_limit: 256m
+        mem_limit: 396m
         cpu_shares: 2
         depends_on:
             - rpisec-test-app-db
@@ -49,8 +45,6 @@ services:
         container_name: rpisec-test-nginx
         build:
             context: ./nginx
-        volumes:
-            - ./volumes/log:/var/log/nginx/
         mem_limit: 256m
         cpu_shares: 2
         ports:

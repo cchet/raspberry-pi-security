@@ -14,8 +14,9 @@ RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | te
 
 
 RUN adduser --disabled-password --gecos "" user && \
-    mkdir ~/conf && \
-    mkdir ~/log
+    mkdir -p /home/user/app && \
+    mkdir -p /home/user/conf && \
+    mkdir -p /home/user/log/logs
 
 ADD docker-entrypoint.sh /home/user/docker-entrypoint.sh
 ADD app.jar ./home/user/app/app.jar
