@@ -19,6 +19,17 @@ import org.junit.runners.Suite;
 })
 public class AuthRestApiTestSuite {
 
+    private static final int TIMEOUT;
+
+    static {
+        // If ony pi then we need much more time for waiting.
+        if (System.getProperty("pi") != null) {
+            TIMEOUT = 900000;
+        } else {
+            TIMEOUT = 120000;
+        }
+    }
+
     @ClassRule
     public static final DockerComposeRule dockerRule = DockerComposeRule.builder()
                                                                         .saveLogsTo("build/docker-logs")
@@ -34,7 +45,7 @@ public class AuthRestApiTestSuite {
                                                                                            HealthChecks.toRespond2xxOverHttp(8080,
                                                                                                                              (port) -> port.inFormat(
                                                                                                                                      "http://$HOST:$EXTERNAL_PORT/rpisec-auth/test/alive")))
-                                                                        .nativeServiceHealthCheckTimeout(new Duration(600000))
+                                                                        .nativeServiceHealthCheckTimeout(new Duration(TIMEOUT))
                                                                         .build();
 
 }
