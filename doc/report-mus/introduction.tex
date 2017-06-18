@@ -12,19 +12,36 @@ Da es sich um eine Sicherheitsanwendung handelt, soll die Benutzerverwaltung sow
 Dieser Abschnitt behandelt die Funktionsweise der Applikation \emph{RPISec}. Die Abbildung \ref{fig:image-system-structure} zeigt den Systemaufbau der \emph{RPISec} Applikation. 
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=0.6]{\imageDir/Infrastructure.jpg}
+	\includegraphics[scale=0.7]{\imageDir/Infrastructure.jpg}
 	\caption{Systemaufbau der \emph{RPISec} Applikation}
 	\label{fig:image-system-structure}
 \end{figure}
 \ \newpage
+
+\subsubsection{Zugangsbestätigung eines neuen Benutzers}
+Beim Start des \emph{Auth-Service} wird ein Administrator Benutzer erstellt, der über eine E-Mail dazu aufgefordert wird, seinen Zugang zu aktivieren, in dem er ein Password für den Benutzer vergeben wird.
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{\imageDir/view-verify-account.JPG}
+	\caption{Zugangsaktivierung}
+	\label{fig:image-veriy-account}
+\end{figure}
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{\imageDir/view-verified-account.JPG}
+	\caption{Bestätigung der Aktivierung}
+	\label{fig:image-veriied-account}
+\end{figure}
+\subsubsection{\emph{Client Login}}
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.55]{\imageDir/sequence-client-login.jpg}
 	\caption{Sequenzdiagramm des Logins über einen mobilen \emph{Client}}
 	\label{fig:image-sequence-client-login}
 \end{figure}
-\ \newline
 Die Abbildung \ref{fig:image-sequence-client-login} zeigt das Sequenzdiagramm das den erfolgreichen Ablauf des Logins eines Benutzers über ein Android Gerät beschreibt. Im Zuge des Logins wird das mobile Endgerät am Authentifizierungsservice und Applikationsservice registriert und für jeden Login ein neuer \emph{OAuth2 Client} angelegt und gegebenenfalls der alte \emph{OAuth2 Client} für dieses Endgerät gelöscht. Bezüglich OAuth2 wurde dieser Ansatz gewählt, da mit der \emph{Client}-Applikation keine \emph{Oauth2 Client} Zugangsdaten ausgeliefert sollen.
+
+\subsubsection{Sicherheitsvorfall melden}
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.55]{\imageDir/sequence-incident.jpg}
@@ -32,8 +49,9 @@ Die Abbildung \ref{fig:image-sequence-client-login} zeigt das Sequenzdiagramm da
 	\label{fig:image-sequence-incident}
 \end{figure}
 \ \newline
-Die Abbildung \ref{fig:image-sequence-incident} zeigt das Sequenzdiagramm für das Behandeln eines Sicherheitsvorfalls, der von der Sensorapplikation erkannt wurde und dem Applikationsservice mitgeteilt wurde. 
-\ \newpage 
+Die Abbildung \ref{fig:image-sequence-incident} zeigt das Sequenzdiagramm für das Behandeln eines Sicherheitsvorfalls, der von der Sensorapplikation erkannt und dem Applikationsservice mitgeteilt wurde. Der Vorfall wird über \emph{Firebase} an die \emph{Clients} gemeldet, wobei einerseits eine \emph{Cloud Message} an die \emph{Clients} versendet wird, sowie das gemachte Bild in der \emph{Firebase} JSON-Datenbank den \emph{Clients} zum Download zur Verfügung gestellt wird.  
+ 
+\subsubsection{\emph{Client} Nachrichtenempfang}
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.55]{\imageDir/sequence-client-notification.jpg}

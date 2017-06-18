@@ -15,7 +15,8 @@
 \usepackage[left=1.0in, right=1.0in, top=1.0in, bottom=1.0in]{geometry} % for custom page layout
 
 % Title Page
-\title{RPISec OAuth2 und Docker Integrationstestsurity App{Thonas Herzog}
+\title{OAuth2 und Docker Integrationstests für RPISec}
+\author{Thonas Herzog}
 
 \newcommand{\imageDir}{../../images}
 \newcommand{\dataDir}{../../data}
@@ -81,8 +82,8 @@ Diese Dateien sind im Verzeichnis \emph{$/doc/config$} der Abgabe enthalten, wob
 \newline
 \newline
 In den folgenden Abschnitten wird beschrieben, wie die Services gebaut und gestartet werden können, wobei die Befehle im Wurzelverzeichnis \emph{($/java$)} der Projektstruktur ausgeführt werden müssen.
-\newpage
-section{Auth-Service}
+
+\section{Auth-Service}
 Mit den folgenden \emph{Gradle} Befehl kann der \emph{Auth-Service} über die Kommandozeile gestartet werden. Um den Service in einer IDE zu starten kann eine \emph{Run Configuration} spezifisch für die IDE eingerichtet werden, die alle notwendigen \emph{Gradle} Kommandos und VM-Options definiert.
 \begin{minted}{bash}
 .\gradlew :auth:buildFatJar :auth:bootRun
@@ -131,7 +132,7 @@ Mit den folgenden \emph{Gradle} Befehl können die Integrationstest über die Ko
           -Dplatform=integrationTest
           -Dapp.config=<fully_qualified_path_to_app_test_properties> 
           -Dauth.config=<fully_qualified_path_to_auth_test_properties> 
-          -DfirebaseConfig=<fully_qualified_path_to_firebase_json_file>
+          -Dfirebase.config=<fully_qualified_path_to_firebase_json_file>
 \end{minted}
 {\renewcommand{\arraystretch}{2}%
 \begin{center}
@@ -161,7 +162,6 @@ Um die \emph{OAuth2-Clients} auf Benutzer einzuschränken wurden einige Klassen 
 Nachdem am \emph{Auth-Service} mobile \emph{Clients} authentifiziert werden, wird für diese \emph{Clients} der \emph{OAuth2-Password-Flow} angewendet. Da es vermieden werden soll, mit  der \emph{Client}-Applikation \emph{Client-Credentials} mit auszuliefern, wird bei jedem \emph{Login} eines mobilen \emph{Clients} ein neuer \emph{OAuth2-Client} für diesen mobilen \emph{Client}  angelegt und gegebenenfalls ein bereits existierender gelöscht, damit werden bei jedem Login neue \emph{Client-Credentials} für die mobilen \emph{Clients} generiert.
 
 \subsection{Benutzerverwaltung}
-\newpage
 ch um eine Sicherheitsanwendung handelt wollen wir keine Benutzerverwaltung von anderen Services nutzen, sondern wollen die Benutzer selbst verwalten, was im \emph{Auth-Service} implementiert wurde. Es wurden \emph{JPA-Entitäten} \emph{User} und \emph{ClientDevice} implementiert, wobei \emph{ClientDevice} die Referenz auf den erstellten OAuth2-\emph{Clients} für den Benutzer hält.
 
 \subsubsection{\emph{Client} Login}
@@ -181,8 +181,7 @@ Die Abbildung \ref{fig:image-sequence-client-login} zeigt den Ablauf des Logins 
 \ \newline
 Das Registrieren des Clients vom \emph{Auth-Service} am \emph{App-Service} erfolgt über \emph{HTTP Basic Auth} geschützte Schnittstelle, die nur für einen Systembenutzer nutzbar ist, der dem \emph{Auth-Service} bekannt ist.
 
-\newpage
-ection{\emph{Client} \emph{Firebase Cloud Messaging (FCM) Token} Registrierung}
+\section{\emph{Client} \emph{Firebase Cloud Messaging (FCM) Token} Registrierung}
 Die Abbildung \ref{fig:image-sequence-fcm-token-registration} zeigt den Ablauf der Registrierung des FCM-Tokens am \emph{Auth-Service}, der wiederum vom \emph{Auth-Service} amd \emph{App-service} registriert wird. Die Registrierung über den \emph{Auth-Service} wurde gewählt, da dieser Service die Benutzer und deren Endgeräte verwaltet. Das Registrieren des FCM-Tokens am \emph{App-Service} erfolgt über eine \emph{HTTP BasicAuth} geschützte Schnittstelle, die nur für einen Systembenutzer nutzbar ist, der dem \emph{Auth-Service} bekannt ist. 
 \begin{figure}[h]
 	\centering
