@@ -15,14 +15,26 @@ dependencies {
 
 // add network sve_net for testing
 task prepareEnvironment(type: Exec) {
-    executable "docker"
-    args "network", "create", "${networkName}"
+    try {
+        executable "docker"
+        args "network", "create", "${networkName}"
+    }
+    catch(e)
+    {
+        println 'network exists alread...'
+    }
 }
 
 // remove network sve_net after testing
 task cleanupEnvironment(type: Exec) {
-    executable "docker"
-    args "network", "rm", "${networkName}"
+    try {
+        executable "docker"
+        args "network", "rm", "${networkName}"
+    }
+    catch(e)
+    {
+        println 'network does not exists ...'
+    }
 }
 
 test {
