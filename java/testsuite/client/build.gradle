@@ -19,7 +19,7 @@ task prepareEnvironment(type: Exec) {
         executable "docker"
         args "network", "create", "${networkName}"
     }
-    catch(e)
+    catch(org.gradle.process.internal.ExecException e)
     {
         println 'network exists alread...'
     }
@@ -31,8 +31,7 @@ task cleanupEnvironment(type: Exec) {
         executable "docker"
         args "network", "rm", "${networkName}"
     }
-    catch(e)
-    {
+    catch(org.gradle.process.internal.ExecException e) {
         println 'network does not exists ...'
     }
 }
@@ -45,8 +44,14 @@ test {
         includeTestsMatching '*.*Suite'
     }
     doFirst {
-        if(!System.getProperty("jenkins"))
-            prepareEnvironment.execute()
+        if(!System.getProperty("jenkins")) {
+            try {
+                prepareEnvironment.execute()
+            }
+            catch(TaskExecutionException e) {
+                println "ignore exception - it caused from docker because of already existing network '${networkName}'"
+            }
+        }
 
         // Set environment variables if executed on a windows system
         if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
@@ -59,8 +64,14 @@ test {
         }
     }
     doLast {
-        if(!System.getProperty("jenkins"))
-            cleanupEnvironment.execute()
+        if(!System.getProperty("jenkins")) {
+            try {
+                cleanupEnvironment.execute()
+            }
+            catch(TaskExecutionException e) {
+                println "ignore exception - it caused from docker because of not existing network '${networkName}'"
+            }
+        }
     }
 }
 
