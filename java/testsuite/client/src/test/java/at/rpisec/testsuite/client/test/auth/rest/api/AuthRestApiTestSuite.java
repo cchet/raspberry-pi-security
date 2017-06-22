@@ -63,9 +63,9 @@ public class AuthRestApiTestSuite {
 
     private static HealthCheck<Container> createHealthCheckForAuthJenkins() {
         return (container) -> {
-            log.debug("Waiting for auth-service to become healthy");
+            log.debug("Waiting for auth-service to become healthy: {}", String.format("http://%s:9080/rpisec-auth/test/alive", NGINX_HOST));
             try {
-                (new RestTemplate()).getForEntity(String.format("http://%s:9080/rpisec-app/test/alive", NGINX_HOST), Void.class);
+                (new RestTemplate()).getForEntity(String.format("http://%s:9080/rpisec-auth/test/alive", NGINX_HOST), Void.class);
                 return SuccessOrFailure.success();
             } catch (RestClientException e) {
                 return SuccessOrFailure.failure("Auth-service not ready yet: "+e.getMessage());
@@ -75,7 +75,7 @@ public class AuthRestApiTestSuite {
 
     private static HealthCheck<Container> createHealthCheckForAppJenkins() {
         return (container) -> {
-            log.debug("Waiting for app-service to become healthy");
+            log.debug("Waiting for app-service to become healthy: {}", String.format("http://%s:9080/rpisec-app/test/alive", NGINX_HOST));
             try {
                 (new RestTemplate()).getForEntity(String.format("http://%s:9080/rpisec-app/test/alive", NGINX_HOST), Void.class);
                 return SuccessOrFailure.success();

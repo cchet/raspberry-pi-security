@@ -45,7 +45,8 @@ test {
         includeTestsMatching '*.*Suite'
     }
     doFirst {
-        prepareEnvironment.execute()
+        if(!System.getProperty("jenkins"))
+            prepareEnvironment.execute()
 
         // Set environment variables if executed on a windows system
         if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
@@ -58,7 +59,8 @@ test {
         }
     }
     doLast {
-        cleanupEnvironment.execute()
+        if(!System.getProperty("jenkins"))
+            cleanupEnvironment.execute()
     }
 }
 
