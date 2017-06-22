@@ -9,6 +9,8 @@ services:
             - POSTGRES_DATABASE=rpisec-auth
         mem_limit: 128m
         cpu_shares: 2
+        networks:
+            - sve_net
     rpisec-test-app-db:
         container_name: rpisec-test-app-db
         image: postgres:9.6
@@ -18,34 +20,40 @@ services:
             - POSTGRES_DATABASE=rpisec-app
         mem_limit: 128m
         cpu_shares: 2
+        networks:
+            - sve_net
     rpisec-test-auth:
         container_name: rpisec-test-auth
         build:
             context: ./auth
         environment:
-            - OAUTH_JAVA_OPTS=-Xms128m -Xmx256m
+            - OAUTH_JAVA_OPTS=-Xms128m -Xmx512m
             - WAIT_INTERVAL=5
-        mem_limit: 396m
+        mem_limit: 1024m
         cpu_shares: 2
         depends_on:
             - rpisec-test-auth-db
             - rpisec-test-app
+        networks:
+            - sve_net
     rpisec-test-app:
         container_name: rpisec-test-app
         build:
             context: ./app
         environment:
-            - APP_JAVA_OPTS=-Xms128m -Xmx256m
+            - APP_JAVA_OPTS=-Xms128m -Xmx512m
             - WAIT_INTERVAL=5
-        mem_limit: 396m
+        mem_limit: 1024m
         cpu_shares: 2
         depends_on:
             - rpisec-test-app-db
+        networks:
+            - sve_net
     rpisec-test-nginx:
         container_name: rpisec-test-nginx
         build:
             context: ./nginx
-        mem_limit: 256m
+        mem_limit: 128m
         cpu_shares: 2
         ports:
             - 9080:8080
@@ -54,3 +62,8 @@ services:
             - rpisec-test-auth-db
             - rpisec-test-app
             - rpisec-test-auth
+        networks:
+            - sve_net
+networks:
+  sve_net:
+    external: true

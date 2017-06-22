@@ -23,8 +23,7 @@ import java.util.Objects;
  */
 public class BaseIntegrationTest {
 
-    //protected static final String AUTH_BASE = "http://localhost:9080/rpisec-auth";
-	protected static final String AUTH_BASE = "http://" + System.getProperty("nginx.host", "localhost") + ":9080/rpisec-auth";
+	protected static final String AUTH_BASE = "http://" + getSystemPropertyOrDefaultValue("nginx.host", "localhost") + ":9080/rpisec-auth";
 	
     protected static final String AUTH_REST_SYSTEM_API_BASE = AUTH_BASE + "/test";
 
@@ -91,5 +90,15 @@ public class BaseIntegrationTest {
         });
 
         return template;
+    }
+
+    private static String getSystemPropertyOrDefaultValue(final String property, final String defaultValue)
+    {
+        final String tmp = System.getProperty(property);
+
+        if(tmp == null || tmp.trim().isEmpty())
+            return defaultValue != null ? defaultValue : "localhost";
+
+        return tmp;
     }
 }

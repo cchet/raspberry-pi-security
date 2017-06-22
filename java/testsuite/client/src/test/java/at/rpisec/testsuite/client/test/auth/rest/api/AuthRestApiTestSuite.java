@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,8 +29,13 @@ import org.springframework.web.client.RestTemplate;
 })
 public class AuthRestApiTestSuite {
 
+    private static final String NGINX_HOST = System.getProperty("nginx.host", "localhost");
     private static final int TIMEOUT = Integer.valueOf(System.getProperty("timeout", "120000"));
     private static final boolean jenkinsTest = Boolean.valueOf(System.getProperty("jenkins", "false"));
+
+    //networks:
+    //sve_net:
+    //external: true
 
     private static final Logger log = LoggerFactory.getLogger(AuthRestApiTestSuite.class);
 
@@ -59,10 +65,10 @@ public class AuthRestApiTestSuite {
         return (container) -> {
             log.debug("Waiting for auth-service to become healthy");
             try {
-                (new RestTemplate()).getForEntity("http://local_machine:9080/rpisec-auth/test/alive", null, Void.class);
+                (new RestTemplate()).getForEntity(String.format("http://%s:9080/rpisec-app/test/alive", NGINX_HOST), Void.class);
                 return SuccessOrFailure.success();
             } catch (RestClientException e) {
-                return SuccessOrFailure.failure("Auth app not ready yet");
+                return SuccessOrFailure.failure("Auth-service not ready yet: "+e.getMessage());
             }
         };
     }
@@ -71,19 +77,21 @@ public class AuthRestApiTestSuite {
         return (container) -> {
             log.debug("Waiting for app-service to become healthy");
             try {
-                (new RestTemplate()).getForEntity("http://local_machine:9080/rpisec-app/test/alive", null, Void.class);
+                (new RestTemplate()).getForEntity(String.format("http://%s:9080/rpisec-app/test/alive", NGINX_HOST), Void.class);
                 return SuccessOrFailure.success();
             } catch (RestClientException e) {
-                return SuccessOrFailure.failure("Auth app not ready yet");
+                return SuccessOrFailure.failure("App-service not ready yet: "+ e.getMessage());
             }
         };
     }
 
     private static HealthCheck<Container> createHealthCheckForAppLocal() {
+        log.debug("Waiting for local app-service to become healthy: {}", String.format("http://%s:9080/rpisec-app/test/alive", NGINX_HOST));
         return HealthChecks.toRespond2xxOverHttp(8080, (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT/rpisec-app/test/alive"));
     }
 
     private static HealthCheck<Container> createHealthCheckForAuthLocal() {
+        log.debug("Waiting for local auth-service to become healthy: {}", String.format("http://%s:9080/rpisec-auth/test/alive", NGINX_HOST));
         return HealthChecks.toRespond2xxOverHttp(8080, (port) -> port.inFormat("http://$HOST:$EXTERNAL_PORT/rpisec-auth/test/alive"));
     }
 }

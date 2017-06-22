@@ -1,6 +1,7 @@
 def dockerRootLocation = project.buildDir.absolutePath + "/docker"
 def dockerAppLocation = dockerRootLocation + "/app"
 def dockerAuthLocation = dockerRootLocation + "/auth"
+def networkName = "sve_net"
 
 dependencies {
     testCompile 'org.springframework:spring-web'
@@ -12,12 +13,28 @@ dependencies {
     testCompile project(':swagger/client/auth')
 }
 
+// add network sve_net for testing
+task prepareEnvironment(type: Exec) {
+    executable "docker"
+    args "network", "create", "${networkName}"
+}
+
+// remove network sve_net after testing
+task cleanupEnvironment(type: Exec) {
+    executable "docker"
+    args "network", "rm", "${networkName}"
+}
+
 test {
     systemProperty "jenkins", System.getProperty("jenkins")
+    systemProperty "nginx.host", System.getProperty("nginx.host")
+
     filter {
         includeTestsMatching '*.*Suite'
     }
     doFirst {
+        prepareEnvironment.execute()
+
         // Set environment variables if executed on a windows system
         if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             if (System.getenv('DOCKER_COMPOSE_LOCATION') == null) {
@@ -27,6 +44,9 @@ test {
                 environment('DOCKER_LOCATION', 'C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe')
             }
         }
+    }
+    doLast {
+        cleanupEnvironment.execute()
     }
 }
 
