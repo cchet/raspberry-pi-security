@@ -12,8 +12,6 @@ buildscript {
 	}
 }
 
-def prefix = 'rpisec-'
-
 subprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
@@ -48,19 +46,19 @@ subprojects {
     }
 
     jar {
-        archiveName = prefix + project.name.replace('/', '-') + '.jar'
+        archiveName = "rpisec-" + project.name.replace('/', '-') + '-' + version + '.jar'
     }
 
     task sourceJar(type: Jar, dependsOn: classes) {
+        archiveName = jar.archiveName.replace('.jar','-') + 'sources.jar'
         classifier 'sources'
         from sourceSets.main.allJava
     }
 
-
     publishing {
         publications {
             maven(MavenPublication) {
-                groupId "at."  +prefix.replace("-","")
+                groupId "at.rpisec"
                 artifactId jar.archiveName.replace(".jar", "")
                 version project.version
                 from components.java
