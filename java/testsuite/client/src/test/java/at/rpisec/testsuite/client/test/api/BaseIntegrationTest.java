@@ -23,7 +23,9 @@ import java.util.Objects;
  */
 public class BaseIntegrationTest {
 
-    protected static final String AUTH_BASE = "http://localhost:9080/rpisec-auth";
+    //protected static final String AUTH_BASE = "http://localhost:9080/rpisec-auth";
+	protected static final String AUTH_BASE = "http://" + System.getProperty("nginx.host", "localhost") + ":9080/rpisec-auth";
+	
     protected static final String AUTH_REST_SYSTEM_API_BASE = AUTH_BASE + "/test";
 
     @Before
