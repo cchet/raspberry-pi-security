@@ -23,9 +23,13 @@ import java.util.Objects;
  */
 public class BaseIntegrationTest {
 
-    //protected static final String AUTH_BASE = "http://localhost:9080/rpisec-auth";
-	protected static final String AUTH_BASE = "http://" + System.getProperty("nginx.host", "localhost") + ":9080/rpisec-auth";
-	
+    private static final boolean jenkinsTest = Boolean.valueOf(System.getProperty("jenkins", "false"));
+    protected static final String AUTH_BASE;
+
+    static {
+        AUTH_BASE = "http://" + (jenkinsTest ? "local_machine" : "localhost") + ":9080/rpisec-auth";
+    }
+
     protected static final String AUTH_REST_SYSTEM_API_BASE = AUTH_BASE + "/test";
 
     @Before
@@ -65,7 +69,7 @@ public class BaseIntegrationTest {
      * @return the prepared rest template
      */
     private RestTemplate prepareRestTemplate(final String username,
-                                               final String password) {
+                                             final String password) {
         final RestTemplate template = new RestTemplate();
         if ((username != null) && (password != null)) {
             final String auth = username + ":" + password;
