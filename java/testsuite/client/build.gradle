@@ -1,7 +1,7 @@
 def dockerRootLocation = project.buildDir.absolutePath + "/docker"
 def dockerAppLocation = dockerRootLocation + "/app"
 def dockerAuthLocation = dockerRootLocation + "/auth"
-def networkName = "sve_net"
+def networkName = "sveprojekt_sve_net"
 
 dependencies {
     testCompile 'org.springframework:spring-web'
