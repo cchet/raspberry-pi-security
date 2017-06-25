@@ -10,7 +10,7 @@ services:
         mem_limit: 128m
         cpu_shares: 2
         networks:
-            - sve_net
+            - sveprojekt_sve_net
     rpisec-test-app-db:
         container_name: rpisec-test-app-db
         image: postgres:9.6
@@ -21,7 +21,7 @@ services:
         mem_limit: 128m
         cpu_shares: 2
         networks:
-            - sve_net
+            - sveprojekt_sve_net
     rpisec-test-auth:
         container_name: rpisec-test-auth
         build:
@@ -35,7 +35,7 @@ services:
             - rpisec-test-auth-db
             - rpisec-test-app
         networks:
-            - sve_net
+            - sveprojekt_sve_net
     rpisec-test-app:
         container_name: rpisec-test-app
         build:
@@ -48,7 +48,7 @@ services:
         depends_on:
             - rpisec-test-app-db
         networks:
-            - sve_net
+            - sveprojekt_sve_net
     rpisec-test-nginx:
         container_name: rpisec-test-nginx
         build:
@@ -63,7 +63,7 @@ services:
             - rpisec-test-app
             - rpisec-test-auth
         networks:
-            - sve_net
+            - sveprojekt_sve_net
 networks:
-  sve_net:
+  sveprojekt_sve_net:
     external: true
