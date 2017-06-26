@@ -106,15 +106,19 @@ task prepareDockerInfrastructure(dependsOn: [':app:buildFatJar', ':auth:buildFat
         }
 
         if (!appConfig.isEmpty()) {
+            def appConfigFile = new File(appConfig)
             copy {
-                from new File(appConfig)
+                from appConfigFile
                 into dockerAppLocation
+                rename(appConfigFile.name, "app.properties")
             }
         }
         if (!authConfig.isEmpty()) {
+            def authConfigFile = new File(authConfig)
             copy {
-                from new File(authConfig)
+                from authConfigFile
                 into dockerAuthLocation
+                rename(authConfigFile.name, "auth.properties")
             }
         }
         if (!firebaseConfig.isEmpty()) {
@@ -122,10 +126,12 @@ task prepareDockerInfrastructure(dependsOn: [':app:buildFatJar', ':auth:buildFat
             copy {
                 from firebaseConfigFile
                 into dockerAppLocation
+                rename(firebaseConfigFile.name, "firebase-account.json")
             }
             copy {
                 from firebaseConfigFile
                 into dockerAuthLocation
+                rename(firebaseConfigFile.name, "firebase-account.json")
             }
         }
 
