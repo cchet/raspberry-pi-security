@@ -15,6 +15,7 @@ import android.widget.GridView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -103,6 +104,9 @@ public class IncidentsActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        Collections.reverse(inFiles);
+
         return inFiles;
     }
 
