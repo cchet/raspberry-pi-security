@@ -59,7 +59,7 @@ subprojects {
         publications {
             maven(MavenPublication) {
                 groupId "at.rpisec"
-                artifactId jar.archiveName.replace(".jar", "")
+                artifactId "rpisec-" + project.name.replace('/', '-')
                 version project.version
                 from components.java
 

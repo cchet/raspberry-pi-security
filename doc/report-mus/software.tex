@@ -1,5 +1,5 @@
 
-\section{Software und Dienste}
+\section{Software und \emph{Cloud}}
 Dieser Abschnitt behandelt die verwendete bzw. implementierte Software und die verwendeten Dienste für die Applikation \emph{RPISec}.
 
 \subsection{\emph{Microservices}}
@@ -11,45 +11,117 @@ Es wurden die beiden \emph{Microservices Auth-Service} für die Benutzerverwaltu
 \newline
 Der \emph{Microservice App-Service} interagiert nicht direkt mit der Sensorik, sondern bindet die Sensorapplikation beschrieben in Abschnitt \ref{sec:sensor-application} ein und ist für dessen Lebenszyklus verantwortlich. Nachdem Start der Sensorapplikation wird ein \emph{Listener} registriert, der auf Statusänderungen des Bewegungssensor reagiert und diesen Sicherheitsverstoß wie in Abbildung \ref{fig:image-sequence-incident} behandelt.
 
+\subsection{Sensor Applikation}
+\label{sec:sensor-application}
+Bei den Komponenten der Sensor-Anwendung handelt es sich, wie in \autoref{sec:raspberrypi} erwähnt, um die beiden Bauteile:
+
+\begin{itemize}
+	\item \emph{AZDeliveryCamRasp Kamera}
+	\item \emph{HC-SR501 Bewegungssensor}
+\end{itemize}
+\ \newline
+Die Ansteuerung der Pins erfolgt über die \emph{Pi4J\footnote{\url{http://pi4j.com/}}}-Bibliotheken die wiederum die \emph{WiringPi\footnote{\url{http://wiringpi.com/}}}-Bibliothek nutzt, welche die eigentliche Ansteuerung der Pins erledigt.
+
+\subsubsection{Pi4J}
+Pi4J ist eine Bibliothek  für Java, die den vollen Zugriff auf die Ressourcen des \emph{Raspberry PI} ermöglicht. Mit Pi4J ist es möglich Anwendungen für \emph{Raspberry PI} zu schreiben, die nur Java benötigen. Damit können praktisch alle Bibliotheken eingesetzt werden, die für Java verfügbar sind. Einschränkungen gibt es nur bei den Ressourcen des \emph{Raspberry PI}.
+
+\subsubsection{WiringPi}
+\emph{WiringPi} ist eine Bibliothek, um die \emph{GPIO} Ein-und Ausgänge am \emph{Raspberry Pi} zu schalten. Das Ziel dieser Bibliothek ist es, eine einzige gemeinsame Plattform und Programmierschnistelle für den Zugriff auf die \emph{GPIOs} des \emph{Rapsberry Pi} für verschiedene Programmiersprachen zur Verfügung zu stellen. Im Kern ist \emph{WiringPi} eine C-Bibliothek, aber sie steht auch in Ruby und Python zur Verfügung.
+\newpage
+
+\begin{code}
+	\caption{IRSensor\_HCSR501.java}
+	\javaFile{\srcDir/gpio-controller.java}
+	\label{src:gpio-controller}
+\end{code}
+
+\subsection{Mobiler \emph{Client}}
+Beim \emph{RPISec Client} handelt es sich um eine native \emph{Android App}. Diese kommuniziert über REST-Schnittstellen mit einem \emph{Auth-Service} sowie mit \emph{Firebase}-Diensten von Google. Die für diese App verwendeten \emph{Firebase}-Dienste sind \emph{Firebase-Messaging} und \emph{Firebase-RealTimeDatabase}.\\
+
+\subsubsection{Login}
+Die Startseite der App besteht nur aus einem Login-Fenster (\autoref{fig:android_login}). Der Login erfolgt in drei Schritten.
+
+\begin{enumerate}
+	\item RPISec Login
+	\newline
+	\newline
+	Die App generiert einen UUID-Wert \emph{(Universally Unique Identifier)} als Identifikator für das Gerät. Zusammen mit dem eingegebenen Benutzernamen, Passwort und der UUID wird eine Anfrage für einen \emph{Firebase}-Token an den \emph{Auth-Service} gestellt. Sind die Zugangsdaten korrekt, wird für diese UUID ein Token, sowie \emph{Client-Id} und \emph{Client-Secret} erzeugt und als Antwort an die \emph{App} übertragen. Der \emph{Firebase}-Token wird für die Authentifizierung bei den verbunden Diensten benutzt.
+	\newpage
+	
+	\begin{code}
+		\caption{ClientLoginOAuthTask.java}
+		\javaFile{\srcDir/ClientLoginOAuthTask.java}
+		\label{src:ClientLoginOAuthTask}
+	\end{code}
+		
+	\item  \emph{Firebase} Login
+	\newline
+	\newline
+	Im zweiten Schritt wird ein Token für \emph{Firebase-Messaging} registriert. Dies erfolgt wiederum mit dem Benutzernamen und Passwort. Nach der Registrierung kann die \emph{App} Nachrichten über den \emph{Firebase-Messageing} Dienst empfangen.\\
+	
+	\begin{code}
+		\caption{RegisterFCMTask.java}
+		\javaFile{\srcDir/RegisterFCMTask.java}
+		\label{src:RegisterFCMTask}
+	\end{code}
+
+	\item \emph{Firebase}-Token Registrierung 
+	\newline
+	\newline
+	Am Schluss wird der \emph{Firebase}-Token am \emph{Auth-Service} registriert.
+ \end{enumerate}
+\ \newpage
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.6]{\imageDir/android_login.png}
+	\caption{Pin-Schema}
+	\label{fig:android_login}
+\end{figure}
+
+Nach einem erfolgreichen Login wird automatisch die Detailansicht (siehe \autoref{fig:android_image_overview_m}) gestartet.
+\newpage
+
+\subsubsection{Detailansicht}
+Bei der Detailansicht handelt es sich um eine Übersicht aller Bilder, chronologisch geordnet nach Aufnahmedatum, in einem Raster. Bei den angezeigten Bildern handelt es sich nur um \emph{Thumbnails}. Die richtigen Bilder werden beim Auswählen eines Bildes angezeigt, ähnlich dem \emph{Fotoviewer} in Android.
+\newline
+\newline
+Die Detailansicht wird beim Eintreffen eines neuen Bildes aktualisiert. Sollte die Detailansicht nicht die aktive Anwendung sein, wird in der Infoleiste eine Notifikation angezeigt und ein Ton abgespielt. Durch tippen auf die Notifikation wird die Anwendung wieder in den Vordergrund geholt.
+\newline
+\newline
+Mittels Swipe-Down-Geste kann die Ansicht aktualisiert werden.
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.7]{\imageDir/android_image_overview_m.png}
+	\caption{Pin-Schema}
+	\label{fig:android_image_overview_m}
+\end{figure}
+
+\subsubsection{Datenabfrage}
+Bei jedem \emph{Incident} der von der Server-Anwendung über Firebase-Messaging an die App gesendet wird, werden der Titel, eine Nachricht und die Id des aufgenommenen Bildes übertragen. Mit dieser Id kann das eigentliche Bild aus der Firebase-RealTimeDatabase abgerufen werden.\\
+
+\begin{code}
+	\caption{FirebaseMessaging.java}
+	\javaFile{\srcDir/FirebaseMessaging.java}
+	\label{src:FirebaseMessaging}
+\end{code}
+
 \subsection{Datenbank}
 Dieser Abschnitt behandelt die verwendete Datenbank für die \emph{Microservices}. Im Entwicklungsbetrieb auf einen Entwicklerrechner wird die Datenbank H2 und im produktiven Betrieb auf einen \emph{Raspberry PI} die Datenbank PostgreSQL verwendet. Die Datenbank PostgreSQL konnte am \emph{Raspberry PI} verwendet werden, da PostgreSQL die ARM Architektur unterstützt und sich auch mit geringen Ressourcenaufwand betreiben lässt.
 
-\subsection{\emph{Cloud} Dienst}
+\subsection{\emph{Firebase}}
 Dieser Abschnitt behandelt den verwendeten \emph{Cloud} Dienst \emph{Firebase}. \emph{Firebase} ist ein \emph{Cloud} Dienst von \emph{Google}, der einen \emph{Messaging} Dienst sowie eine Onlinedatenbank (JSON-Datenbank) bereitstellt. Bis zu einer gewissen Anzahl von \emph{Requests} ist dieser Dienst kostenlos zu verwenden.  
 \newline
 \newline
 Für \emph{Firebase} gibt es eine Java Implementierung das sogenannte \emph{firebase-admin-sdk}, das eine API zum Interagieren mit der JSON-Datenbank und eine API zum Erstellen von Authentifizierungstoken für die \emph{Client}-Authentifizierung auf \emph{Firebase} zur Verfügung stellt. In der Java Implementierung wird zurzeit keine API für die Interaktion mit dem \emph{Messaging} Dienst zur Verfügung gestellt, was aber kein Problem darstellt, da es sich hierbei um eine einfache Anfrage an eine \emph{REST-API} handelt, die mit Spring \emph{RestTemplate} realisiert wurde.
 \newline
 \newline
-Für die Interaktion mit \emph{Firebase} über \emph{Android} wird ebenfalls eine Java Implementierung bereitgestellt. Diese Implementierung enthält auch eine \emph{API} für den \emph{MEssaging} Dienst von \emph{Firebase}.
+Für die Interaktion mit \emph{Firebase} über \emph{Android} wird ebenfalls eine Java Implementierung bereitgestellt. Diese Implementierung enthält auch eine \emph{API} für den \emph{Messaging} Dienst von \emph{Firebase}.
 \newline
 \newline
-Es sind zwar Implementierungen der \emph{API} mehrere Programmiersprachen verfügbar, jedoch wird eine vollständige \emph{API} nur für \emph{NodeJS} bereitgestellt.
-
-\subsection{\emph{Docker}}
-Dieser Abschnitt behandelt die Verwendung von \emph{Docker}, für das hosten der Services und Datenbanken für die Services. Dank dem \emph{Raspberry PI Image}, bereitgestellt von \emph{Hypriots}, sind bereits \emph{Docker} und \emph{Docker-Compose} \emph{(Orchestration)} vorinstalliert und müssen nicht separat geladen und für die Zielarchitektur gebaut werden.
-\newline
-\newline
-Da der Umgang mit \emph{Docker} und einer umfangreicheren Infrastruktur mit viel Shell-Skripten verbunden ist, wird das Python basierte Tool \emph{Docker-Compose} verwendet, das es erlaubt eine Infrastruktur, die aus einer Menge von untereinander abhängigen Services besteht, deklarativ über eine \emph{YAML}-Konfigurationsdatei zu konfigurieren und zu \emph{orchestrieren}. 
-\newline
-\newline
-Die Definition der \emph{Images} sowie der Aufbau der \emph{Docker-Compose} Infrastruktur sind im Verzeichnis \emph{$/host/docker/$} enthalten, wobei die einzelnen \emph{Dockerfiles} der Services in Unterverzeichnissen organisiert werden, die alle Abhängigkeiten, welche in die Images mitaufgenommen werden müssen, enthalten. Die \emph{PostgreSQL} Images stehen am \emph{Docker Hub}\footnote{https://hub.docker.com/r/tobi312/rpi-postgresql/} zur Verfügung. Es wurde ein eigenes Basisimage definiert, das die benötigten Abhängigkeiten für die Interaktion mit der Hardware beinhaltet. Es werden in diesem Basisimage alle benötigten C-Bibliotheken wie \emph{WiringPI}\footnote{https://git.drogon.net/?p=wiringPi;a=summary} und die Bibliotheken für das Interagieren mit der \emph{Raspberry Pi GPU}\footnote{https://github.com/raspberrypi/userland} während des Bauens des Images geladen und kompiliert. Dieser Ansatz wurde gewählt, da das Bauen der Abhängigkeiten aufwendig ist und viel Zeit in Anspruch nimmt und sich dieses Basisimage nur selten ändert.
-\begin{center}
-	\begin{figure}[h]
-		\centering
-		\includegraphics[scale=0.65]{\imageDir/pi-docker-infrastructure.jpg}
-		\caption{\emph{Raspberry PI Docker} Infrastruktur}
-		\label{fig:rapsi-docker-infrastructure}
-	\end{figure}
-\end{center}
-Die Abbildung \ref{fig:rapsi-docker-infrastructure} zeigt die implementierte \emph{Docker} Infrastruktur, wie sie am \emph{Raspberry PI} gehostet wird. Da die Daten der \emph{Docker-Container} persistent gehalten werden müssen, werden die Daten in den \emph{Containern} in Verzeichnissen gehalten, die auf den \emph{Host} über ein \emph{Volume Mapping} gebunden sind. Der \emph{Docker Container App-Service} benötigt privilegierte Rechte, damit die Sensorapplikation mit der angeschlossenen \emph{Hardware} des \emph{Raspberry PI} kommunizieren kann. 
-\newline
-\newline
-Der Quelltext \ref{src:test-docker-compose} zeigt den Inhalt der \emph{docker-compose.yml}, welche die \emph{Docker} Infrastruktur für \emph{RPISec} am \emph{Raspberry PI} definiert. Die in der Datei vorkommenden Textfragmente im Format \emph{\$\{...\}} stellen Variablen dar, die \emph{Docker-Compose} entweder aus einer Datei mit dem Namen \emph{.env}, die auf derselben Ebene wie die \emph{docker-compose.yml} platziert werden muss, oder aus den Umgebungsvariablen des Benutzers, mit dem die Infrastruktur erstellt wird, auflöst. Sollten Variablen nicht auflösbar sein, so wird eine entsprechende Meldung auf die Konsole ausgegeben.
-\begin{code}
-	\caption{docker-compose.yml für RPISec am \emph{Raspberry PI}}
-	\yamlFile{\dockerRPIDir/docker-compose.yml}
-	\label{src:test-docker-compose}
-\end{code}
-\ \newline
-Das Bauen der Infrastruktur und Starten der Services dauert am \emph{Raspberry PI} relativ lange, da nur wenig Speicher zur Verfügung steht, es sich um eine ARM-Architektur handelt und das Speichermedium eine \emph{MicroSD} Karte ist. Ebenso ist die Performance der Services nicht herausragend, jedoch kann die Applikation auf dem \emph{Raspberry PI} problemlos ausgeführt werden.  
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{\imageDir/firebase-database-entry.JPG}
+	\caption{Eintrag in der \emph{Firebase} Onlinedatenbank}
+	\label{fig:firabse-database}
+\end{figure}
