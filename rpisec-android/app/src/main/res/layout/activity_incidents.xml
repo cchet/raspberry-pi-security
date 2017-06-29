@@ -9,11 +9,11 @@
         android:id="@+id/incidentsGridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        android:gravity="center"
-        android:horizontalSpacing="0dp"
         android:numColumns="auto_fit"
+        android:verticalSpacing="1dp"
+        android:horizontalSpacing="1dp"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="8dp"
+        android:gravity="center"
         tools:context="at.rpisec.client.activity.IncidentsActivity" />
 </android.support.v4.widget.SwipeRefreshLayout>
+<!--android:columnWidth="90dp"-->
