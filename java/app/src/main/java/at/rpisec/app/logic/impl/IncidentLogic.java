@@ -109,7 +109,7 @@ public class IncidentLogic implements IIncidentLogic {
 
         // Save file to filesystem
         try {
-            Files.createFile(Paths.get(imageLocation + occurringDate + "." + extension));
+            Files.write(Files.createFile(Paths.get(imageLocation + occurringDate + "." + extension)), image);
         } catch (Exception e) {
             log.error("Could not save file to filesystem", e);
         }

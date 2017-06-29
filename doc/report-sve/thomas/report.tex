@@ -51,10 +51,10 @@
 \maketitle
 
 \section{Einleitung}
-Dieses Dokument behandelt die Dokumentation der Erweiterung des Projekts \emph{RPISec} um einen \emph{Auth-Service (OAuth2)} und Integrationstests der Applikation mit \emph{Docker}. Das Projekt \emph{RPISec} ist ein Projekt für die Lehrveranstaltung \emph{Mobile und ubiquitäre Systeme}. 
+Dieses Dokument behandelt die Dokumentation der Erweiterung des Projekts \emph{RPISec (Raspberry PI Security)} um einen \emph{Auth-Service (OAuth2)} und Integrationstests mit \emph{Docker}. Das Projekt \emph{RPISec} ist ein Projekt für die Lehrveranstaltung \emph{Mobile und ubiquitäre Systeme}. 
 \newline
 \newline
-Die bestehende Implementierung beinhaltet die Benutzerverwaltung und die Authentifizierung der Benutzer, was in einen eigenen \emph{Microservice Auth-Service}, der \emph{OAuth2} unterstützen muss, gekapselt werden soll. Für die \emph{Microservices} sollen Integrationstests basierenden auf \emph{Docker} implementiert werden, wobei die Tests auch auf einem Windows basierten Entwicklungsrechner sowie auf einen \emph{Raspberry PI} ausführbar sein sollen. 
+Die bestehende Implementierung beinhaltet die Benutzerverwaltung und die Authentifizierung der Benutzer, was in einen eigenen \emph{Microservice Auth-Service}, der \emph{OAuth2} unterstützen muss, gekapselt werden soll. Für die \emph{Microservices} sollen Integrationstests basierenden auf \emph{Docker} implementiert werden, wobei die Tests auf einem Windows und Linux basierten Entwicklungsrechner ausführbar sein sollen. 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1]{\imageDir/Infrastructure.jpg}
@@ -64,10 +64,10 @@ Die bestehende Implementierung beinhaltet die Benutzerverwaltung und die Authent
 \ \newpage
 
 \section{Einrichten}
-Dieser Abschnitt behandelt das Einrichten des Projekts \emph{RPISec} auf einem Entwicklungsrechner oder \emph{Raspberry PI}. \emph{RPISec} ist auf Zugangsdaten für \emph{GMail}, \emph{Firebase Database} und \emph{Firebase Cloud Messaging} angewiesen, die nicht über das Versionierungssystem verwaltet werden und daher nicht in der Projektstruktur enthalten sind. Diese Zugangsdaten müssen lokal bereitgestellt und separat eingebunden werden.
+Dieser Abschnitt behandelt das Einrichten des Projekts \emph{RPISec} auf einem Entwicklungsrechner oder \emph{Raspberry PI}. \emph{RPISec} ist auf Zugangsdaten für \emph{GMail}, \emph{Firebase Database} und \emph{Firebase Cloud Messaging (FCM)} angewiesen, die nicht über das Versionierungssystem verwaltet werden und daher nicht in der Projektstruktur enthalten sind. Diese Zugangsdaten müssen lokal bereitgestellt und separat eingebunden werden.
 {\renewcommand{\arraystretch}{2}%
 \begin{center}
-	\begin{tabular}{| c | l | p{7cm} |}
+	\begin{tabular}{| c | l |}
 		\hline
 		\textbf{Konfigurationsdatei} & \textbf{Beschreibung}  \\ \hline
 		\textit{app.properties} & Externe Konfigurationsdatei für den \emph{App-Service} \\ \hline
@@ -81,11 +81,15 @@ Dieser Abschnitt behandelt das Einrichten des Projekts \emph{RPISec} auf einem E
 Diese Dateien sind im Verzeichnis \emph{$/doc/config$} der Abgabe enthalten, wobei die Datei \emph{firebase-account.json} und die \emph{GMail} Zugangsdaten ab 15.07.2016 18:00 nicht mehr gültig sein werden, da ab diesem Datum die Zugänge geschlossen werden.
 \newline
 \newline
-In den folgenden Abschnitten wird beschrieben, wie die Services gebaut und gestartet werden können, wobei die Befehle im Wurzelverzeichnis \emph{($/java$)} der Projektstruktur ausgeführt werden müssen.
+In den folgenden Abschnitten wird beschrieben, wie die Services über die Kommandozeile gebaut und gestartet werden können, wobei die Befehle im Wurzelverzeichnis \emph{($/java$)} der Projektstruktur ausgeführt werden müssen. 
+\newline
+\newline
+Bei der Entwicklung wurde auf \emph{Docker} verzichtetet, da \emph{Hot-Code-Replacement} und ein schnelleres \emph{Re-Deployment} erwünscht waren.
 
 \section{Auth-Service}
 Mit den folgenden \emph{Gradle} Befehl kann der \emph{Auth-Service} über die Kommandozeile gestartet werden. Um den Service in einer IDE zu starten kann eine \emph{Run Configuration} spezifisch für die IDE eingerichtet werden, die alle notwendigen \emph{Gradle} Kommandos und VM-Options definiert.
 \begin{minted}{bash}
+# on a windows based system the vm options need to wrapped into double quotes "-D..."
 .\gradlew :auth:buildFatJar :auth:bootRun
           -Dplatform=dev
           -Dadmin.email=<admin_email_address>                
@@ -100,14 +104,18 @@ Mit den folgenden \emph{Gradle} Befehl kann der \emph{Auth-Service} über die Ko
 		\textbf{prod}: Profil mit PostgreSQL
 		\\ \hline
 		\textit{admin.email} & Bsp.: admin@mail.com & Email-Adresse des Admins, der beim Start erstellt wird. \\ \hline
-		\textit{spring.config.location} & Bsp.: /auth.properties & Voll qualifizierter Pfad zur Konfigurationsdatei  \\ \hline
+		\textit{spring.config.location} & Bsp.: /auth.properties & Voll qualifizierter Pfad zur Konfigurationsdatei.
+		\newline 
+		Der enthaltene Parameter \emph{firebase.configFile} muss angepasst werden 
+		\\ \hline
 	\end{tabular}
 \end{center}
 \ \newline
-Während des Start des Service wir ein Administrator Benutzer erstellt, falls noch nicht vorhanden und es wird eine E-Mail an die angegebene \emph{admin.email} Adresse versendet. Über den in der E-Mail enthaltenen Link muss ein Password vergebenen werden und dadurch der Zugang aktiviert werden.
+Während des Start des Service wir ein Administrator Benutzer erstellt (falls noch nicht vorhanden) und es wird eine E-Mail an die angegebene \emph{admin.email} Adresse versendet. Über den in der E-Mail enthaltenen Link kann eine Webseite aufgerufen werden, über die ein Password vergebenen und dadurch der Zugang aktiviert werden kann.
 \subsubsection{App-Service}
 Mit den folgenden \emph{Gradle} Befehl kann der \emph{App-Service} über die Kommandozeile gestartet werden. Um den Service in einer IDE zu starten kann eine \emph{Run Configuration} spezifisch für die IDE eingerichtet werden, die alle notwendigen \emph{Gradle} Kommandos und VM-Options definiert.
 \begin{minted}{bash}
+# on a windows based system the vm options need to wrapped into double quotes "-D..."
 .\gradlew :app:buildFatJar :app:bootRun
 	      -Dplatform=dev              
 	      -Dspring.config.location=<fully_qualified_path_to_config_file>
@@ -119,16 +127,21 @@ Mit den folgenden \emph{Gradle} Befehl kann der \emph{App-Service} über die Kom
 		\textbf{Parameter} & \textbf{Werte} & \textbf{Beschreibung}  \\ \hline
 		\textit{platform} & $[dev|prod]$ & \textbf{dev}: Profil mit H2 und ohne Sensor \newline
 		\textbf{prod}: Profil mit PostgreSQL und mit Sensor \\ \hline
-		\textit{spring.config.location} & Bsp.: /app.properties & Voll qualifizierter Pfad zur Konfigurationsdatei  \\ \hline
+		\textit{spring.config.location} & Bsp.: /app.properties & Voll qualifizierter Pfad zur Konfigurationsdatei
+		\newline 
+		Der enthaltene Parameter \emph{firebase.configFile} muss angepasst werden  \\ \hline
 	\end{tabular}
 \end{center}
+\ \newline
+Der \emph{App-Service} benötigt das Verzeichnis \emph{$<user\_home>$/image}, wo die Bilder gespeichert werden. 
 
 \subsubsection{Integrationstests}
 Mit den folgenden \emph{Gradle} Befehl können die Integrationstest über die Kommandozeile ausgeführt werden. Es muss sichergestellt werden, dass \emph{Docker} gestartet ist und dass der Benutzer alle nötigen Rechte für \emph{Docker} hat. Auf einen \emph{Windows} basierten Rechner muss sichergestellt werden, dass das Laufwerk, wo die Quelltexte liegen, für \emph{Docker} freigegeben wurde. 
 \begin{minted}{bash}
-.\gradlew :testuite/client:clean 
-          :testuite/client:prepareDockerInfrastructure 
-          :testuite/client:test
+# on a windows based system the vm options need to wrapped into double quotes "-D..."
+.\gradlew :testsuite/client:clean 
+          :testsuite/client:prepareDockerInfrastructure 
+          :testsuite/client:test
           -Dplatform=integrationTest
           -Dapp.config=<fully_qualified_path_to_app_test_properties> 
           -Dauth.config=<fully_qualified_path_to_auth_test_properties> 
@@ -142,15 +155,14 @@ Mit den folgenden \emph{Gradle} Befehl können die Integrationstest über die Ko
 		\textit{platform} & $integrationTest$ & Profil für die Integrationstests\\ \hline
 		\textit{app.config} & Bsp.: /app.properties & Voll qualifizierter Pfad zur Konfigurationsdatei für den \emph{App-Service}  \\ \hline
 		\textit{auth.config} & Bsp.: /auth.properties & Voll qualifizierter Pfad zur Konfigurationsdatei für den \emph{Auth-Service}  \\ \hline
-		\textit{firebase.config} & Bsp.: /app.properties & Voll qualifizierter Pfad zur 
+		\textit{firebase.config} & Bsp.: /firebase-account.json & Voll qualifizierter Pfad zur 
 		\emph{firebase} JSON Datei  \\ \hline
 	\end{tabular}
 \end{center}
 In der Datei \emph{Gradle Build}-Datei \emph{java/testsuite/client/build.gradle} werden die beiden Umgebungsvariablen \textbf{\emph{DOCKER\_COMPOSE\_LOCATION}} und  \textbf{\emph{DOCKER\_COMPOSE\_LOCATION}} auf einem Windows basierten System automatisch gesetzt, wenn sie nicht vorhanden sind. Für Linux basierte Systeme wird in den Standardinstallationsverzeichnissen nach den \emph{Binaries} gesucht, sollten die \emph{Binaries} dort nicht vorhanden sein, so müssen diese Umgebungsvariablen am System gesetzt werden. 
-\newpage
 
 \section{\emph{Auth-Service}}
-Dieser Abschnitt behandelt die Dokumentation des implementierten \emph{Auth-Service}, der für die Benutzerverwaltung und die Authentifizierung der Benutzer über ihre mobilen \emph{Clients} für den bestehenden \emph{App-Service} verantwortlich ist. Der \emph{Auth-Service} wurde mit \emph{Spring Boot} implementiert, wobei \emph{Spring Boot} schon alle benötigten Funktionalitäten für einen Authentifizierungsservice der \emph{OAuth2} unterstützt bereitstellt und die Applikation nur mehr konfiguriert werden muss.
+Dieser Abschnitt behandelt die Dokumentation des implementierten \emph{Auth-Service}, der für die Benutzerverwaltung und die Authentifizierung der Benutzer über ihre mobilen \emph{Clients} für den bestehenden \emph{App-Service} verantwortlich ist. Der \emph{Auth-Service} wurde mit \emph{Spring Boot} implementiert, wobei \emph{Spring Boot} schon alle benötigten Funktionalitäten für einen Authentifizierungsservice der \emph{OAuth2} bereitstellt und die Applikation nur mehr konfiguriert werden muss.
 \newline
 \newline
 \emph{Spring Boot} stellt ein Datenbankschema für \emph{OAuth2} zur Verfügung, welches die \emph{OAuth2} \emph{-Clients}, \emph{-Tokens} usw. über JDBC in einer Datenbank verwaltet. Neben diesen Datenbankschema wurden auch Benutzertabellen angelegt, die über \emph{JPA} verwaltet werden und keine strikten Beziehungen zu \emph{OAuth2} Tabellen haben, jedoch halten die Benutzer die \emph{Id} des generierten \emph{Oauth2-Clients}, damit sichergestellt werden kann, das bei Anfragen an den Service nur \emph{Client-Credentials} von \emph{Clients} akzeptiert werden, die auch dem Benutzer zugewiesen sind, was so in \emph{OAuth2} nicht vorgesehen ist.
@@ -162,18 +174,17 @@ Um die \emph{OAuth2-Clients} auf Benutzer einzuschränken wurden einige Klassen 
 Nachdem am \emph{Auth-Service} mobile \emph{Clients} authentifiziert werden, wird für diese \emph{Clients} der \emph{OAuth2-Password-Flow} angewendet. Da es vermieden werden soll, mit  der \emph{Client}-Applikation \emph{Client-Credentials} mit auszuliefern, wird bei jedem \emph{Login} eines mobilen \emph{Clients} ein neuer \emph{OAuth2-Client} für diesen mobilen \emph{Client}  angelegt und gegebenenfalls ein bereits existierender gelöscht, damit werden bei jedem Login neue \emph{Client-Credentials} für die mobilen \emph{Clients} generiert.
 
 \subsection{Benutzerverwaltung}
-ch um eine Sicherheitsanwendung handelt wollen wir keine Benutzerverwaltung von anderen Services nutzen, sondern wollen die Benutzer selbst verwalten, was im \emph{Auth-Service} implementiert wurde. Es wurden \emph{JPA-Entitäten} \emph{User} und \emph{ClientDevice} implementiert, wobei \emph{ClientDevice} die Referenz auf den erstellten OAuth2-\emph{Clients} für den Benutzer hält.
+Da es sich um eine Sicherheitsanwendung handelt wollen wir keine Benutzerverwaltung von anderen Services nutzen, sondern wollen die Benutzer selbst verwalten, was im \emph{Auth-Service} implementiert wurde. Es wurden \emph{JPA-Entitäten} \emph{User} und \emph{ClientDevice} implementiert, wobei \emph{ClientDevice} die Referenz auf den erstellten OAuth2-\emph{Clients} für den Benutzer hält.
 
 \subsubsection{\emph{Client} Login}
+Die Abbildung \ref{fig:image-sequence-client-login} zeigt den Ablauf des Logins eines Benutzers über einen mobilen \emph{Client}. Der Benutzer wird mit seinen Zugangsdaten via REST am \emph{Auth-Service} authentifiziert und es wird ein \emph{OAuth2-Client} für den verwendeten mobilen \emph{Client} erstellt, wobei die \emph{Client}-Anwendung einen eindeutigen Schlüssel für jedes Endgerät erzeugen muss. Dieser registrierte \emph{Client} wird an den \emph{App-Service} via REST übermittelt. Anschließend wird für den mobilen \emph{Client} auf \emph{Firebase} ein Token erstellt, mit dem sich der mobile \emph{Client} auf \emph{Firebase} authentifizieren kann. Als Antwort wird dem mobilen \emph{Client} folgendes JSON-Resultat übermittelt.
+\newpage
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.75]{\imageDir/sequence-client-login-auth-only.jpg}
 	\caption{Sequenzdiagramm des Logins über einen mobilen \emph{Client}}
 	\label{fig:image-sequence-client-login}
 \end{figure}
-\ \newline
-Die Abbildung \ref{fig:image-sequence-client-login} zeigt den Ablauf des Logins eines Benutzers über einen mobilen \emph{Client}. Der Benutzer wird mit seinen Zugangsdaten via REST am \emph{Auth-Service} authentifiziert und es wird ein \emph{OAuth2-Client} für den verwendeten mobilen \emph{Client} erstellt, wobei die \emph{Client}-Anwendung einen eindeutigen Schlüssel für jedes Endgerät erzeugen muss. Dieser registrierte \emph{Client} wird an den \emph{App-Service} via REST übermittelt. Anschließend wird für den mobilen \emph{Client} auf \emph{Firebase} ein Token erstellt, mit dem sich der mobile \emph{Client} auf \emph{Firebase} authentifizieren kann. Als Antwort wird dem mobilen \emph{Client} folgendes JSON-Resultat übermittelt.
-\newline
 \begin{code}
 	\caption{JSON-Antwort an den \emph{Client}}
 	\jsonfile{\dataDir/client-login-json-response.json}
@@ -210,21 +221,21 @@ Nachdem die \emph{OAuth2}-Authentifizierung über die \emph{Swagger-UI} nicht fu
 
 \section{\emph{Docker} unterstützte Integrationstests}
 Dieser Abschnitt behandelt die Integrationstests für die implementierten \emph{Microservices} in einer Docker Infrastruktur. Die Abbildung \ref{fig:integration-tests-docker-infrastructure} zeigt den Aufbau der \emph{Docker} Infrastruktur und die Verbindung zu den implementierten \emph{JUnit}-Tests. Die Tests wurden in einer \emph{TestSuite} zusammengefasst, wobei diese Suite eine \emph{JUnit ClassRule} definiert, welche die \emph{Docker} Infrastruktur via \emph{Docker-Compose} vor der Ausführung der \emph{TestSuite} erstellt und startet und nach er Ausführung der \emph{TestSuite} die Infrastruktur stoppt und die \emph{Docker Container} entfernt.
+\newline
+\newline
+Die verwendete \emph{JUnit ClassRule} wird von der Bibliothek \emph{docker-compose-rule-junit4}\footnote{\url{https://github.com/palantir/docker-compose-rule}} von \emph{Palantir} zur Verfügung gestellt, die es erlaubt über einen \emph{Builder} die \emph{ClassRule} zu konfigurieren und zu erstellen. Jedoch hat sich gezeigt, dass wenn während des Startens der \emph{Docker} Infrastruktur eine Ausnahme ausgelöst wird, die \emph{Docker} Infrastruktur nicht richtig runter gefahren wird und dadurch \emph{Docker Container} Namenskonflikte auftreten, die ein erneutes Starten der Tests verhindern. Mit dem folgenden Befehl kann die \emph{Docker} Infrastruktur bereinigt werden.
+\begin{minted}{bash}
+docker rm -f rpisec-test-auth-db 
+             rpisec-test-app-db 
+             rpisec-test-auth 
+             rpisec-test-app 
+             rpisec-test-nginx
+\end{minted}
+Die Tests nutzen die im Abschnitt \ref{sec:swagger-client-generation} beschriebenen generierten \emph{Swagger Clients}, um die Kommunikation der \emph{Clients} mit den \emph{Auth-Service} zu testen. Es sei aber angemerkt dass es sich hier um reine \emph{Blackbox} Tests handelt, die nur aus der Sicht der \emph{Clients} testen.
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=0.60]{\imageDir/integration-tests-docker-infrastructure}
+	\includegraphics[scale=0.70]{\imageDir/integration-tests-docker-infrastructure}
 	\caption{Aufbau der Integrationstests mit Docker Infrastruktur}
 	\label{fig:integration-tests-docker-infrastructure}
 \end{figure}
-\ \newpage
-Es wurden jeweils zwei \emph{Dockerfiles} definiert \emph{Dockerfile-x86} und \emph{Dockerfile-pi}, welche ein \emph{Base Image} für die jeweilige Umgebung generieren. Die anderen \emph{Dockerfiles} leiten von dem \emph{Base Image rpisec-test-base} ab, das entweder über \emph{Dockerfile-x86} oder über \emph{Dockerfile-pi} erzeugt wurde, je nachdem auf welcher Umgebung die Tests ausgeführt werden sollen. Mit dem folgenden Befehl muss das \emph{Base Image} vor der Ausführung der Tests erzeugt werden.
-\begin{minted}{bash}
-docker build -t rpisec-test-base -f base/Dockerfile-[x86|pi] .
-\end{minted}
-Die verwendete \emph{JUnit ClassRule} wird von der Bibliothek \emph{docker-compose-rule-junit4}\footnote{\url{https://github.com/palantir/docker-compose-rule}} von \emph{Palantir} zur Verfügung gestellt, die es erlaubt über einen \emph{Builder} die \emph{ClassRule} zu konfigurieren und zu erstellen. Jedoch hat sich gezeigt, dass wenn während des Startens der \emph{Docker} Infrastruktur eine Ausnahme ausgelöst wird, die \emph{Docker} Infrastruktur nicht richtig runter gefahren wird und dadurch \emph{Docker Container} Namenskonflikte auftreten, die ein erneutes Starten der Tests verhindern. Mit dem folgenden Befehl kann die \emph{Docker} Infrastruktur bereinigt werden.
-\begin{minted}{bash}
-docker rm -f rpisec-test-auth-db rpisec-test-app-db 
-             rpisec-test-auth rpisec-test-app rpisec-test-nginx
-\end{minted}
-Die Tests nutzen die im Abschnitt \ref{sec:swagger-client-generation} beschriebenen generierten \emph{Swagger Clients}, um die Kommunikation der \emph{Clients} mit den \emph{Auth-Service} zu testen. Es sei aber angemerkt dass es sich hier um reine \emph{Blackbox} Tests handelt, die nur aus der Sicht der \emph{Clients} testen.
 \end{document}           
