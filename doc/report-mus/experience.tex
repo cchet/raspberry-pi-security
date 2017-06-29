@@ -1,0 +1,14 @@
+\section{Erfahrungen}
+Dieser Abschnitt behandelt die gemachten Erfahrungen während der Umsetzung dieses Projekts. Nachdem für dem \emph{Raspberry PI} bereits ein Betriebssystem zur Verfügung steht, das alle benötigten Bibliotheken für wie \emph{Docker} und \emph{Docker-Compose} bereitstellt und es auch eine \emph{ARM} Implementierung von \emph{Oracle}-Java gibt, hat sich die Umsetzung als relativ einfach gestaltet. Hätte es keine Oracle Implementierung für die \emph{ARM}-Plattform gegeben, hätte man \emph{OpenJDK} verwenden müssen, was das Laufzeitverhalten der \emph{Microservices} negativ beeinflusst hätte.   
+\newline
+\newline
+Die verwendete \emph{PostgreSQL} Datenbank, die in einem \emph{Docker Container} gehostet wird, braucht beim ersten Start (Keine Datenbank vorhanden) relativ lange, weswegen der erste Start der \emph{Docker-Compose} orchestrierten  Infrastruktur beim ersten Mal fehlschlägt, da die \emph{Microservices} gestartet sind und auf eine nicht verfügbare Datenbank zugreifen wollen, die noch im Initialisierungsprozess feststeckt. Dieses Problem wurde gelöst indem die Datenbanken initialisiert werden, bevor die gesamte Infrastruktur gestartet wird.
+\newline
+\newline
+Die Java Bibliothek für den \emph{Cloud}-Dienst \emph{Firebase} ist zwar eingeschränkt verglichen mit der Implementierung für \emph{NodeJS}, jedoch konnten alle Tasks, bis auf das Versenden der \emph{Messages}, das mit Spring \emph{Resttemplate} realisiert wurde, einfach implementiert werden. 
+\newline
+\newline
+Für die Umsetzung der \emph{Microservices} mussten keine besonderen Vorkehrungen wegen dem Hosten auf einen \emph{Raspberry PI} getroffen werden. Nichts desto trotz sollte man sich bei der Implementierung der \emph{Microservices} bezüglich der Abhängigkeiten und verwendeten \emph{Frameworks} bewusst sein, dass man mit einem System konfrontiert ist, das nur beschränkte Ressourcen zur Verfügung stellt.
+\newline
+\newline
+Abschließend kann man sagen das \emph{Docker} und Java Programme auf einen \emph{Raspberry PI} sehr gut zu betreiben sind, solange man nicht Programme und \emph{Docker Container} betreiben will, für welche die zur Verfügung stehenden Ressourcen nicht oder nur knapp ausreichen. Vor allem das Zeitverhalten muss berücksichtigt werden, dass aufgrund der \emph{ARM}-Architektur sich nicht gleich verhält als auf einer \emph{x86}-Architektur. \emph{PI4J} bietet einen sehr gute \emph{API} für die Interaktion mit den \emph{GPIO} und für das Ausführen von Prozessen am Hostsystem.  
