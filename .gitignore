@@ -1,3 +1,6 @@
+# Linux (KDE) excludes
+**/.directory
+
 .idea/
 out/
 classes/
